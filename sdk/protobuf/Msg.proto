@@ -1,0 +1,7 @@
+syntax = "proto3";
+ //定义protobuf的包名称空间
+package com.t0ugh.sdk.protocol;
+
+option java_package = "com.t0ugh.sdk.protocol";
+option java_outer_classname = "MsgProtos";
+
