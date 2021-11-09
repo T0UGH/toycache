@@ -10,4 +10,6 @@ public class Config {
     private int upperKeyLimitOfPeriodicalDelete;
     private int periodicalDeleteTick;
     private int nettyServerPort;
+    // tick间隔, 单位毫秒(MILLISECONDS)
+    private int tickInterval;
 }

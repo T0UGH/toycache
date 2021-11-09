@@ -5,6 +5,7 @@ public class Configs {
         return Config.builder()
                 .periodicalDeleteTick(25)
                 .nettyServerPort(8114)
+                .tickInterval(100)
                 .upperKeyLimitOfPeriodicalDelete(100).build();
     }
 }

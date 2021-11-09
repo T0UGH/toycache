@@ -59,4 +59,11 @@ public class MessageUtils {
             return Optional.empty();
         }
     }
+
+
+    public static Proto.Request newInnerClearExpireRequest(){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.InnerClearExpire)
+                .setInnerClearExpireRequest(Proto.InnerClearExpireRequest.newBuilder()).build();
+    }
 }
