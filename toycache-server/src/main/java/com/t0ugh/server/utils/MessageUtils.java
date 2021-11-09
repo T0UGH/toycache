@@ -55,6 +55,7 @@ public class MessageUtils {
                 return Optional.empty();
             return Optional.of(key);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
+            log.error("", e);
             return Optional.empty();
         }
     }

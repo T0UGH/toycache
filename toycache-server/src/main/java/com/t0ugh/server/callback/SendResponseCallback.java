@@ -12,7 +12,7 @@ public class SendResponseCallback implements Callback{
     private ChannelHandlerContext channelHandlerContext;
 
     @Override
-    public void callback(Proto.Request request, Proto.Response response) throws Exception {
+    public void callback(Proto.Request request, Proto.Response response) {
         channelHandlerContext.write(response);
     }
 }

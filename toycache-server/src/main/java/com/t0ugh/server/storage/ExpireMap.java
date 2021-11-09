@@ -1,5 +1,8 @@
 package com.t0ugh.server.storage;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +12,7 @@ public class ExpireMap {
     private final Map<String, Long> map;
 
     public ExpireMap() {
-        this.map = new HashMap<>();
+        this.map = Maps.newHashMap();
     }
 
     /**
@@ -52,7 +55,7 @@ public class ExpireMap {
      * 删除超时的键并且返回删除了的键
      * */
     public List<String> deleteExpires(int limit) {
-        List<String> expiredKeys = new ArrayList<>();
+        List<String> expiredKeys = Lists.newArrayList();
         for (Map.Entry<String, Long> entry : map.entrySet()){
             if (expiredKeys.size() >= limit){
                 break;

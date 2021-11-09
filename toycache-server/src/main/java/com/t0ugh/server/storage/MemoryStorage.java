@@ -1,5 +1,6 @@
 package com.t0ugh.server.storage;
 
+import com.google.common.collect.Maps;
 import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 
 import java.util.HashMap;
@@ -11,7 +12,7 @@ import java.util.Objects;
  * */
 public class MemoryStorage implements Storage {
 
-    private final Map<String, ValueObject> map = new HashMap<>();;
+    private final Map<String, ValueObject> map = Maps.newHashMap();
 
     public Map<String, ValueObject> backdoor() {
         return this.map;

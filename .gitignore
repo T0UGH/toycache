@@ -3,7 +3,6 @@ target/
 .mvn/
 !**/src/main/**
 !**/src/test/**
-healthlung.log
 
 ### STS ###
 .apt_generated
@@ -32,3 +31,4 @@ build/
 .vscode/
 
 
+/toycache-sdk/src/main/java/com/t0ugh/sdk/proto/
