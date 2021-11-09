@@ -1,6 +1,7 @@
 package com.t0ugh.server;
 
 import com.t0ugh.sdk.proto.Proto;
+import com.t0ugh.server.callback.SendResponseCallback;
 import com.t0ugh.server.storage.MemoryStorage;
 import com.t0ugh.server.storage.Storage;
 import io.netty.bootstrap.ServerBootstrap;
@@ -18,15 +19,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NettyServer {
 
+    private final GlobalContext globalContext;
     private final int serverPort;
-    ServerBootstrap b = new ServerBootstrap();
-    private final MessageExecutor messageExecutor;
+    ServerBootstrap b;
 
-    public NettyServer(int port)
+    public NettyServer(GlobalContext globalContext)
     {
-        Storage storage = new MemoryStorage();
-        this.serverPort = port;
-        this.messageExecutor = new MessageExecutor(storage);
+        b = new ServerBootstrap();
+        this.serverPort = globalContext.getConfig().getNettyServerPort();
+        this.globalContext = globalContext;
     }
 
     //服务器端业务处理器
@@ -36,8 +37,8 @@ public class NettyServer {
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception
         {
             Proto.Request request = (Proto.Request) msg;
-            //直接向ME提交消息就行
-            messageExecutor.submit(request, ctx);
+            //直接向ME提交消息就行, 并且放一个Callback
+            globalContext.getMessageExecutor().submit(request, new SendResponseCallback(ctx));
         }
     }
 

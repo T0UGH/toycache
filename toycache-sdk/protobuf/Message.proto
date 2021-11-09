@@ -17,6 +17,9 @@ enum MessageType {
   Get = 4;
   Set = 5;
 //  GetSet = 6; //设置指定 key 的值，并返回 key 的旧值。
+  Expire = 7;
+
+  InnerClearExpire = 101;
 }
 
 enum ResponseCode {
@@ -28,6 +31,8 @@ enum ResponseCode {
   InvalidParam = 2;
   // 操作对应的key与storage中的ValueObject对应不上 todo 这句话说的也太不清不楚了, 重新组织一下
   ValueTypeNotMatch = 3;
+  // 指定的Key已经过期了
+  KeyExpired = 4;
 }
 
 message Request {
@@ -36,6 +41,8 @@ message Request {
   DelRequest delRequest = 3;
   GetRequest getRequest = 4;
   SetRequest setRequest = 5;
+  ExpireRequest expireRequest = 6;
+  InnerClearExpireRequest innerClearExpireRequest = 7;
 }
 
 message Response {
@@ -45,6 +52,24 @@ message Response {
   DelResponse delResponse = 4;
   GetResponse getResponse = 5;
   SetResponse setResponse = 6;
+  ExpireResponse expireResponse = 7;
+  InnerClearExpireResponse innerClearExpireResponse = 8;
+}
+
+message InnerClearExpireRequest {
+}
+
+message InnerClearExpireResponse {
+  uint32 cleared = 1;
+}
+
+message ExpireRequest {
+  string key = 1;
+  uint64 expireTime = 2;
+}
+
+message ExpireResponse {
+  bool ok = 1;
 }
 
 message ExistsRequest {

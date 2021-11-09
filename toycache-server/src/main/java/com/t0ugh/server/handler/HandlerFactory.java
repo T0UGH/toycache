@@ -1,8 +1,7 @@
 package com.t0ugh.server.handler;
 
 import com.t0ugh.sdk.proto.Proto;
-import com.t0ugh.server.handler.impl.key.ExistsHandler;
-import com.t0ugh.server.handler.impl.string.GetHandler;
+import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.storage.Storage;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
@@ -20,10 +19,11 @@ import java.util.Set;
 @Slf4j
 public class HandlerFactory {
 
-    private final Map<Proto.MessageType, Handler> m = new HashMap<>();
+    private final Map<Proto.MessageType, Handler> m;
 
-    public HandlerFactory(Storage storage) {
-        registerAll(storage);
+    public HandlerFactory(GlobalContext globalContext) {
+        m = new HashMap<>();
+        registerAll(globalContext);
     }
 
     public Optional<Handler> getHandler(Proto.MessageType messageType) {
@@ -36,14 +36,14 @@ public class HandlerFactory {
         return m.size();
     }
 
-    public void registerAll(Storage storage){
+    public void registerAll(GlobalContext globalContext){
         Reflections reflections = new Reflections("com.t0ugh.server.handler");
         Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(HandlerAnnotation.class);
         classSet.forEach(clazz -> {
             try {
                 Proto.MessageType messageType = clazz.getAnnotation(HandlerAnnotation.class).type();
-                Constructor<?> cons = clazz.getConstructor(Storage.class);
-                register(messageType, (Handler) cons.newInstance(storage));
+                Constructor<?> cons = clazz.getConstructor(GlobalContext.class);
+                register(messageType, (Handler) cons.newInstance(globalContext));
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 e.printStackTrace();
                 log.error("handler register failed", e);

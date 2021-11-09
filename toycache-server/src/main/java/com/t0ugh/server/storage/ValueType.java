@@ -4,6 +4,6 @@ public enum ValueType {
     ValueTypeString,
     ValueTypeSet,
     ValueTypeList,
-    ValueTypeOrderedSet,
+    ValueTypeSortedSet,
     ValueTypeMap;
 }

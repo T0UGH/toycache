@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 实际的cache, todo 这块要大改来支持多种类型
+ * 实际的cache
  * */
 public class MemoryStorage implements Storage {
 
@@ -31,8 +31,7 @@ public class MemoryStorage implements Storage {
 
     @Override
     public void set(String key, String value) {
-        ValueObject val = ValueObject.builder()
-                .valueType(ValueType.ValueTypeString).stringObj(value).build();
+        ValueObject val = ValueObject.newStringObject(value);
         map.put(key, val);
     }
 
