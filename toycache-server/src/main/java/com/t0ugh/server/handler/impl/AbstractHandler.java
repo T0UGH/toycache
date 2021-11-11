@@ -6,10 +6,10 @@ import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.handler.Handler;
-import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.utils.MessageUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
@@ -18,6 +18,7 @@ import java.util.Optional;
  * 这是一个TemplateMethod模式
  * 此外, 为了注册handler，这个类的所有子类都必须带有HandlerAnnotation注解 {@link com.t0ugh.server.handler.HandlerAnnotation()}
  * */
+@Slf4j
 @AllArgsConstructor
 public abstract class AbstractHandler implements Handler {
 
@@ -55,6 +56,7 @@ public abstract class AbstractHandler implements Handler {
         } catch (KeyExpireException e) {
             return MessageUtils.responseWithCode(Proto.ResponseCode.KeyExpired);
         } catch (Exception e) {
+            log.error("MyUnknown Exception: ", e);
             return MessageUtils.responseWithCode(Proto.ResponseCode.Unknown);
         }
 

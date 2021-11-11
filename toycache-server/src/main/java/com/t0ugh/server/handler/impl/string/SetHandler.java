@@ -17,7 +17,7 @@ public class SetHandler extends AbstractHandler {
     public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
         Proto.SetRequest sRequest = request.getSetRequest();
         getGlobalContext().getStorage().set(sRequest.getKey(), sRequest.getValue());
-        responseBuilder.setSetResponse(Proto.SetResponse.newBuilder());
+        responseBuilder.setSetResponse(Proto.SetResponse.newBuilder().setOk(true));
     }
 
 }

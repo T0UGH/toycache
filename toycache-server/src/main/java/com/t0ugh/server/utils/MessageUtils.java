@@ -1,16 +1,11 @@
 package com.t0ugh.server.utils;
 
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
-import com.sun.org.apache.xpath.internal.objects.XString;
 import com.t0ugh.sdk.proto.Proto;
-import com.t0ugh.server.storage.ExpireMap;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -44,9 +39,11 @@ public class MessageUtils {
      * 如果key找到了就返回key本身
      * 如果找key途中报错或者请求中就没有key就返回
      * */
+
     public static Optional<String> getKeyFromRequest(Proto.Request request) {
         try {
-            Class<?> clazz = Class.forName("com.t0ugh.sdk.proto.Proto." + request.getMessageType().getValueDescriptor().getName() +"Request");
+            String className = "com.t0ugh.sdk.proto.Proto$" + request.getMessageType().getValueDescriptor().getName() +"Request";
+            Class<?> clazz = Class.forName(className);
             Method method = request.getClass().getMethod("get"+ request.getMessageType().getValueDescriptor().getName() +"Request");
             Object innerRequest = method.invoke(request);
             Method getKeyMethod = clazz.getMethod("getKey");

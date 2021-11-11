@@ -80,6 +80,6 @@ public class ExpireMap {
      * todo: 这样实现超时是否好
      * */
     private static boolean isTimeExpired(long time){
-        return time >= System.currentTimeMillis();
+        return time <= System.currentTimeMillis();
     }
 }

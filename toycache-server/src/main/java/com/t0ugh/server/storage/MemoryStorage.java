@@ -3,7 +3,6 @@ package com.t0ugh.server.storage;
 import com.google.common.collect.Maps;
 import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -24,6 +23,9 @@ public class MemoryStorage implements Storage {
 
     public String get(String key) throws ValueTypeNotMatchException {
         ValueObject vo = map.get(key);
+        if(Objects.isNull(vo)){
+            return null;
+        }
         if (!Objects.equals(vo.getValueType(), ValueType.ValueTypeString)){
             throw new ValueTypeNotMatchException();
         }
@@ -32,7 +34,7 @@ public class MemoryStorage implements Storage {
 
     @Override
     public void set(String key, String value) {
-        ValueObject val = ValueObject.newStringObject(value);
+        ValueObject val = ValueObject.newInstance(value);
         map.put(key, val);
     }
 
