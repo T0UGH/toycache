@@ -24,7 +24,6 @@ public class Ticker {
         executorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                System.out.println("run "+ System.currentTimeMillis());
                 ticks.forEach(Tickable::tick);
             }
         }, 0, globalContext.getConfig().getTickInterval(), TimeUnit.MILLISECONDS);

@@ -1,6 +1,5 @@
-package com.t0ugh.server.handler;
+package com.t0ugh.server;
 
-import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.config.Configs;
 import com.t0ugh.server.storage.ExpireMap;
 import com.t0ugh.server.storage.MemoryStorage;
@@ -8,7 +7,7 @@ import com.t0ugh.server.storage.Storage;
 import org.junit.After;
 import org.junit.Before;
 
-public class HandlerTestBase {
+public class BaseTest {
 
     public GlobalContext testContext;
 
@@ -18,8 +17,9 @@ public class HandlerTestBase {
         testContext = GlobalContext.builder()
                 .storage(storage)
                 .expireMap(new ExpireMap())
-                .config(Configs.newDefaultConfig()).build();
-        new HandlerFactory(testContext);
+                .config(Configs.newTestConfig()).build();
+        MessageExecutor messageExecutor = new MessageExecutorImpl(testContext);
+        testContext.setMessageExecutor(messageExecutor);
     }
 
     @After

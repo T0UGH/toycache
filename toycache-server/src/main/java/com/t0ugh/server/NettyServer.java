@@ -2,8 +2,6 @@ package com.t0ugh.server;
 
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.callback.SendResponseCallback;
-import com.t0ugh.server.storage.MemoryStorage;
-import com.t0ugh.server.storage.Storage;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -16,6 +14,7 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import lombok.extern.slf4j.Slf4j;
 
+//todo 测试用例
 @Slf4j
 public class NettyServer {
 

@@ -1,10 +1,7 @@
 package com.t0ugh.server.handler.impl.string;
 
 import com.t0ugh.sdk.proto.Proto;
-import com.t0ugh.server.GlobalContext;
-import com.t0ugh.server.config.Configs;
-import com.t0ugh.server.handler.HandlerTestBase;
-import com.t0ugh.server.storage.MemoryStorage;
+import com.t0ugh.server.BaseTest;
 import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.storage.ValueObject;
 import com.t0ugh.server.storage.ValueType;
@@ -15,7 +12,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class SetHandlerTest extends HandlerTestBase {
+public class SetTest extends BaseTest {
 
     @Before
     public void setUp() throws Exception {

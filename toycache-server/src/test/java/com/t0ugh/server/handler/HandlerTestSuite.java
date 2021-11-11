@@ -1,17 +1,17 @@
 package com.t0ugh.server.handler;
 
-import com.t0ugh.server.handler.impl.inner.InnerClearExpireHandlerTest;
-import com.t0ugh.server.handler.impl.key.DelHandlerTest;
-import com.t0ugh.server.handler.impl.key.ExistsHandlerTest;
-import com.t0ugh.server.handler.impl.key.ExpireHandlerTest;
-import com.t0ugh.server.handler.impl.string.GetHandlerTest;
-import com.t0ugh.server.handler.impl.string.SetHandlerTest;
+import com.t0ugh.server.handler.impl.inner.InnerClearExpireTest;
+import com.t0ugh.server.handler.impl.key.DelTest;
+import com.t0ugh.server.handler.impl.key.ExistsTest;
+import com.t0ugh.server.handler.impl.key.ExpireTest;
+import com.t0ugh.server.handler.impl.string.GetTest;
+import com.t0ugh.server.handler.impl.string.SetTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({InnerClearExpireHandlerTest.class, DelHandlerTest.class,
-        ExistsHandlerTest.class, ExpireHandlerTest.class,
-        GetHandlerTest.class, SetHandlerTest.class})
+@Suite.SuiteClasses({InnerClearExpireTest.class, DelTest.class,
+        ExistsTest.class, ExpireTest.class,
+        GetTest.class, SetTest.class})
 public class HandlerTestSuite {
 }

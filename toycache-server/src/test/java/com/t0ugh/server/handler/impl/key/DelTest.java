@@ -2,18 +2,16 @@ package com.t0ugh.server.handler.impl.key;
 
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.handler.Handler;
-import com.t0ugh.server.handler.HandlerTestBase;
+import com.t0ugh.server.BaseTest;
 import com.t0ugh.server.storage.ValueObject;
 import com.t0ugh.server.utils.TestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Optional;
-
 import static org.junit.Assert.*;
 
-public class DelHandlerTest extends HandlerTestBase {
+public class DelTest extends BaseTest {
 
     @Before
     public void setUp() throws Exception {

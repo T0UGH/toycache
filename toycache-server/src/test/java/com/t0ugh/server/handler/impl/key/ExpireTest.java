@@ -3,7 +3,7 @@ package com.t0ugh.server.handler.impl.key;
 import com.google.common.primitives.Longs;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.handler.Handler;
-import com.t0ugh.server.handler.HandlerTestBase;
+import com.t0ugh.server.BaseTest;
 import com.t0ugh.server.storage.ExpireMap;
 import com.t0ugh.server.storage.ValueObject;
 import com.t0ugh.server.utils.TestUtils;
@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ExpireHandlerTest extends HandlerTestBase {
+public class ExpireTest extends BaseTest {
 
     @Before
     public void setUp() throws Exception {

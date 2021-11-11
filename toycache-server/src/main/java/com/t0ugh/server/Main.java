@@ -14,7 +14,7 @@ public class Main {
                 .storage(storage)
                 .config(Configs.newDefaultConfig()).build();
 
-        MessageExecutor messageExecutor = new MessageExecutor(globalContext);
+        MessageExecutor messageExecutor = new MessageExecutorImpl(globalContext);
         globalContext.setMessageExecutor(messageExecutor);
 
         Ticker ticker = new Ticker(globalContext);

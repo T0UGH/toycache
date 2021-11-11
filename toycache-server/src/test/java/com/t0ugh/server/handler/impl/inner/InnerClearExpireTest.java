@@ -4,8 +4,7 @@ import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.config.Config;
 import com.t0ugh.server.handler.Handler;
-import com.t0ugh.server.handler.HandlerTestBase;
-import com.t0ugh.server.handler.impl.key.ExpireHandler;
+import com.t0ugh.server.BaseTest;
 import com.t0ugh.server.storage.ExpireMap;
 import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.utils.TestUtils;
@@ -15,7 +14,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class InnerClearExpireHandlerTest extends HandlerTestBase {
+public class InnerClearExpireTest extends BaseTest {
 
     @Before
     public void setUp() throws Exception {
