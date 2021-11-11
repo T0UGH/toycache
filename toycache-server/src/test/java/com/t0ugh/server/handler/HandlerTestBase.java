@@ -19,6 +19,7 @@ public class HandlerTestBase {
                 .storage(storage)
                 .expireMap(new ExpireMap())
                 .config(Configs.newDefaultConfig()).build();
+        new HandlerFactory(testContext);
     }
 
     @After

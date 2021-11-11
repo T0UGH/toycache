@@ -8,7 +8,7 @@ import com.t0ugh.server.storage.Storage;
 
 import java.util.List;
 
-@HandlerAnnotation(type = Proto.MessageType.InnerClearExpire)
+@HandlerAnnotation(type = Proto.MessageType.InnerClearExpire, checkExpire = false)
 public class InnerClearExpireHandler extends AbstractHandler {
 
     public InnerClearExpireHandler(GlobalContext globalContext) {

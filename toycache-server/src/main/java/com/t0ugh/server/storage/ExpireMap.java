@@ -17,7 +17,7 @@ public class ExpireMap {
 
     /**
      * 判断给定Key是否超时, 只是简单的判断超时, 不会删除超时的键
-     * 如果键不存在返回false
+     * 如果键不存在也返回false
      * */
     public boolean isExpired(String key){
         if (!map.containsKey(key)){
