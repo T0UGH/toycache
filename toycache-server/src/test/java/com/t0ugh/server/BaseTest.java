@@ -17,7 +17,9 @@ public class BaseTest {
         testContext = GlobalContext.builder()
                 .storage(storage)
                 .expireMap(new ExpireMap())
-                .config(Configs.newTestConfig()).build();
+                .config(Configs.newTestConfig())
+                .globalState(GlobalState.newInstance())
+                .build();
         MessageExecutor messageExecutor = new MessageExecutorImpl(testContext);
         testContext.setMessageExecutor(messageExecutor);
     }

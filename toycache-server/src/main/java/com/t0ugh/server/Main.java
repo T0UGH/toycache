@@ -4,7 +4,7 @@ import com.t0ugh.server.config.Configs;
 import com.t0ugh.server.storage.MemoryDBStorage;
 import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.tick.DeleteKeyTicker;
-import com.t0ugh.server.tick.TickDriver;
+import com.t0ugh.server.tick.TickDriverImpl;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,7 +17,7 @@ public class Main {
         MessageExecutor messageExecutor = new MessageExecutorImpl(globalContext);
         globalContext.setMessageExecutor(messageExecutor);
 
-        TickDriver tickDriver = new TickDriver(globalContext);
+        TickDriverImpl tickDriver = new TickDriverImpl(globalContext);
         DeleteKeyTicker deleteKeyTicker = new DeleteKeyTicker(globalContext);
         tickDriver.register(deleteKeyTicker);
         tickDriver.start();

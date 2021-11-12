@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
-@Builder
 public class MemoryDBStorage implements Storage{
 
     private final Map<String, DBProto.ValueObject> kvs;

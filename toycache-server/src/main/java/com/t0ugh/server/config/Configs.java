@@ -15,6 +15,8 @@ public class Configs {
                 .periodicalDeleteTick(5)
                 .nettyServerPort(8114)
                 .tickInterval(100)
+                .saveCheckLimit(5)
+                .saveCheckTick(2)
                 .dbBaseFilePath("D:\\tmp\\tcdb\\")
                 .upperKeyLimitOfPeriodicalDelete(10).build();
     }

@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class TickDriverTest extends BaseTest {
+public class TickDriverImplTest extends BaseTest {
 
     TickDriver tickDriver;
 
@@ -15,7 +15,7 @@ public class TickDriverTest extends BaseTest {
 
     @Before
     public void setUp() throws Exception {
-        tickDriver = new TickDriver(testContext);
+        tickDriver = new TickDriverImpl(testContext);
         tickableTestImpl = new TickerTestImpl();
         tickDriver.register(tickableTestImpl);
 

@@ -9,4 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Builder
 public class GlobalState {
     private AtomicInteger updateCount;
+
+    public static GlobalState newInstance(){
+        return GlobalState.builder().updateCount(new AtomicInteger(0)).build();
+    }
 }

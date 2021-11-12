@@ -10,14 +10,14 @@ import static org.junit.Assert.*;
 public class DeleteKeyTickerTest extends BaseTest {
 
     DeleteKeyTicker deleteKeyTicker;
-    TickDriver tickDriver;
+    TickDriverImpl tickDriver;
     MessageExecutorTestImpl messageExecutorForTest;
 
     @Before
     public void setUp() throws Exception {
         messageExecutorForTest = new MessageExecutorTestImpl();
         testContext.setMessageExecutor(messageExecutorForTest);
-        tickDriver = new TickDriver(testContext);
+        tickDriver = new TickDriverImpl(testContext);
         deleteKeyTicker = new DeleteKeyTicker(testContext);
         tickDriver.register(deleteKeyTicker);
 
