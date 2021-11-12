@@ -36,7 +36,7 @@ public class MessageUtils {
      * */
     public static boolean containRequest(Proto.Request request) {
         try {
-            if(!Objects.equals(Proto.MessageType.Invalid, request.getMessageType())){
+            if(Objects.equals(Proto.MessageType.Invalid, request.getMessageType())){
                 return false;
             }
             Method hasXXXRequestMethod = request.getClass().getMethod("has"+ request.getMessageType().getValueDescriptor().getName() +"Request");

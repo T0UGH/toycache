@@ -1,6 +1,7 @@
 package com.t0ugh.server;
 
 import com.t0ugh.server.config.Configs;
+import com.t0ugh.server.db.DBExecutor;
 import com.t0ugh.server.storage.ExpireMap;
 import com.t0ugh.server.storage.MemoryDBStorage;
 import com.t0ugh.server.storage.Storage;
@@ -22,6 +23,7 @@ public class BaseTest {
                 .build();
         MessageExecutor messageExecutor = new MessageExecutorImpl(testContext);
         testContext.setMessageExecutor(messageExecutor);
+        testContext.setDbExecutor(new DBExecutor(testContext));
     }
 
     @After

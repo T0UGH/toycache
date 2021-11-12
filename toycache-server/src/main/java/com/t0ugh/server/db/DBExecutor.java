@@ -40,7 +40,7 @@ public class DBExecutor {
         if(!Objects.equals(Proto.MessageType.InnerSave, request.getMessageType())
                 ||!request.hasInnerSaveRequest()
                 ||!request.getInnerSaveRequest().hasDb()
-                ||!Strings.isNullOrEmpty(request.getInnerSaveRequest().getFilePath()))
+                ||Strings.isNullOrEmpty(request.getInnerSaveRequest().getFilePath()))
             throw new InvalidParameterException();
     }
 
