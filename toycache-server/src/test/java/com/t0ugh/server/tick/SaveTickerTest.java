@@ -18,7 +18,7 @@ public class SaveTickerTest extends BaseTest {
     @Before
     public void setUp() throws Exception {
         messageExecutorForTest = new MessageExecutorTestImpl();
-        testContext.setMessageExecutor(messageExecutorForTest);
+        testContext.setMemoryOperationExecutor(messageExecutorForTest);
         tickDriver = new TickDriverTestImpl(testContext);
         saveTicker = new SaveTicker(testContext);
         tickDriver.register(saveTicker);

@@ -7,12 +7,17 @@ import com.t0ugh.server.enums.SaveState;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 import com.t0ugh.server.utils.DBUtils;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
 @HandlerAnnotation(type = Proto.MessageType.Save, checkExpire = false, isWrite = false)
 public class SaveHandler extends AbstractHandler {
 
+    //这里的setter和getter仅供测试代码使用
+    @Getter
+    @Setter
     private SaveState saveState;
 
     public SaveHandler(GlobalContext globalContext) {

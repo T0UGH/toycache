@@ -31,7 +31,7 @@ public class DeleteKeyTicker implements Ticker {
         executorService.submit(() -> {
             count ++;
             if(count >= interval) {
-                globalContext.getMessageExecutor().submit(MessageUtils.newInnerClearExpireRequest());
+                globalContext.getMemoryOperationExecutor().submit(MessageUtils.newInnerClearExpireRequest());
                 count = 0;
             }
         });

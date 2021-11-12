@@ -14,8 +14,8 @@ public class Main {
                 .storage(storage)
                 .config(Configs.newDefaultConfig()).build();
 
-        MessageExecutor messageExecutor = new MessageExecutorImpl(globalContext);
-        globalContext.setMessageExecutor(messageExecutor);
+        MessageExecutor messageExecutor = new MemoryOperationExecutor(globalContext);
+        globalContext.setMemoryOperationExecutor(messageExecutor);
 
         TickDriverImpl tickDriver = new TickDriverImpl(globalContext);
         DeleteKeyTicker deleteKeyTicker = new DeleteKeyTicker(globalContext);

@@ -21,8 +21,8 @@ public class BaseTest {
                 .config(Configs.newTestConfig())
                 .globalState(GlobalState.newInstance())
                 .build();
-        MessageExecutor messageExecutor = new MessageExecutorImpl(testContext);
-        testContext.setMessageExecutor(messageExecutor);
+        MessageExecutor messageExecutor = new MemoryOperationExecutor(testContext);
+        testContext.setMemoryOperationExecutor(messageExecutor);
         testContext.setDbExecutor(new DBExecutor(testContext));
     }
 

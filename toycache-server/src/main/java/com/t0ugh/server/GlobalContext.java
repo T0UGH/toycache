@@ -13,8 +13,8 @@ import lombok.Data;
 public class GlobalContext {
     private Config config;
     private Storage storage;
-    private MessageExecutor messageExecutor;
-    private DBExecutor dbExecutor;
+    private MessageExecutor memoryOperationExecutor;
+    private MessageExecutor dbExecutor;
     private ExpireMap expireMap;
     private HandlerFactory handlerFactory;
     private GlobalState globalState;

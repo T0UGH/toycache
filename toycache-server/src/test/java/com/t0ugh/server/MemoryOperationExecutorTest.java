@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class MessageExecutorImplTest extends BaseTest {
+public class MemoryOperationExecutorTest extends BaseTest {
 
     @Before
     public void setUp() throws Exception {
@@ -27,10 +27,10 @@ public class MessageExecutorImplTest extends BaseTest {
                         .setKey("Hello")
                         .setValue("World")).build();
         CallbackTestImpl testCallback = new CallbackTestImpl();
-        testContext.getMessageExecutor().submit(request, testCallback);
-        testContext.getMessageExecutor().submitAndWait(request, testCallback);
+        testContext.getMemoryOperationExecutor().submit(request, testCallback);
+        testContext.getMemoryOperationExecutor().submitAndWait(request, testCallback);
         assertEquals(2, testCallback.responseList.size());
-        testContext.getMessageExecutor().submitAndWait(request, testCallback);
+        testContext.getMemoryOperationExecutor().submitAndWait(request, testCallback);
         assertEquals(3, testCallback.responseList.size());
     }
 }

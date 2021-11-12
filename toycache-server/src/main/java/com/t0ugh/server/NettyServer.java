@@ -37,7 +37,7 @@ public class NettyServer {
         {
             Proto.Request request = (Proto.Request) msg;
             //直接向ME提交消息就行, 并且放一个Callback
-            globalContext.getMessageExecutor().submit(request, new SendResponseCallback(ctx));
+            globalContext.getMemoryOperationExecutor().submit(request, new SendResponseCallback(ctx));
         }
     }
 

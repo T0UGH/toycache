@@ -33,7 +33,7 @@ public class SaveTicker implements Ticker{
         executorService.submit(() -> {
             count ++;
             if(count >= interval && globalContext.getGlobalState().getUpdateCount().get() >= saveCheckLimit) {
-                globalContext.getMessageExecutor().submit(MessageUtils.newStartSaveRequest());
+                globalContext.getMemoryOperationExecutor().submit(MessageUtils.newStartSaveRequest());
                 count = 0;
             }
         });

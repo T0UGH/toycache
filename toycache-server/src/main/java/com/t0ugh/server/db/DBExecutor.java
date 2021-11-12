@@ -3,6 +3,8 @@ package com.t0ugh.server.db;
 import com.google.common.base.Strings;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
+import com.t0ugh.server.MessageExecutor;
+import com.t0ugh.server.callback.Callback;
 import com.t0ugh.server.utils.DBUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Slf4j
-public class DBExecutor {
+public class DBExecutor implements MessageExecutor {
 
     private final GlobalContext globalContext;
 
@@ -26,9 +28,19 @@ public class DBExecutor {
     }
 
 
+    @Override
+    public void submit(Proto.Request request, Callback... callbacks) {
+        throw new UnsupportedOperationException();
+    }
+
     public void submit(Proto.Request request){
         checkRequest(request);
         executorService.submit(new DBRunnable(request));
+    }
+
+    @Override
+    public void submitAndWait(Proto.Request request, Callback... callbacks) throws Exception {
+        throw new UnsupportedOperationException();
     }
 
     public void submitAndWait(Proto.Request request) throws Exception{
@@ -55,7 +67,7 @@ public class DBExecutor {
                 Proto.InnerSaveRequest saveRequest = request.getInnerSaveRequest();
                 DBUtils.writeToFile(saveRequest.getDb(), saveRequest.getFilePath());
                 // 把消息通知回去
-                globalContext.getMessageExecutor().submit(newSaveRequest());
+                globalContext.getMemoryOperationExecutor().submit(newSaveRequest());
             } catch (IOException e) {
                 log.error("IO", e);
                 e.printStackTrace();

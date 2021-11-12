@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.Objects;
 
 import static org.junit.Assert.*;
 
@@ -41,7 +40,7 @@ public class DBExecutorTest extends BaseTest {
                 .putAllKeyValues(kvs)
                 .build();
         messageExecutorTestImpl = new MessageExecutorTestImpl();
-        testContext.setMessageExecutor(messageExecutorTestImpl);
+        testContext.setMemoryOperationExecutor(messageExecutorTestImpl);
     }
 
     /**

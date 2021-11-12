@@ -18,13 +18,13 @@ import java.util.concurrent.Executors;
  * 命令执行器, 命令都在一个单独的线程中执行
  * */
 @Slf4j
-public class MessageExecutorImpl implements MessageExecutor{
+public class MemoryOperationExecutor implements MessageExecutor{
 
     private final ExecutorService executorService;
 
     private final HandlerFactory handlerFactory;
 
-    public MessageExecutorImpl(GlobalContext globalContext) {
+    public MemoryOperationExecutor(GlobalContext globalContext) {
         handlerFactory = new HandlerFactory(globalContext);
         executorService = Executors.newSingleThreadExecutor();
     }

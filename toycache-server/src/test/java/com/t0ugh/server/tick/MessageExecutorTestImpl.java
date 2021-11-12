@@ -1,9 +1,7 @@
 package com.t0ugh.server.tick;
 
 import com.t0ugh.sdk.proto.Proto;
-import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.MessageExecutor;
-import com.t0ugh.server.MessageExecutorImpl;
 import com.t0ugh.server.callback.Callback;
 
 import java.util.ArrayList;

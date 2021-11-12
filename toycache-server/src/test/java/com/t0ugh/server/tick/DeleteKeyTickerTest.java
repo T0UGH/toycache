@@ -16,7 +16,7 @@ public class DeleteKeyTickerTest extends BaseTest {
     @Before
     public void setUp() throws Exception {
         messageExecutorForTest = new MessageExecutorTestImpl();
-        testContext.setMessageExecutor(messageExecutorForTest);
+        testContext.setMemoryOperationExecutor(messageExecutorForTest);
         tickDriver = new TickDriverImpl(testContext);
         deleteKeyTicker = new DeleteKeyTicker(testContext);
         tickDriver.register(deleteKeyTicker);
