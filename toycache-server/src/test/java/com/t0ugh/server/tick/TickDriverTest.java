@@ -7,17 +7,17 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class TickerTest extends BaseTest {
+public class TickDriverTest extends BaseTest {
 
-    Ticker ticker;
+    TickDriver tickDriver;
 
-    TickableTestImpl tickableTestImpl;
+    TickerTestImpl tickableTestImpl;
 
     @Before
     public void setUp() throws Exception {
-        ticker = new Ticker(testContext);
-        tickableTestImpl = new TickableTestImpl();
-        ticker.register(tickableTestImpl);
+        tickDriver = new TickDriver(testContext);
+        tickableTestImpl = new TickerTestImpl();
+        tickDriver.register(tickableTestImpl);
 
     }
 
@@ -27,10 +27,10 @@ public class TickerTest extends BaseTest {
 
     @Test
     public void testTicker() throws Exception {
-        ticker.start();
+        tickDriver.start();
         int interval = testContext.getConfig().getTickInterval();
         Thread.sleep(interval * 5L);
-        ticker.shutdown();
+        tickDriver.shutdown();
         assertTrue(tickableTestImpl.count > 0);
     }
 }

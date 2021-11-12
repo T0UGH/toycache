@@ -2,10 +2,14 @@ package com.t0ugh.server.utils;
 
 import com.google.common.base.Strings;
 import com.t0ugh.sdk.proto.Proto;
+import com.t0ugh.server.handler.Handler;
+import com.t0ugh.server.handler.HandlerAnnotation;
+import com.t0ugh.server.handler.HandlerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -21,11 +25,20 @@ public class MessageUtils {
                 .setResponseCode(code).build();
     }
 
+
+    public static boolean isWriteRequest(Proto.MessageType messageType, HandlerFactory handlerFactory){
+        Optional<Handler> op = handlerFactory.getHandler(messageType);
+        return op.map(handler -> handler.getClass().getAnnotation(HandlerAnnotation.class).isWrite()).orElse(false);
+    }
+
     /**
      * 检查请求中是否包含对应MessageType的子请求
      * */
     public static boolean containRequest(Proto.Request request) {
         try {
+            if(!Objects.equals(Proto.MessageType.Invalid, request.getMessageType())){
+                return false;
+            }
             Method hasXXXRequestMethod = request.getClass().getMethod("has"+ request.getMessageType().getValueDescriptor().getName() +"Request");
             return (boolean)hasXXXRequestMethod.invoke(request);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
@@ -62,5 +75,13 @@ public class MessageUtils {
         return Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.InnerClearExpire)
                 .setInnerClearExpireRequest(Proto.InnerClearExpireRequest.newBuilder()).build();
+    }
+
+    public static Proto.Request newStartSaveRequest(){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.Save)
+                .setSaveRequest(Proto.SaveRequest.newBuilder()
+                        .setSaveType(Proto.SaveType.SaveTypeStart))
+                .build();
     }
 }

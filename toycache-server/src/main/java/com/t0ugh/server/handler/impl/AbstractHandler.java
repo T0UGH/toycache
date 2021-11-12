@@ -1,7 +1,6 @@
 package com.t0ugh.server.handler.impl;
 
 import com.t0ugh.sdk.exception.InvalidParamException;
-import com.t0ugh.sdk.exception.KeyExpireException;
 import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
@@ -46,6 +45,10 @@ public abstract class AbstractHandler implements Handler {
             Proto.Response.Builder okBuilder = MessageUtils.okBuilder();
             doHandle(request, okBuilder);
             okBuilder.setMessageType(request.getMessageType());
+            // 如果能执行到这里, 基本就是没有异常了, 如果是写请求更新一下内部状态
+            if(MessageUtils.isWriteRequest(request.getMessageType(), getGlobalContext().getHandlerFactory())){
+                getGlobalContext().getGlobalState().getUpdateCount().incrementAndGet();
+            }
             return okBuilder.build();
         // 统一的异常处理
         } catch (ValueTypeNotMatchException e) {

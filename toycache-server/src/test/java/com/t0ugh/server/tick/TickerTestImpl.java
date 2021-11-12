@@ -1,6 +1,6 @@
 package com.t0ugh.server.tick;
 
-public class TickableTestImpl implements Tickable{
+public class TickerTestImpl implements Ticker {
 
     public int count = 0;
 

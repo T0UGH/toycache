@@ -3,8 +3,8 @@ package com.t0ugh.server;
 import com.t0ugh.server.config.Configs;
 import com.t0ugh.server.storage.MemoryDBStorage;
 import com.t0ugh.server.storage.Storage;
-import com.t0ugh.server.tick.DeleteKeyExecutor;
-import com.t0ugh.server.tick.Ticker;
+import com.t0ugh.server.tick.DeleteKeyTicker;
+import com.t0ugh.server.tick.TickDriver;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,10 +17,10 @@ public class Main {
         MessageExecutor messageExecutor = new MessageExecutorImpl(globalContext);
         globalContext.setMessageExecutor(messageExecutor);
 
-        Ticker ticker = new Ticker(globalContext);
-        DeleteKeyExecutor deleteKeyExecutor = new DeleteKeyExecutor(globalContext);
-        ticker.register(deleteKeyExecutor);
-        ticker.start();
+        TickDriver tickDriver = new TickDriver(globalContext);
+        DeleteKeyTicker deleteKeyTicker = new DeleteKeyTicker(globalContext);
+        tickDriver.register(deleteKeyTicker);
+        tickDriver.start();
 
         NettyServer nettyServer = new NettyServer(globalContext);
         nettyServer.runServer();

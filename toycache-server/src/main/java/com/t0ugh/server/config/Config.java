@@ -12,4 +12,10 @@ public class Config {
     private int nettyServerPort;
     // tick间隔, 单位毫秒(MILLISECONDS)
     private int tickInterval;
+    // 一个目录
+    private String dbBaseFilePath;
+    // 多少个tick检查一次存盘
+    private int saveCheckTick;
+    // 处理了至少多少个写请求才存盘
+    private int saveCheckLimit;
 }

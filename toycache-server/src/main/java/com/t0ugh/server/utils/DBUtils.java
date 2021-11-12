@@ -26,4 +26,8 @@ public class DBUtils {
     public static DBProto.Database loadFromFile(String filePath) throws IOException{
         return DBProto.Database.parseFrom(new FileInputStream(filePath));
     }
+
+    public static String genFilePath(String baseFilePath){
+        return baseFilePath +"\\"+ System.currentTimeMillis() + ".tcdb";
+    }
 }

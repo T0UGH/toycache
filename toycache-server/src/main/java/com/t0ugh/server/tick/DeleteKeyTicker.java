@@ -6,13 +6,13 @@ import com.t0ugh.server.utils.MessageUtils;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class DeleteKeyExecutor implements Tickable{
+public class DeleteKeyTicker implements Ticker {
     private int count;
     private final ExecutorService executorService;
     private final GlobalContext globalContext;
     private final int interval;
 
-    public DeleteKeyExecutor(GlobalContext globalContext) {
+    public DeleteKeyTicker(GlobalContext globalContext) {
         executorService = Executors.newSingleThreadExecutor();
         this.globalContext = globalContext;
         this.interval = globalContext.getConfig().getPeriodicalDeleteTick();

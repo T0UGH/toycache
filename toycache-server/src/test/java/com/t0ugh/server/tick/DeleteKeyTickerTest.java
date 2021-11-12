@@ -7,19 +7,19 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class DeleteKeyExecutorTest extends BaseTest {
+public class DeleteKeyTickerTest extends BaseTest {
 
-    DeleteKeyExecutor deleteKeyExecutor;
-    Ticker ticker;
+    DeleteKeyTicker deleteKeyTicker;
+    TickDriver tickDriver;
     MessageExecutorTestImpl messageExecutorForTest;
 
     @Before
     public void setUp() throws Exception {
         messageExecutorForTest = new MessageExecutorTestImpl();
         testContext.setMessageExecutor(messageExecutorForTest);
-        ticker = new Ticker(testContext);
-        deleteKeyExecutor = new DeleteKeyExecutor(testContext);
-        ticker.register(deleteKeyExecutor);
+        tickDriver = new TickDriver(testContext);
+        deleteKeyTicker = new DeleteKeyTicker(testContext);
+        tickDriver.register(deleteKeyTicker);
 
     }
 
@@ -31,7 +31,7 @@ public class DeleteKeyExecutorTest extends BaseTest {
     public void test0() throws Exception {
         int periodicalDeleteTick = testContext.getConfig().getPeriodicalDeleteTick();
         int tickInterval = testContext.getConfig().getTickInterval();
-        ticker.start();
+        tickDriver.start();
         Thread.sleep(periodicalDeleteTick * tickInterval * 2L);
         assertTrue(messageExecutorForTest.requestList.size() > 0);
     }
