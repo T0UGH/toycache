@@ -1,9 +1,11 @@
 syntax = "proto3";
  //定义protobuf的包名称空间
-package com.t0ugh.sdk.protocol;
+package toycache;
 
 option java_package = "com.t0ugh.sdk.proto";
 option java_outer_classname = "Proto";
+
+import "Database.proto";
 
 enum MessageType {
   Invalid = 0;
@@ -18,8 +20,10 @@ enum MessageType {
   Set = 5;
 //  GetSet = 6; //设置指定 key 的值，并返回 key 的旧值。
   Expire = 7;
+  Save = 8; //后台开个线程存, 约等于Redis的SAVE
 
   InnerClearExpire = 101;
+  InnerSave = 102;
 }
 
 enum ResponseCode {
@@ -43,6 +47,8 @@ message Request {
   SetRequest setRequest = 5;
   ExpireRequest expireRequest = 6;
   InnerClearExpireRequest innerClearExpireRequest = 7;
+  InnerSaveRequest innerSaveRequest = 8;
+  SaveRequest saveRequest = 9;
 }
 
 message Response {
@@ -54,6 +60,30 @@ message Response {
   SetResponse setResponse = 6;
   ExpireResponse expireResponse = 7;
   InnerClearExpireResponse innerClearExpireResponse = 8;
+  InnerSaveResponse innerSaveResponse = 9;
+  SaveResponse saveResponse = 10;
+}
+
+message SaveRequest {
+  SaveType saveType = 1;
+}
+enum SaveType {
+  SaveTypeInvalid = 0;
+  SaveTypeStart = 1;
+  SaveTypeFinish = 2;
+}
+
+message SaveResponse {
+  bool ok = 1;
+}
+
+message InnerSaveRequest {
+  Database db = 1;
+  string filePath = 2;
+}
+
+message InnerSaveResponse {
+  bool ok = 1;
 }
 
 message InnerClearExpireRequest {
