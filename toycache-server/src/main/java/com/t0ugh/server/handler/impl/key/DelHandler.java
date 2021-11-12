@@ -5,7 +5,7 @@ import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
-@HandlerAnnotation(type = Proto.MessageType.Del)
+@HandlerAnnotation(type = Proto.MessageType.Del, isWrite = true)
 public class DelHandler extends AbstractHandler {
 
     public DelHandler(GlobalContext globalContext) {

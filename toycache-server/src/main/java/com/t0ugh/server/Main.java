@@ -1,7 +1,7 @@
 package com.t0ugh.server;
 
 import com.t0ugh.server.config.Configs;
-import com.t0ugh.server.storage.MemoryStorage;
+import com.t0ugh.server.storage.MemoryDBStorage;
 import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.tick.DeleteKeyExecutor;
 import com.t0ugh.server.tick.Ticker;
@@ -9,7 +9,7 @@ import com.t0ugh.server.tick.Ticker;
 public class Main {
     public static void main(String[] args) {
 
-        Storage storage = new MemoryStorage();
+        Storage storage = new MemoryDBStorage();
         GlobalContext globalContext = GlobalContext.builder()
                 .storage(storage)
                 .config(Configs.newDefaultConfig()).build();

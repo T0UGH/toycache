@@ -4,9 +4,8 @@ import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
-import com.t0ugh.server.storage.Storage;
 
-@HandlerAnnotation(type = Proto.MessageType.Set)
+@HandlerAnnotation(type = Proto.MessageType.Set, isWrite = true)
 public class SetHandler extends AbstractHandler {
 
     public SetHandler(GlobalContext globalContext) {

@@ -2,7 +2,7 @@ package com.t0ugh.server;
 
 import com.t0ugh.server.config.Configs;
 import com.t0ugh.server.storage.ExpireMap;
-import com.t0ugh.server.storage.MemoryStorage;
+import com.t0ugh.server.storage.MemoryDBStorage;
 import com.t0ugh.server.storage.Storage;
 import org.junit.After;
 import org.junit.Before;
@@ -13,7 +13,7 @@ public class BaseTest {
 
     @Before
     public void setUpBase() throws Exception {
-        Storage storage = new MemoryStorage();
+        Storage storage = new MemoryDBStorage();
         testContext = GlobalContext.builder()
                 .storage(storage)
                 .expireMap(new ExpireMap())

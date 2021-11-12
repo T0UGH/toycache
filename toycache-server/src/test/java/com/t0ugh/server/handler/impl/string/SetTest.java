@@ -1,10 +1,9 @@
 package com.t0ugh.server.handler.impl.string;
 
+import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.BaseTest;
 import com.t0ugh.server.storage.Storage;
-import com.t0ugh.server.storage.ValueObject;
-import com.t0ugh.server.storage.ValueType;
 import com.t0ugh.server.utils.TestUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -38,10 +37,10 @@ public class SetTest extends BaseTest {
                         .setValue("World")).build();
         Proto.Response response = setHandler.handle(request);
         TestUtils.assertOK(Proto.MessageType.Set, response);
-        ValueObject vo = storage.backdoor().get("Hello");
-        assertNotNull(vo.getStringObj());
-        assertEquals(vo.getValueType(), ValueType.ValueTypeString);
-        assertEquals(vo.getStringObj(), "World");
+        DBProto.ValueObject vo = storage.backdoor().get("Hello");
+        assertNotNull(vo.getStringValue());
+        assertEquals(vo.getValueType(), DBProto.ValueType.ValueTypeString);
+        assertEquals(vo.getStringValue(), "World");
     }
 
     /**
@@ -64,9 +63,9 @@ public class SetTest extends BaseTest {
                         .setKey("Hello")
                         .setValue("War")).build();
         Proto.Response response2 = setHandler.handle(request2);
-        ValueObject vo = storage.backdoor().get("Hello");
-        assertNotNull(vo.getStringObj());
-        assertEquals(ValueType.ValueTypeString, vo.getValueType());
-        assertEquals("War", vo.getStringObj());
+        DBProto.ValueObject vo = storage.backdoor().get("Hello");
+        assertNotNull(vo.getStringValue());
+        assertEquals(DBProto.ValueType.ValueTypeString, vo.getValueType());
+        assertEquals("War", vo.getStringValue());
     }
 }

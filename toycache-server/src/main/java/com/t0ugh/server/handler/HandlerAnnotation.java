@@ -11,5 +11,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface HandlerAnnotation {
     Proto.MessageType type();
+    /**
+     * 是否需要检测超时
+     * */
     boolean checkExpire() default true;
+    /**
+     * 是否是写请求
+     * */
+    boolean isWrite() default false;
 }

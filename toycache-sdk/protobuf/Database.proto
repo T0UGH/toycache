@@ -1,0 +1,50 @@
+syntax = "proto3";
+//定义protobuf的包名称空间
+package com.t0ugh.sdk.protocol;
+
+option java_package = "com.t0ugh.sdk.proto";
+option java_outer_classname = "DBProto";
+
+message Database {
+    uint64 version = 1;
+    map<string, ValueObject> keyValues = 2;
+}
+
+message ValueObject {
+    ValueType valueType = 1;
+    string stringValue = 2;
+    repeated string setValue = 3;
+    repeated string listValue = 4;
+    repeated string sortedSetValue = 5;
+    map<string, string> mapValue = 6;
+}
+
+enum ValueType {
+    ValueTypeInvalid = 0;
+    ValueTypeString = 1;
+    ValueTypeSet = 2;
+    ValueTypeList = 3;
+    ValueTypeSortedSet = 4;
+    ValueTypeMap = 5;
+}
+//
+//message ValueString {
+//    string content = 1;
+//}
+//
+//message ValueSet {
+//    repeated string content = 1;
+//}
+//
+//message ValueList {
+//    repeated string content = 1;
+//}
+//
+//
+//message ValueSortedSet {
+//    repeated string content = 1;
+//}
+//
+//message ValueMap {
+//    map<string, string> content = 1;
+//}

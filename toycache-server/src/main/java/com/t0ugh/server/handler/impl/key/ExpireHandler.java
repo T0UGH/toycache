@@ -6,7 +6,7 @@ import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
-@HandlerAnnotation(type = Proto.MessageType.Expire)
+@HandlerAnnotation(type = Proto.MessageType.Expire, isWrite = true)
 public class ExpireHandler extends AbstractHandler {
 
     public ExpireHandler(GlobalContext globalContext) {
