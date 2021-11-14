@@ -2,7 +2,10 @@ package com.t0ugh.server.tick;
 
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.utils.MessageUtils;
+import com.t0ugh.server.utils.WriteLogUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -32,10 +35,17 @@ public class RewriteLogTicker implements Ticker{
         executorService.submit(() -> {
             count ++;
             if(count >= interval) {
-                globalContext.getMemoryOperationExecutor().submit(MessageUtils.newRewriteLogRequest());
+                if(sizeExceedsThreshold()){
+                    globalContext.getMemoryOperationExecutor().submit(MessageUtils.newRewriteLogRequest());
+
+                }
                 count = 0;
             }
         });
     }
 
+    private boolean sizeExceedsThreshold() {
+        File file = new File(WriteLogUtils.getWriteLogFilePath(globalContext.getConfig().getWriteLogBaseFilePath()));
+        return  file.length() >= (globalContext.getConfig().getRewriteLogSizeKBThreshold() * 1024L);
+    }
 }

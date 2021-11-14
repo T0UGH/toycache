@@ -7,6 +7,7 @@ import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.sdk.proto.ValueObjects;
 import com.t0ugh.server.BaseTest;
 import com.t0ugh.server.storage.Storage;
+import com.t0ugh.server.tick.MessageExecutorTestImpl;
 import com.t0ugh.server.utils.WriteLogUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -63,9 +64,12 @@ public class WriteLogExecutorTest extends BaseTest {
      * 测试提交一条写请求、一条重写请求、再一条写请求
      * 1. 第一条写请求被删掉了
      * 2. 后面的都有
+     * 3. MessageExecutor能收到一条WriteLogFinish消息
      * */
     @Test
     public void testInnerRewriteLogRequest() throws Exception {
+        MessageExecutorTestImpl messageExecutorTest = new MessageExecutorTestImpl();
+        testContext.setMemoryOperationExecutor(messageExecutorTest);
         Proto.Request request1 = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.Set)
                 .setSetRequest(Proto.SetRequest.newBuilder()
@@ -105,5 +109,7 @@ public class WriteLogExecutorTest extends BaseTest {
         assertEquals(3, (int)m.get(Proto.MessageType.Set));
         assertEquals(1, (int)m.get(Proto.MessageType.Expire));
         inputStream.close();
+        assertEquals(1, messageExecutorTest.requestList.size());
+        assertEquals(Proto.MessageType.InnerRewriteLogFinish, messageExecutorTest.requestList.get(0).getMessageType());
     }
 }

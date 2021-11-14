@@ -12,12 +12,14 @@ public class SaveTicker implements Ticker{
     private final GlobalContext globalContext;
     private final int interval;
     private final int saveCheckLimit;
+    private int lastUpdateCount;
 
     public SaveTicker(GlobalContext globalContext) {
         executorService = Executors.newSingleThreadExecutor();
         this.globalContext = globalContext;
         this.interval = globalContext.getConfig().getSaveCheckTick();
         this.saveCheckLimit = globalContext.getConfig().getSaveCheckLimit();
+        lastUpdateCount = 0;
     }
 
     public void shutdown() {
@@ -32,8 +34,12 @@ public class SaveTicker implements Ticker{
     public void tick() {
         executorService.submit(() -> {
             count ++;
-            if(count >= interval && globalContext.getGlobalState().getUpdateCount().get() >= saveCheckLimit) {
-                globalContext.getMemoryOperationExecutor().submit(MessageUtils.newStartSaveRequest());
+            if(count >= interval) {
+                int updateCount = globalContext.getGlobalState().getUpdateCount().get();
+                if(updateCount - lastUpdateCount >= saveCheckLimit){
+                     globalContext.getMemoryOperationExecutor().submit(MessageUtils.newStartSaveRequest());
+                 }
+                lastUpdateCount = updateCount;
                 count = 0;
             }
         });

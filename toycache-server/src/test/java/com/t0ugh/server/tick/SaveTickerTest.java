@@ -41,6 +41,31 @@ public class SaveTickerTest extends BaseTest {
     }
 
     /**
+     * 当tick到足够的次数且更新次数达标时能够发出命令, 然后再tick足够的次数然后检测更新次数是否达标，又达标又发出命令
+     * */
+    @Test
+    public void testSendRequest3() throws Exception {
+        testContext.getGlobalState().getUpdateCount().set(testContext.getConfig().getSaveCheckLimit());
+        for(int i = 0; i < testContext.getConfig().getSaveCheckTick(); i ++){
+            tickDriver.tickManually();
+        }
+        Thread.sleep(200);
+        assertEquals(1, messageExecutorForTest.requestList.size());
+        Proto.Request request = messageExecutorForTest.requestList.get(0);
+        assertEquals(Proto.MessageType.Save, request.getMessageType());
+        assertTrue(request.hasSaveRequest());
+        testContext.getGlobalState().getUpdateCount().addAndGet(testContext.getConfig().getSaveCheckLimit());
+        for(int i = 0; i < testContext.getConfig().getSaveCheckTick(); i ++){
+            tickDriver.tickManually();
+        }
+        Thread.sleep(200);
+        assertEquals(2, messageExecutorForTest.requestList.size());
+        Proto.Request request2 = messageExecutorForTest.requestList.get(1);
+        assertEquals(Proto.MessageType.Save, request2.getMessageType());
+        assertTrue(request2.hasSaveRequest());
+    }
+
+    /**
      * 当tick到足够的次数后但更新次数不达标时，不能够发出命令
      * */
     @Test

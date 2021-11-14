@@ -19,8 +19,10 @@ public class RewriteLogHandler extends AbstractHandler {
     public void doHandle(Proto.Request unused, Proto.Response.Builder responseBuilder) throws Exception {
         if(Objects.equals(RewriteLogState.Rewriting, getGlobalContext().getGlobalState().getRewriteLogState())){
             responseBuilder.setRewriteLogResponse(Proto.RewriteLogResponse.newBuilder().setOk(false));
+            return;
         }
         Proto.Request request = Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.InnerRewriteLog)
                 .setInnerRewriteLogRequest(Proto.InnerRewriteLogRequest.newBuilder()
                         .setDb(getGlobalContext().getStorage().toUnModifiableDB()))
                 .build();

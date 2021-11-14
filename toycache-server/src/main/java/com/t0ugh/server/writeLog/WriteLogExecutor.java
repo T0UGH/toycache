@@ -35,10 +35,10 @@ public class WriteLogExecutor extends AbstractMessageExecutor {
 
     private void doRewriteLogRequest(Proto.Request request) throws IOException, InterruptedException {
         // 检查体积是否超过上限制
-        if(!sizeExceedsThreshold()){
-            getGlobalContext().getMemoryOperationExecutor().submit(MessageUtils.newInnerRewriteLogFinishRequest(false));
-            return;
-        }
+//        if(!sizeExceedsThreshold()){
+//            getGlobalContext().getMemoryOperationExecutor().submit(MessageUtils.newInnerRewriteLogFinishRequest(false));
+//            return;
+//        }
         Proto.InnerRewriteLogRequest rewriteLogRequest = request.getInnerRewriteLogRequest();
         // 清空OutputStream
         OutputStream newOut = WriteLogUtils.clearOutputStream(getGlobalContext().getWriteLogOutputStream(),
@@ -53,10 +53,5 @@ public class WriteLogExecutor extends AbstractMessageExecutor {
         }
         // 重写完了告诉MemoryOperationExecutor一声
         getGlobalContext().getMemoryOperationExecutor().submit(MessageUtils.newInnerRewriteLogFinishRequest(true));
-    }
-
-    private boolean sizeExceedsThreshold() throws IOException {
-        File file = new File(WriteLogUtils.getWriteLogFilePath(getGlobalContext().getConfig().getWriteLogBaseFilePath()));
-        return  file.length() >= (getGlobalContext().getConfig().getRewriteLogSizeKBThreshold() * 1024L);
     }
 }
