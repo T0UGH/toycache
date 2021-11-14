@@ -3,7 +3,8 @@ package com.t0ugh.server.db;
 import com.google.common.base.Strings;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
-import com.t0ugh.server.MessageExecutor;
+import com.t0ugh.server.executor.AbstractMessageExecutor;
+import com.t0ugh.server.executor.MessageExecutor;
 import com.t0ugh.server.callback.Callback;
 import com.t0ugh.server.utils.DBUtils;
 import lombok.AllArgsConstructor;
@@ -16,36 +17,41 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Slf4j
-public class DBExecutor implements MessageExecutor {
-
-    private final GlobalContext globalContext;
-
-    private final ExecutorService executorService;
+public class DBExecutor extends AbstractMessageExecutor {
 
     public DBExecutor(GlobalContext globalContext) {
-        this.globalContext = globalContext;
-        executorService = Executors.newSingleThreadExecutor();
+        super(globalContext, Executors.newSingleThreadExecutor());
     }
 
 
     @Override
     public void submit(Proto.Request request, Callback... callbacks) {
-        throw new UnsupportedOperationException();
+        checkRequest(request);
+        super.submit(request, callbacks);
     }
 
     public void submit(Proto.Request request){
         checkRequest(request);
-        executorService.submit(new DBRunnable(request));
+        super.submit(request);
     }
 
     @Override
     public void submitAndWait(Proto.Request request, Callback... callbacks) throws Exception {
-        throw new UnsupportedOperationException();
+        checkRequest(request);
+        super.submitAndWait(request, callbacks);
     }
 
     public void submitAndWait(Proto.Request request) throws Exception{
         checkRequest(request);
-        executorService.submit(new DBRunnable(request)).get();
+        super.submitAndWait(request);
+    }
+
+    @Override
+    public Proto.Response doRequest(Proto.Request request) throws IOException {
+        Proto.InnerSaveRequest saveRequest = request.getInnerSaveRequest();
+        DBUtils.writeToFile(saveRequest.getDb(), saveRequest.getFilePath());
+        getGlobalContext().getMemoryOperationExecutor().submit(newSaveRequest());
+        return null;
     }
 
     private void checkRequest(Proto.Request request){
@@ -54,26 +60,6 @@ public class DBExecutor implements MessageExecutor {
                 ||!request.getInnerSaveRequest().hasDb()
                 ||Strings.isNullOrEmpty(request.getInnerSaveRequest().getFilePath()))
             throw new InvalidParameterException();
-    }
-
-    @AllArgsConstructor
-    private class DBRunnable implements Runnable {
-
-        Proto.Request request;
-
-        @Override
-        public void run() {
-            try {
-                Proto.InnerSaveRequest saveRequest = request.getInnerSaveRequest();
-                DBUtils.writeToFile(saveRequest.getDb(), saveRequest.getFilePath());
-                // 把消息通知回去
-                globalContext.getMemoryOperationExecutor().submit(newSaveRequest());
-            } catch (IOException e) {
-                log.error("IO", e);
-                e.printStackTrace();
-            }
-        }
-
     }
 
     private static Proto.Request newSaveRequest(){

@@ -1,4 +1,4 @@
-package com.t0ugh.server;
+package com.t0ugh.server.executor;
 
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.callback.Callback;
