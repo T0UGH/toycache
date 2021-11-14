@@ -80,8 +80,7 @@ public class MessageUtils {
     public static Proto.Request newStartSaveRequest(){
         return Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.Save)
-                .setSaveRequest(Proto.SaveRequest.newBuilder()
-                        .setSaveType(Proto.SaveType.SaveTypeStart))
+                .setSaveRequest(Proto.SaveRequest.newBuilder())
                 .build();
     }
 
@@ -110,6 +109,15 @@ public class MessageUtils {
         return Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.InnerRewriteLogFinish)
                 .setInnerRewriteLogFinishRequest(Proto.InnerRewriteLogFinishRequest.newBuilder().setOk(ok))
+                .build();
+    }
+
+    public static Proto.Request newInnerSaveFinishRequest(){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.InnerSaveFinish)
+                .setInnerSaveFinishRequest(Proto.InnerSaveFinishRequest.newBuilder()
+                        .setOk(true)
+                        .build())
                 .build();
     }
 }

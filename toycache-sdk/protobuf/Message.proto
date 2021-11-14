@@ -25,8 +25,10 @@ enum MessageType {
 
   InnerClearExpire = 101;
   InnerSave = 102;
-  InnerRewriteLog = 103;
-  InnerRewriteLogFinish = 104;
+  InnerSaveFinish = 103;
+  InnerRewriteLog = 104;
+  InnerRewriteLogFinish = 105;
+
 }
 
 enum ResponseCode {
@@ -55,6 +57,7 @@ message Request {
   InnerRewriteLogRequest innerRewriteLogRequest = 10;
   InnerRewriteLogFinishRequest innerRewriteLogFinishRequest = 11;
   RewriteLogRequest rewriteLogRequest = 12;
+  InnerSaveFinishRequest innerSaveFinishRequest = 13;
 }
 
 message Response {
@@ -71,19 +74,21 @@ message Response {
   InnerRewriteLogResponse innerRewriteLogResponse = 11;
   InnerRewriteLogFinishResponse innerRewriteLogFinishResponse = 12;
   RewriteLogResponse rewriteLogResponse = 13;
+  InnerSaveFinishResponse innerSaveFinishResponse = 14;
 }
 
 message SaveRequest {
-  SaveType saveType = 1;
+}
+
+message InnerSaveFinishRequest {
+  bool ok = 1;
+}
+
+message InnerSaveFinishResponse {
+  bool ok = 1;
 }
 
 message RewriteLogRequest {
-}
-
-enum SaveType {
-  SaveTypeInvalid = 0;
-  SaveTypeStart = 1;
-  SaveTypeFinish = 2;
 }
 
 message RewriteLogResponse {

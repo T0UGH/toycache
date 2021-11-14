@@ -23,19 +23,23 @@ public abstract class AbstractMessageExecutor implements MessageExecutor{
     }
 
     public void submit(Proto.Request request, Callback... callbacks){
+        beforeSubmit(request);
         executorService.submit(new RunnableCommand(request, callbacks));
     }
 
     public void submit(Proto.Request request){
+        beforeSubmit(request);
         executorService.submit(new RunnableCommand(request));
     }
 
     public void submitAndWait(Proto.Request request, Callback... callbacks) throws Exception{
+        beforeSubmit(request);
         executorService.submit(new RunnableCommand(request, callbacks)).get();
 
     }
 
     public void submitAndWait(Proto.Request request) throws Exception{
+        beforeSubmit(request);
         executorService.submit(new RunnableCommand(request)).get();
     }
 
@@ -45,6 +49,10 @@ public abstract class AbstractMessageExecutor implements MessageExecutor{
 
     protected ExecutorService getExecutorService(){
         return executorService;
+    }
+
+    protected void beforeSubmit(Proto.Request request){
+
     }
 
     public abstract Proto.Response doRequest(Proto.Request request) throws Exception;

@@ -29,7 +29,7 @@ public class SaveHandlerTest extends BaseTest {
     }
 
     /**
-     * 测试当Handler内部状态为Idle时收到了Start类型的Save请求
+     * 测试当Handler内部状态为Idle时收到了Save请求
      * 1. 能够往dbExecutor发条消息
      * 2. 能够response一个OK
      * */
@@ -38,8 +38,7 @@ public class SaveHandlerTest extends BaseTest {
         SaveHandler handler = (SaveHandler) testContext.getHandlerFactory().getHandler(Proto.MessageType.Save).get();
         Proto.Request request = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.Save)
-                .setSaveRequest(Proto.SaveRequest.newBuilder()
-                        .setSaveType(Proto.SaveType.SaveTypeStart))
+                .setSaveRequest(Proto.SaveRequest.newBuilder())
                 .build();
         Proto.Response response = handler.handle(request);
         Thread.sleep(100);
@@ -54,18 +53,17 @@ public class SaveHandlerTest extends BaseTest {
     }
 
     /**
-     * 测试当Handler内部状态为Running时收到了Start类型的Save请求
+     * 测试当Handler内部状态为Running时收到了Save请求
      * 1. 不往dbExecutor发消息
      * 2. 能够response一个OK=false
      * */
     @Test
     public void test2() throws Exception {
         SaveHandler handler = (SaveHandler) testContext.getHandlerFactory().getHandler(Proto.MessageType.Save).get();
-        handler.setSaveState(SaveState.Running);
+        testContext.getGlobalState().setSaveState(SaveState.Running);
         Proto.Request request = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.Save)
-                .setSaveRequest(Proto.SaveRequest.newBuilder()
-                        .setSaveType(Proto.SaveType.SaveTypeStart))
+                .setSaveRequest(Proto.SaveRequest.newBuilder())
                 .build();
         Proto.Response response = handler.handle(request);
         Thread.sleep(100);
@@ -75,24 +73,23 @@ public class SaveHandlerTest extends BaseTest {
     }
 
     /**
-     * 测试当Handler内部状态为Running时收到了Finish类型的Save请求
+     * 测试当Handler内部状态为Running时收到了InnerSaveFinishRequest请求
      * 1. 将状态置为Idle
      * 2. 返回OK
      * */
     @Test
     public void test3() throws Exception {
         SaveHandler handler = (SaveHandler) testContext.getHandlerFactory().getHandler(Proto.MessageType.Save).get();
-        handler.setSaveState(SaveState.Running);
+        testContext.getGlobalState().setSaveState(SaveState.Running);
         Proto.Request request = Proto.Request.newBuilder()
-                .setMessageType(Proto.MessageType.Save)
-                .setSaveRequest(Proto.SaveRequest.newBuilder()
-                        .setSaveType(Proto.SaveType.SaveTypeFinish))
+                .setMessageType(Proto.MessageType.InnerSaveFinish)
+                .setInnerSaveFinishRequest(Proto.InnerSaveFinishRequest.newBuilder().setOk(true))
                 .build();
         Proto.Response response = handler.handle(request);
         Thread.sleep(100);
         TestUtils.assertOK(Proto.MessageType.Save, response);
         assertTrue(response.getSaveResponse().getOk());
         assertEquals(0, mockDbExecutor.requestList.size());
-        assertEquals(SaveState.Idle, handler.getSaveState());
+        assertEquals(SaveState.Idle, testContext.getGlobalState().getSaveState());
     }
 }
