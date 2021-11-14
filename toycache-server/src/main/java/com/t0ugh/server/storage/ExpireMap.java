@@ -42,12 +42,10 @@ public class ExpireMap {
         return map;
     }
 
-    public void set(String key, long expireMs) {
-        if (expireMs <= 0) {
-            throw new IllegalArgumentException();
-        }
-        // todo 这里的加法会不会发生逸出
-        long expireTime = expireMs + System.currentTimeMillis();
+    /**
+     * 也就是说假如传入一个过期的时间也会设置, 等服务器的惰性或者定期删除就行
+     * */
+    public void set(String key, long expireTime) {
         map.put(key, expireTime);
     }
 

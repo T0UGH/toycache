@@ -2,6 +2,7 @@ package com.t0ugh.server;
 
 import com.t0ugh.server.config.Configs;
 import com.t0ugh.server.db.DBExecutor;
+import com.t0ugh.server.handler.HandlerFactory;
 import com.t0ugh.server.storage.ExpireMap;
 import com.t0ugh.server.storage.MemoryDBStorage;
 import com.t0ugh.server.storage.Storage;
@@ -21,8 +22,8 @@ public class BaseTest {
                 .config(Configs.newTestConfig())
                 .globalState(GlobalState.newInstance())
                 .build();
-        MessageExecutor messageExecutor = new MemoryOperationExecutor(testContext);
-        testContext.setMemoryOperationExecutor(messageExecutor);
+        testContext.setMemoryOperationExecutor(new MemoryOperationExecutor(testContext));
+        testContext.setHandlerFactory(new HandlerFactory(testContext));
         testContext.setDbExecutor(new DBExecutor(testContext));
     }
 

@@ -8,6 +8,8 @@ import com.t0ugh.server.storage.Storage;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.OutputStream;
+
 @Data
 @Builder
 public class GlobalContext {
@@ -18,4 +20,6 @@ public class GlobalContext {
     private ExpireMap expireMap;
     private HandlerFactory handlerFactory;
     private GlobalState globalState;
+    private OutputStream writeLogOutputStream;
+    private MessageExecutor writeLogExecutor;
 }

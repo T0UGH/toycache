@@ -33,7 +33,7 @@ public class ExpireTest extends BaseTest {
                 .setMessageType(Proto.MessageType.Expire)
                 .setExpireRequest(Proto.ExpireRequest.newBuilder()
                         .setKey("Hello")
-                        .setExpireTime(1000L))
+                        .setExpireTime(System.currentTimeMillis()+1000L))
                 .build();
         Handler expireHandler = new ExpireHandler(testContext);
         Proto.Response resp = expireHandler.handle(request);
@@ -53,7 +53,7 @@ public class ExpireTest extends BaseTest {
                 .setMessageType(Proto.MessageType.Expire)
                 .setExpireRequest(Proto.ExpireRequest.newBuilder()
                         .setKey("Hi")
-                        .setExpireTime(1000L))
+                        .setExpireTime(System.currentTimeMillis()+1000L))
                 .build();
         Handler expireHandler = new ExpireHandler(testContext);
         Proto.Response resp = expireHandler.handle(request);
@@ -73,7 +73,7 @@ public class ExpireTest extends BaseTest {
                 .setMessageType(Proto.MessageType.Expire)
                 .setExpireRequest(Proto.ExpireRequest.newBuilder()
                         .setKey("Hello")
-                        .setExpireTime(1000L))
+                        .setExpireTime(System.currentTimeMillis()+1000L))
                 .build();
         Handler expireHandler = new ExpireHandler(testContext);
         Proto.Response resp = expireHandler.handle(request);

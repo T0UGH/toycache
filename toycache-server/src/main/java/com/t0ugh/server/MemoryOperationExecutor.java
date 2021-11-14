@@ -22,10 +22,10 @@ public class MemoryOperationExecutor implements MessageExecutor{
 
     private final ExecutorService executorService;
 
-    private final HandlerFactory handlerFactory;
+    private final GlobalContext globalContext;
 
     public MemoryOperationExecutor(GlobalContext globalContext) {
-        handlerFactory = new HandlerFactory(globalContext);
+        this.globalContext = globalContext;
         executorService = Executors.newSingleThreadExecutor();
     }
 
@@ -55,7 +55,7 @@ public class MemoryOperationExecutor implements MessageExecutor{
 
         @Override
         public void run() {
-            Handler handler = handlerFactory.getHandler(request.getMessageType()).orElseThrow(UnsupportedOperationException::new);
+            Handler handler = globalContext.getHandlerFactory().getHandler(request.getMessageType()).orElseThrow(UnsupportedOperationException::new);
             Proto.Response response = handler.handle(request);
             // todo 以后有可能有很多callback需要调用
             // todo 这个tryCatch块有办法没

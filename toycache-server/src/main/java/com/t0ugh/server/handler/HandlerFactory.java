@@ -24,8 +24,6 @@ public class HandlerFactory {
     public HandlerFactory(GlobalContext globalContext) {
         m = new HashMap<>();
         registerAll(globalContext);
-        // todo: 这样好不好??? 还没构造完就注册了
-        globalContext.setHandlerFactory(this);
     }
 
     public Optional<Handler> getHandler(Proto.MessageType messageType) {
