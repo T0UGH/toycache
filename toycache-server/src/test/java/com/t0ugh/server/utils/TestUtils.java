@@ -12,7 +12,7 @@ public class TestUtils {
     public static void assertOK(Proto.MessageType messageType, Proto.Response response) throws Exception  {
         assertEquals(messageType, response.getMessageType());
         assertEquals(Proto.ResponseCode.OK, response.getResponseCode());
-        Method hasXXXRequestMethod = response.getClass().getMethod("has"+ messageType.getValueDescriptor().getName() +"Response");
-        assertTrue((boolean)hasXXXRequestMethod.invoke(response));
+        Method hasXXXResponseMethod = response.getClass().getMethod("has"+ messageType.getValueDescriptor().getName() +"Response");
+        assertTrue((boolean)hasXXXResponseMethod.invoke(response));
     }
 }

@@ -16,6 +16,6 @@ public class InnerSaveFinishHandler extends AbstractHandler {
     @Override
     public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
         getGlobalContext().getGlobalState().setSaveState(SaveState.Idle);
-        responseBuilder.setSaveResponse(Proto.SaveResponse.newBuilder().setOk(true));
+        responseBuilder.setInnerSaveFinishResponse(Proto.InnerSaveFinishResponse.newBuilder().setOk(true).build());
     }
 }

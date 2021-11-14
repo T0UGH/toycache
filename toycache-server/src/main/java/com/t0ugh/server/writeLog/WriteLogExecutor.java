@@ -34,11 +34,6 @@ public class WriteLogExecutor extends AbstractMessageExecutor {
     }
 
     private void doRewriteLogRequest(Proto.Request request) throws IOException, InterruptedException {
-        // 检查体积是否超过上限制
-//        if(!sizeExceedsThreshold()){
-//            getGlobalContext().getMemoryOperationExecutor().submit(MessageUtils.newInnerRewriteLogFinishRequest(false));
-//            return;
-//        }
         Proto.InnerRewriteLogRequest rewriteLogRequest = request.getInnerRewriteLogRequest();
         // 清空OutputStream
         OutputStream newOut = WriteLogUtils.clearOutputStream(getGlobalContext().getWriteLogOutputStream(),

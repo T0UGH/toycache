@@ -3,6 +3,7 @@ package com.t0ugh.server.handler.impl.control;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.BaseTest;
 import com.t0ugh.server.enums.SaveState;
+import com.t0ugh.server.handler.Handler;
 import com.t0ugh.server.tick.MessageExecutorTestImpl;
 import com.t0ugh.server.utils.TestUtils;
 import org.junit.After;
@@ -79,7 +80,7 @@ public class SaveHandlerTest extends BaseTest {
      * */
     @Test
     public void test3() throws Exception {
-        SaveHandler handler = (SaveHandler) testContext.getHandlerFactory().getHandler(Proto.MessageType.Save).get();
+        Handler handler = testContext.getHandlerFactory().getHandler(Proto.MessageType.InnerSaveFinish).get();
         testContext.getGlobalState().setSaveState(SaveState.Running);
         Proto.Request request = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.InnerSaveFinish)
@@ -87,8 +88,8 @@ public class SaveHandlerTest extends BaseTest {
                 .build();
         Proto.Response response = handler.handle(request);
         Thread.sleep(100);
-        TestUtils.assertOK(Proto.MessageType.Save, response);
-        assertTrue(response.getSaveResponse().getOk());
+        TestUtils.assertOK(Proto.MessageType.InnerSaveFinish, response);
+        assertTrue(response.getInnerSaveFinishResponse().getOk());
         assertEquals(0, mockDbExecutor.requestList.size());
         assertEquals(SaveState.Idle, testContext.getGlobalState().getSaveState());
     }
