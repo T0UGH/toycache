@@ -38,7 +38,6 @@ public class SaveTickerTest extends BaseTest {
         Proto.Request request = messageExecutorForTest.requestList.get(0);
         assertEquals(Proto.MessageType.Save, request.getMessageType());
         assertTrue(request.hasSaveRequest());
-        assertEquals(Proto.SaveType.SaveTypeStart, request.getSaveRequest().getSaveType());
     }
 
     /**

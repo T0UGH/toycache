@@ -27,8 +27,9 @@ public class BaseTest {
                 .config(Configs.newTestConfig())
                 .globalState(GlobalState.newInstance())
                 .build();
+        // todo: 因为是测试所以append=false
         OutputStream writeLogOutputStream = new FileOutputStream(WriteLogUtils
-                .getWriteLogFilePath(testContext.getConfig().getWriteLogBaseFilePath()));
+                .getWriteLogFilePath(testContext.getConfig().getWriteLogBaseFilePath()), false);
         testContext.setMemoryOperationExecutor(new MemoryOperationExecutor(testContext));
         testContext.setHandlerFactory(new HandlerFactory(testContext));
         testContext.setDbExecutor(new DBExecutor(testContext));

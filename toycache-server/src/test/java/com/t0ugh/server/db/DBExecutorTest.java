@@ -72,9 +72,8 @@ public class DBExecutorTest extends BaseTest {
         assertEquals("World", newDb.getDataMap().get("Hello").getStringValue());
         assertEquals(1, messageExecutorTestImpl.requestList.size());
         Proto.Request request = messageExecutorTestImpl.requestList.get(0);
-        assertEquals(Proto.MessageType.Save, request.getMessageType());
-        assertTrue(request.hasSaveRequest());
-        assertEquals(Proto.SaveType.SaveTypeFinish, request.getSaveRequest().getSaveType());
+        assertEquals(Proto.MessageType.InnerSaveFinish, request.getMessageType());
+        assertTrue(request.hasInnerSaveFinishRequest());
     }
 
     @After
