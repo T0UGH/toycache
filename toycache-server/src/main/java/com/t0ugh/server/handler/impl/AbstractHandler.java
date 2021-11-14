@@ -39,7 +39,7 @@ public abstract class AbstractHandler implements Handler {
             if (HandlerUtils.needCheckExpire(request.getMessageType(), getGlobalContext().getHandlerFactory())){
                 // 检查是否超时, 超时就删Storage和ExpireMap里对应的kv对
                 Optional<String> o = MessageUtils.getKeyFromRequest(request);
-                o.ifPresent(s -> HandlerUtils.clearStorageAndExpireMapIfExpired(s, getGlobalContext()));
+                o.ifPresent(key -> getGlobalContext().getStorage().delIfExpired(key));
             }
             // 然后调用抽象方法来做实际的处理
             Proto.Response.Builder okBuilder = MessageUtils.okBuilder();

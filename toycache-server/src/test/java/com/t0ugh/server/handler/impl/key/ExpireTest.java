@@ -5,7 +5,7 @@ import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.sdk.proto.ValueObjects;
 import com.t0ugh.server.handler.Handler;
 import com.t0ugh.server.BaseTest;
-import com.t0ugh.server.storage.ExpireMap;
+import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.utils.TestUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -39,9 +39,9 @@ public class ExpireTest extends BaseTest {
         Proto.Response resp = expireHandler.handle(request);
         TestUtils.assertOK(Proto.MessageType.Expire, resp);
         assertTrue(resp.getExpireResponse().getOk());
-        ExpireMap expireMap = testContext.getExpireMap();
-        assertTrue(Longs.compare(expireMap.backdoor().get("Hello"), 0L) > 0);
-        System.out.println(expireMap.backdoor().get("Hello"));
+        Storage storage = testContext.getStorage();
+        assertTrue(Longs.compare(storage.expireBackdoor().get("Hello"), 0L) > 0);
+        System.out.println(storage.expireBackdoor().get("Hello"));
     }
 
     /**
@@ -59,8 +59,7 @@ public class ExpireTest extends BaseTest {
         Proto.Response resp = expireHandler.handle(request);
         TestUtils.assertOK(Proto.MessageType.Expire, resp);
         assertFalse(resp.getExpireResponse().getOk());
-        ExpireMap expireMap = testContext.getExpireMap();
-        assertNull(expireMap.backdoor().get("Hi"));
+        assertNull(testContext.getStorage().expireBackdoor().get("Hi"));
     }
 
     /**
@@ -68,7 +67,7 @@ public class ExpireTest extends BaseTest {
      * */
     @Test
     public void testExpireExpired() throws Exception {
-        testContext.getExpireMap().backdoor().put("Hello", 1636613116992L);
+        testContext.getStorage().expireBackdoor().put("Hello", 1636613116992L);
         Proto.Request request = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.Expire)
                 .setExpireRequest(Proto.ExpireRequest.newBuilder()
@@ -78,7 +77,6 @@ public class ExpireTest extends BaseTest {
         Handler expireHandler = new ExpireHandler(testContext);
         Proto.Response resp = expireHandler.handle(request);
         TestUtils.assertOK(Proto.MessageType.Expire, resp);
-        ExpireMap expireMap = testContext.getExpireMap();
-        assertNull(expireMap.backdoor().get("Hello"));
+        assertNull(testContext.getStorage().expireBackdoor().get("Hello"));
     }
 }

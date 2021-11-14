@@ -49,7 +49,7 @@ public class SaveHandlerTest extends BaseTest {
         Proto.Request request1 = mockDbExecutor.requestList.get(0);
         assertEquals(Proto.MessageType.InnerSave, request1.getMessageType());
         assertTrue(request1.hasInnerSaveRequest());
-        assertEquals(2, request1.getInnerSaveRequest().getDb().getKeyValuesCount());
+        assertEquals(2, request1.getInnerSaveRequest().getDb().getDataCount());
 
     }
 

@@ -4,12 +4,14 @@ import com.t0ugh.server.config.Configs;
 import com.t0ugh.server.db.DBExecutor;
 import com.t0ugh.server.executor.MemoryOperationExecutor;
 import com.t0ugh.server.handler.HandlerFactory;
-import com.t0ugh.server.storage.ExpireMap;
 import com.t0ugh.server.storage.MemoryDBStorage;
 import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.writeLog.WriteLogExecutor;
 import org.junit.After;
 import org.junit.Before;
+
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 public class BaseTest {
 
@@ -17,16 +19,19 @@ public class BaseTest {
 
     @Before
     public void setUpBase() throws Exception {
+
         Storage storage = new MemoryDBStorage();
         testContext = GlobalContext.builder()
                 .storage(storage)
-                .expireMap(new ExpireMap())
                 .config(Configs.newTestConfig())
                 .globalState(GlobalState.newInstance())
                 .build();
+        OutputStream writeLogOutputStream = new FileOutputStream(testContext.getConfig().getWriteLogBaseFilePath()
+                +"\\writeLog.tcwlog");
         testContext.setMemoryOperationExecutor(new MemoryOperationExecutor(testContext));
         testContext.setHandlerFactory(new HandlerFactory(testContext));
         testContext.setDbExecutor(new DBExecutor(testContext));
+        testContext.setWriteLogOutputStream(writeLogOutputStream);
         testContext.setWriteLogExecutor(new WriteLogExecutor(testContext));
     }
 

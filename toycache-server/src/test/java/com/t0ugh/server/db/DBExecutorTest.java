@@ -37,7 +37,7 @@ public class DBExecutorTest extends BaseTest {
         kvs.put("Haha", ValueObjects.newInstance("World"));
         db = DBProto.Database.newBuilder()
                 .setVersion(1L)
-                .putAllKeyValues(kvs)
+                .putAllData(kvs)
                 .build();
         messageExecutorTestImpl = new MessageExecutorTestImpl();
         testContext.setMemoryOperationExecutor(messageExecutorTestImpl);
@@ -68,8 +68,8 @@ public class DBExecutorTest extends BaseTest {
         File file = files[0];
         InputStream input = new FileInputStream(file);
         DBProto.Database newDb = DBProto.Database.parseFrom(input);
-        assertEquals(3, newDb.getKeyValuesCount());
-        assertEquals("World", newDb.getKeyValuesMap().get("Hello").getStringValue());
+        assertEquals(3, newDb.getDataCount());
+        assertEquals("World", newDb.getDataMap().get("Hello").getStringValue());
         assertEquals(1, messageExecutorTestImpl.requestList.size());
         Proto.Request request = messageExecutorTestImpl.requestList.get(0);
         assertEquals(Proto.MessageType.Save, request.getMessageType());

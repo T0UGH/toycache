@@ -62,7 +62,7 @@ public class GetTest extends BaseTest {
      * */
     @Test
     public void testGetExpired() throws Exception {
-        testContext.getExpireMap().backdoor().put("Hello", System.currentTimeMillis() - 1000);
+        testContext.getStorage().expireBackdoor().put("Hello", System.currentTimeMillis() - 1000);
         Proto.Request request = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.Get)
                 .setGetRequest(Proto.GetRequest.newBuilder()

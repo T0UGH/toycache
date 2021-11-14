@@ -5,7 +5,6 @@ import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.config.Config;
 import com.t0ugh.server.handler.Handler;
 import com.t0ugh.server.BaseTest;
-import com.t0ugh.server.storage.ExpireMap;
 import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.utils.TestUtils;
 import org.junit.After;
@@ -30,21 +29,20 @@ public class InnerClearExpireTest extends BaseTest {
         testContext.getStorage().set("Hello", "World");
         testContext.getStorage().set("Hi", "World");
         testContext.getStorage().set("Haha", "World");
-        testContext.getExpireMap().backdoor().put("Hello", 1636613116992L);
-        testContext.getExpireMap().backdoor().put("Hi", System.currentTimeMillis() + 10000000L);
+        testContext.getStorage().expireBackdoor().put("Hello", 1636613116992L);
+        testContext.getStorage().expireBackdoor().put("Hi", System.currentTimeMillis() + 10000000L);
 
         Proto.Response resp = callHandler(testContext);
         TestUtils.assertOK(Proto.MessageType.InnerClearExpire, resp);
         assertEquals(1, resp.getInnerClearExpireResponse().getCleared());
         Storage storage = testContext.getStorage();
-        ExpireMap em = testContext.getExpireMap();
         assertEquals(2, storage.backdoor().size());
         assertTrue(storage.backdoor().containsKey("Hi"));
         assertTrue(storage.backdoor().containsKey("Haha"));
         assertFalse(storage.backdoor().containsKey("Hello"));
-        assertEquals(1, em.backdoor().size());
-        assertTrue(em.backdoor().containsKey("Hi"));
-        assertFalse(em.backdoor().containsKey("Hello"));
+        assertEquals(1, storage.expireBackdoor().size());
+        assertTrue(storage.expireBackdoor().containsKey("Hi"));
+        assertFalse(storage.expireBackdoor().containsKey("Hello"));
     }
 
     /**
@@ -56,14 +54,14 @@ public class InnerClearExpireTest extends BaseTest {
         testContext.getConfig().setUpperKeyLimitOfPeriodicalDelete(10);
         for (int i = 0; i < 15; i ++) {
             testContext.getStorage().set("Hello" + i, "World");
-            testContext.getExpireMap().backdoor().put("Hello" + i, 1636613116992L);
+            testContext.getStorage().expireBackdoor().put("Hello" + i, 1636613116992L);
         }
 
         Proto.Response resp = callHandler(testContext);
         TestUtils.assertOK(Proto.MessageType.InnerClearExpire, resp);
         assertEquals(10, resp.getInnerClearExpireResponse().getCleared());
         assertEquals(5, testContext.getStorage().backdoor().size());
-        assertEquals(5, testContext.getExpireMap().backdoor().size());
+        assertEquals(5, testContext.getStorage().expireBackdoor().size());
     }
 
     public static Proto.Response callHandler(GlobalContext testContext) {

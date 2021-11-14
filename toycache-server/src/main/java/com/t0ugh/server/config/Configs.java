@@ -18,6 +18,7 @@ public class Configs {
                 .saveCheckLimit(5)
                 .saveCheckTick(2)
                 .dbBaseFilePath("D:\\tmp\\tcdb\\test")
+                .writeLogBaseFilePath("D:\\tmp\\tcwlog\\test")
                 .upperKeyLimitOfPeriodicalDelete(10).build();
     }
 }

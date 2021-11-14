@@ -18,7 +18,7 @@ public class DelHandler extends AbstractHandler {
         String key = delRequest.getKey();
         boolean ok = getGlobalContext().getStorage().del(delRequest.getKey());
         // 在超时表中也删除这个键
-        getGlobalContext().getExpireMap().del(key);
+        getGlobalContext().getStorage().delExpire(key);
         responseBuilder.setDelResponse(Proto.DelResponse.newBuilder().setOk(ok));
     }
 }

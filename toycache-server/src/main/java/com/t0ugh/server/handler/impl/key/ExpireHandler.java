@@ -29,7 +29,7 @@ public class ExpireHandler extends AbstractHandler {
             throw new InvalidParamException();
         }
         //实际的set
-        getGlobalContext().getExpireMap().set(eRequest.getKey(), eRequest.getExpireTime());
+        getGlobalContext().getStorage().setExpire(eRequest.getKey(), eRequest.getExpireTime());
         responseBuilder.setExpireResponse(Proto.ExpireResponse.newBuilder().setOk(true).build());
     }
 }

@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class DBUtils {
     public static void writeToFile(String filePath, Map<String, DBProto.ValueObject> kvs) throws IOException {
-        DBProto.Database db = DBProto.Database.newBuilder().setVersion(1L).putAllKeyValues(kvs).build();
+        DBProto.Database db = DBProto.Database.newBuilder().setVersion(1L).putAllData(kvs).build();
         OutputStream outputStream = new FileOutputStream(filePath);
         db.writeTo(outputStream);
     }
@@ -15,7 +15,7 @@ public class DBUtils {
     public static void loadFromFile(String filePath, Map<String, DBProto.ValueObject> kvs) throws IOException {
         InputStream inputStream = new FileInputStream(filePath);
         DBProto.Database db = DBProto.Database.parseFrom(inputStream);
-        kvs.putAll(db.getKeyValuesMap());
+        kvs.putAll(db.getDataMap());
     }
 
     public static void writeToFile(DBProto.Database database, String filePath) throws IOException {

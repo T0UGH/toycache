@@ -17,11 +17,9 @@ public class InnerClearExpireHandler extends AbstractHandler {
 
     @Override
     public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        int limit = getGlobalContext().getConfig().getUpperKeyLimitOfPeriodicalDelete();
-        List<String> keyNeedDelete = getGlobalContext().getExpireMap().deleteExpires(limit);
-        Storage storage = getGlobalContext().getStorage();
-        keyNeedDelete.forEach(storage::del);
+        int threshold = getGlobalContext().getConfig().getUpperKeyLimitOfPeriodicalDelete();
+        int count = getGlobalContext().getStorage().delExpires(threshold);
         responseBuilder.setInnerClearExpireResponse(
-                Proto.InnerClearExpireResponse.newBuilder().setCleared(keyNeedDelete.size()));
+                Proto.InnerClearExpireResponse.newBuilder().setCleared(count));
     }
 }

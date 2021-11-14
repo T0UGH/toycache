@@ -58,7 +58,7 @@ public class ExistsTest extends BaseTest {
      * */
     @Test
     public void testExistExpire() throws Exception {
-        testContext.getExpireMap().backdoor().put("Hello", 1636613116992L);
+        testContext.getStorage().expireBackdoor().put("Hello", 1636613116992L);
         Proto.Request request = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.Exists)
                 .setExistsRequest(Proto.ExistsRequest.newBuilder()
@@ -69,6 +69,6 @@ public class ExistsTest extends BaseTest {
         TestUtils.assertOK(Proto.MessageType.Exists, response);
         assertFalse(response.getExistsResponse().getExists());
         assertFalse(testContext.getStorage().backdoor().containsKey("Hello"));
-        assertFalse(testContext.getExpireMap().backdoor().containsKey("Hello"));
+        assertFalse(testContext.getStorage().expireBackdoor().containsKey("Hello"));
     }
 }
