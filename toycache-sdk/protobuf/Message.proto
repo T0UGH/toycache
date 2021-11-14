@@ -21,9 +21,12 @@ enum MessageType {
 //  GetSet = 6; //设置指定 key 的值，并返回 key 的旧值。
   Expire = 7;
   Save = 8; //后台开个线程存, 约等于Redis的SAVE
+  RewriteLog = 9; //重写日志(压缩日志)
 
   InnerClearExpire = 101;
   InnerSave = 102;
+  InnerRewriteLog = 103;
+  InnerRewriteLogFinish = 104;
 }
 
 enum ResponseCode {
@@ -49,6 +52,9 @@ message Request {
   InnerClearExpireRequest innerClearExpireRequest = 7;
   InnerSaveRequest innerSaveRequest = 8;
   SaveRequest saveRequest = 9;
+  InnerRewriteLogRequest innerRewriteLogRequest = 10;
+  InnerRewriteLogFinishRequest innerRewriteLogFinishRequest = 11;
+  RewriteLogRequest rewriteLogRequest = 12;
 }
 
 message Response {
@@ -62,15 +68,26 @@ message Response {
   InnerClearExpireResponse innerClearExpireResponse = 8;
   InnerSaveResponse innerSaveResponse = 9;
   SaveResponse saveResponse = 10;
+  InnerRewriteLogResponse innerRewriteLogResponse = 11;
+  InnerRewriteLogFinishResponse innerRewriteLogFinishResponse = 12;
+  RewriteLogResponse rewriteLogResponse = 13;
 }
 
 message SaveRequest {
   SaveType saveType = 1;
 }
+
+message RewriteLogRequest {
+}
+
 enum SaveType {
   SaveTypeInvalid = 0;
   SaveTypeStart = 1;
   SaveTypeFinish = 2;
+}
+
+message RewriteLogResponse {
+  bool ok = 1;
 }
 
 message SaveResponse {
@@ -80,6 +97,22 @@ message SaveResponse {
 message InnerSaveRequest {
   Database db = 1;
   string filePath = 2;
+}
+
+message InnerRewriteLogRequest {
+  Database db = 1;
+}
+
+message InnerRewriteLogFinishRequest {
+  bool ok = 1;
+}
+
+message InnerRewriteLogFinishResponse {
+  bool ok = 1;
+}
+
+message InnerRewriteLogResponse {
+  bool ok = 1;
 }
 
 message InnerSaveResponse {

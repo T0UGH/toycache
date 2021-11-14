@@ -84,4 +84,32 @@ public class MessageUtils {
                         .setSaveType(Proto.SaveType.SaveTypeStart))
                 .build();
     }
+
+    public static Proto.Request newSetRequest(String key, String value){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.Set)
+                .setSetRequest(Proto.SetRequest.newBuilder().setKey(key).setValue(value))
+                .build();
+    }
+
+    public static Proto.Request newExpireRequest(String key, long expireTime){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.Expire)
+                .setExpireRequest(Proto.ExpireRequest.newBuilder().setKey(key).setExpireTime(expireTime))
+                .build();
+    }
+
+    public static Proto.Request newRewriteLogRequest() {
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.RewriteLog)
+                .setRewriteLogRequest(Proto.RewriteLogRequest.newBuilder())
+                .build();
+    }
+
+    public static Proto.Request newInnerRewriteLogFinishRequest(boolean ok){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.InnerRewriteLogFinish)
+                .setInnerRewriteLogFinishRequest(Proto.InnerRewriteLogFinishRequest.newBuilder().setOk(ok))
+                .build();
+    }
 }

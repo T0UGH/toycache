@@ -6,6 +6,7 @@ import com.t0ugh.server.executor.MemoryOperationExecutor;
 import com.t0ugh.server.handler.HandlerFactory;
 import com.t0ugh.server.storage.MemoryDBStorage;
 import com.t0ugh.server.storage.Storage;
+import com.t0ugh.server.utils.WriteLogUtils;
 import com.t0ugh.server.writeLog.WriteLogExecutor;
 import org.junit.After;
 import org.junit.Before;
@@ -26,8 +27,8 @@ public class BaseTest {
                 .config(Configs.newTestConfig())
                 .globalState(GlobalState.newInstance())
                 .build();
-        OutputStream writeLogOutputStream = new FileOutputStream(testContext.getConfig().getWriteLogBaseFilePath()
-                +"\\writeLog.tcwlog");
+        OutputStream writeLogOutputStream = new FileOutputStream(WriteLogUtils
+                .getWriteLogFilePath(testContext.getConfig().getWriteLogBaseFilePath()));
         testContext.setMemoryOperationExecutor(new MemoryOperationExecutor(testContext));
         testContext.setHandlerFactory(new HandlerFactory(testContext));
         testContext.setDbExecutor(new DBExecutor(testContext));

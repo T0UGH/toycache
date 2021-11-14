@@ -19,4 +19,8 @@ public class Config {
     private int saveCheckTick;
     // 处理了至少多少个写请求才存盘
     private int saveCheckLimit;
+    // 多少个tick检查一次是否需要重写日志
+    private int rewriteLogTick;
+    // 如果写日志超过多少KB就重写
+    private int rewriteLogSizeKBThreshold;
 }

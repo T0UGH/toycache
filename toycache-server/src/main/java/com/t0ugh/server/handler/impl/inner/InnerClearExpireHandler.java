@@ -4,9 +4,6 @@ import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
-import com.t0ugh.server.storage.Storage;
-
-import java.util.List;
 
 @HandlerAnnotation(type = Proto.MessageType.InnerClearExpire, checkExpire = false)
 public class InnerClearExpireHandler extends AbstractHandler {

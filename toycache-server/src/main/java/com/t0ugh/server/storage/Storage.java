@@ -18,8 +18,6 @@ public interface Storage {
 
     boolean del(String key);
 
-    void writeToFile(String filePath) throws IOException;
-
     void loadFromFile(String filePath) throws IOException;
 
     DBProto.Database toUnModifiableDB();

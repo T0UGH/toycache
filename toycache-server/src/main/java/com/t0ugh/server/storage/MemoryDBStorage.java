@@ -6,12 +6,14 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.server.utils.DBUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@Slf4j
 public class MemoryDBStorage implements Storage{
 
     private final Map<String, DBProto.ValueObject> data;
@@ -68,26 +70,27 @@ public class MemoryDBStorage implements Storage{
     }
 
     @Override
-    public void writeToFile(String filePath) throws IOException {
-        DBUtils.writeToFile(filePath, data);
-    }
-
-    @Override
     public void loadFromFile(String filePath) throws IOException {
-        DBUtils.loadFromFile(filePath, data);
+        DBUtils.loadFromFile(filePath, data, expire);
     }
 
     @Override
     public DBProto.Database toUnModifiableDB() {
         Map<String, DBProto.ValueObject> newKvs = Maps.newHashMap();
+        Map<String, Long> newExpire = Maps.newHashMap();
         data.forEach((k, v) -> {
             try {
                 newKvs.put(k, DBProto.ValueObject.parseFrom(v.toByteArray()));
             } catch (InvalidProtocolBufferException e) {
-                e.printStackTrace();
+                log.error("", e);
             }
         });
-        return DBProto.Database.newBuilder().setVersion(1L).putAllData(newKvs).build();
+        newExpire.putAll(expire);
+        return DBProto.Database.newBuilder()
+                .setVersion(1L)
+                .putAllData(newKvs)
+                .putAllExpire(newExpire)
+                .build();
     }
 
     @Override
