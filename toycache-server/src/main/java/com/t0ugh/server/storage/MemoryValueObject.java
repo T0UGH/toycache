@@ -32,13 +32,13 @@ public class MemoryValueObject {
             case ValueTypeSet:
                 vb.addAllSetValue(setValue);
                 break;
-            //todo: 这几个待实现
             case ValueTypeList:
                 vb.addAllListValue(listValue);
                 break;
             case ValueTypeMap:
                 vb.putAllMapValue(mapValue);
                 break;
+            //todo: 这几个待实现
             case ValueTypeSortedSet:
                 throw new UnsupportedOperationException();
             default:
@@ -60,6 +60,18 @@ public class MemoryValueObject {
                 .setValue(value)
                 .build();
     }
+    public static MemoryValueObject newInstance(List<String> value) {
+        return MemoryValueObject.builder()
+                .valueType(DBProto.ValueType.ValueTypeSet)
+                .listValue(Lists.newLinkedList(value))
+                .build();
+    }
+    public static MemoryValueObject newInstance(Map<String, String> value) {
+        return MemoryValueObject.builder()
+                .valueType(DBProto.ValueType.ValueTypeMap)
+                .mapValue(Maps.newHashMap(value))
+                .build();
+    }
     public static MemoryValueObject fromValueObject(DBProto.ValueObject valueObject){
         MemoryValueObjectBuilder mb = MemoryValueObject.builder();
         mb.valueType(valueObject.getValueType());
@@ -70,13 +82,13 @@ public class MemoryValueObject {
             case ValueTypeSet:
                 mb.setValue(Sets.newHashSet(valueObject.getSetValueList()));
                 break;
-            //todo: 这几个待实现
             case ValueTypeList:
                 mb.listValue(Lists.newArrayList(valueObject.getListValueList()));
                 break;
             case ValueTypeMap:
                 mb.mapValue(Maps.newHashMap(valueObject.getMapValueMap()));
                 break;
+            //todo: 这几个待实现
             case ValueTypeSortedSet:
                 throw new UnsupportedOperationException();
             default:

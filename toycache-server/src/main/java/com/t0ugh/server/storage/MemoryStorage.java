@@ -1,30 +1,26 @@
 package com.t0ugh.server.storage;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.primitives.Ints;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.server.utils.DBUtils;
-import com.t0ugh.server.utils.OtherUtils;
+import com.t0ugh.server.utils.StorageUtils;
 import lombok.extern.slf4j.Slf4j;
-import sun.swing.StringUIClientPropertyKey;
 
-import javax.print.attribute.IntegerSyntax;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 @Slf4j
-public class MemoryDBStorage implements Storage{
+public class MemoryStorage implements Storage{
 
     private final Map<String, MemoryValueObject> data;
     private final Map<String, Long> expire;
 
-    public MemoryDBStorage() {
+    public MemoryStorage() {
         data = Maps.newHashMap();
         expire = Maps.newHashMap();
     }
@@ -112,7 +108,7 @@ public class MemoryDBStorage implements Storage{
         if (setValue.size() <= count){
             return setValue;
         }
-        Set<String> res = OtherUtils.randomPick(count, setValue);
+        Set<String> res = StorageUtils.randomPick(count, setValue);
         setValue.removeAll(res);
         return res;
     }
@@ -139,9 +135,168 @@ public class MemoryDBStorage implements Storage{
         if (setValue.size() <= count){
             return setValue;
         }
-        Set<String> res = OtherUtils.randomPick(count, setValue);
+        Set<String> res = StorageUtils.randomPick(count, setValue);
         setValue.removeAll(res);
         return res;
+    }
+
+    @Override
+    public int lPush(String key, List<String> values) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            data.put(key, MemoryValueObject.newInstance(values));
+            return values.size();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeList);
+        List<String> listValue = vo.getListValue();
+        listValue.addAll(0, values);
+        return listValue.size();
+    }
+
+    @Override
+    public Optional<String> lIndex(String key, int index) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return Optional.empty();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeList);
+        List<String> listValue = vo.getListValue();
+        try{
+            int actualIndex = StorageUtils.assertAndConvertIndex(index, listValue.size());
+            String val = listValue.get(actualIndex);
+            return Optional.of(val);
+        } catch (IndexOutOfBoundsException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public int lLen(String key) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return 0;
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeList);
+        return vo.getListValue().size();
+    }
+
+    @Override
+    public Optional<String> lPop(String key) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return Optional.empty();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeList);
+        List<String> listValue = vo.getListValue();
+        if(listValue.size() < 1){
+            return Optional.empty();
+        }
+        return Optional.of(listValue.remove(0));
+    }
+
+    @Override
+    public List<String> lRange(String key, int start, int end) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return Lists.newArrayList();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeList);
+        List<String> listValue = vo.getListValue();
+        try{
+            int actualStart = StorageUtils.assertAndConvertIndex(start, listValue.size());
+            int actualEnd = StorageUtils.assertAndConvertIndex(end, listValue.size());
+            if (actualStart > actualEnd){
+                return Lists.newArrayList();
+            }
+            List<String> res = Lists.newArrayList();
+            int i = 0;
+            for (String val: listValue) {
+                if (i >= actualStart && i <= actualEnd){
+                    res.add(val);
+                }
+                if (i > actualEnd){
+                    break;
+                }
+                i ++;
+            }
+            return res;
+        } catch (IndexOutOfBoundsException e) {
+            return Lists.newArrayList();
+        }
+    }
+
+    @Override
+    public boolean lTrim(String key, int start, int end) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return false;
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeList);
+        List<String> listValue = vo.getListValue();
+        try{
+            int actualStart = StorageUtils.assertAndConvertIndex(start, listValue.size());
+            int actualEnd = StorageUtils.assertAndConvertIndex(end, listValue.size());
+            if (actualStart > actualEnd){
+                return false;
+            }
+            List<String> newListValue = Lists.newArrayList();
+            int i = 0;
+            for (String val: listValue) {
+                if (i >= actualStart && i <= actualEnd){
+                    newListValue.add(val);
+                }
+                if (i > actualEnd){
+                    break;
+                }
+                i ++;
+            }
+            data.put(key, MemoryValueObject.newInstance(newListValue));
+            return true;
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean lSet(String key, int index, String newValue) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return false;
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeList);
+        List<String> listValue = vo.getListValue();
+        try{
+            int actualIndex = StorageUtils.assertAndConvertIndex(index, listValue.size());
+            String val = listValue.set(actualIndex, newValue);
+            return true;
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public void hSet(String key, String field, String value) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            Map<String, String> map = Maps.newHashMap();
+            map.put(field, value);
+            data.put(key, MemoryValueObject.newInstance(map));
+            return;
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeMap);
+        vo.getMapValue().put(field, value);
+        return;
+    }
+
+    @Override
+    public boolean hExists(String key, String field) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return false;
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeMap);
+        Map<String, String> mapValue = vo.getMapValue();
+        return mapValue.containsKey(field);
     }
 
     @Override

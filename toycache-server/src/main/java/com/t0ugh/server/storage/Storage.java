@@ -6,6 +6,7 @@ import com.t0ugh.sdk.proto.DBProto;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public interface Storage {
@@ -30,6 +31,24 @@ public interface Storage {
     int sRem(String key, Set<String> members) throws ValueTypeNotMatchException;
 
     Set<String> sRandMember(String key, int count) throws ValueTypeNotMatchException;
+
+    int lPush(String key, List<String> value) throws ValueTypeNotMatchException;
+
+    Optional<String> lIndex(String key, int index) throws ValueTypeNotMatchException;
+
+    int lLen(String key) throws ValueTypeNotMatchException;
+
+    Optional<String> lPop(String key) throws ValueTypeNotMatchException;
+
+    List<String> lRange(String key, int start, int end) throws ValueTypeNotMatchException;
+
+    boolean lTrim(String key, int start, int end) throws ValueTypeNotMatchException;
+
+    boolean lSet(String key, int index, String newValue) throws ValueTypeNotMatchException;
+
+    void hSet(String key, String field, String value) throws ValueTypeNotMatchException;
+
+    boolean hExists(String key, String field) throws ValueTypeNotMatchException;
 
     boolean del(String key);
 

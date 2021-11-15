@@ -4,7 +4,7 @@ import com.t0ugh.server.config.Configs;
 import com.t0ugh.server.db.DBExecutor;
 import com.t0ugh.server.executor.MemoryOperationExecutor;
 import com.t0ugh.server.handler.HandlerFactory;
-import com.t0ugh.server.storage.MemoryDBStorage;
+import com.t0ugh.server.storage.MemoryStorage;
 import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.utils.WriteLogUtils;
 import com.t0ugh.server.writeLog.WriteLogExecutor;
@@ -21,7 +21,7 @@ public class BaseTest {
     @Before
     public void setUpBase() throws Exception {
 
-        Storage storage = new MemoryDBStorage();
+        Storage storage = new MemoryStorage();
         testContext = GlobalContext.builder()
                 .storage(storage)
                 .config(Configs.newTestConfig())

@@ -1,6 +1,8 @@
 package com.t0ugh.server.utils;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.t0ugh.sdk.exception.InvalidParamException;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.handler.Handler;
 import com.t0ugh.server.handler.HandlerAnnotation;
@@ -9,8 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 public class MessageUtils {
@@ -49,11 +50,13 @@ public class MessageUtils {
 
     /**
      * 返回这个请求对应的Key
-     * 如果key找到了就返回key本身
+     * 1. 如果key找到了就返回key本身
+     * 2. 如果这个请求本身就没有key,就返回Optinal.empty()
+     * 3. 如果如果发现找到的Key是""或null就抛出异常
      * 如果找key途中报错或者请求中就没有key就返回
      * */
 
-    public static Optional<String> getKeyFromRequest(Proto.Request request) {
+    public static Optional<String> getKeyFromRequest(Proto.Request request) throws InvalidParamException {
         try {
             String className = "com.t0ugh.sdk.proto.Proto$" + request.getMessageType().getValueDescriptor().getName() +"Request";
             Class<?> clazz = Class.forName(className);
@@ -62,7 +65,7 @@ public class MessageUtils {
             Method getKeyMethod = clazz.getMethod("getKey");
             String key = (String)getKeyMethod.invoke(innerRequest);
             if (Strings.isNullOrEmpty(key))
-                return Optional.empty();
+                throw new InvalidParamException();
             return Optional.of(key);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
             log.error("", e);
@@ -119,5 +122,20 @@ public class MessageUtils {
                         .setOk(true)
                         .build())
                 .build();
+    }
+
+    public static void assertStringNotNullOrEmpty(String str) throws InvalidParamException {
+        if(Strings.isNullOrEmpty(str))
+            throw new InvalidParamException();
+    }
+
+    public static void assertCollectionNotEmpty(Collection<String> collection) throws InvalidParamException {
+        if(collection.isEmpty())
+            throw new InvalidParamException();
+    }
+
+    public static void assertIntNotNegative(int aInt) throws InvalidParamException {
+        if(aInt < 0)
+            throw new InvalidParamException();
     }
 }

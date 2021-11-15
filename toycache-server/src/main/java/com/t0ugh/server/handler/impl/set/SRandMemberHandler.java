@@ -4,6 +4,7 @@ import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
+import com.t0ugh.server.utils.MessageUtils;
 
 import java.util.Set;
 
@@ -17,6 +18,7 @@ public class SRandMemberHandler extends AbstractHandler {
     @Override
     public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
         Proto.SRandMemberRequest req = request.getSRandMemberRequest();
+        MessageUtils.assertIntNotNegative(req.getCount());
         Set<String> setValue = getGlobalContext().getStorage().sRandMember(req.getKey(), req.getCount());
         responseBuilder.setSRandMemberResponse(Proto.SRandMemberResponse.newBuilder().addAllSetValue(setValue));
     }

@@ -35,11 +35,11 @@ public abstract class AbstractHandler implements Handler {
             if (!MessageUtils.containRequest(request)){
                 throw new IllegalArgumentException(String.format("Request[%s] doesn't exist", request.getMessageType().getValueDescriptor().getName()));
             }
-            // 这个请求是否需要判断超时
-            if (HandlerUtils.needCheckExpire(request.getMessageType(), getGlobalContext().getHandlerFactory())){
+            Optional<String> optional = MessageUtils.getKeyFromRequest(request);
+            // 如果请求中含有key并且需要判断超时, 就检查超时
+            if (optional.isPresent() && HandlerUtils.needCheckExpire(request.getMessageType(), getGlobalContext().getHandlerFactory())){
                 // 检查是否超时, 超时就删Storage和ExpireMap里对应的kv对
-                Optional<String> o = MessageUtils.getKeyFromRequest(request);
-                o.ifPresent(key -> getGlobalContext().getStorage().delIfExpired(key));
+                getGlobalContext().getStorage().delIfExpired(optional.get());
             }
             // 然后调用抽象方法来做实际的处理
             Proto.Response.Builder okBuilder = MessageUtils.okBuilder();

@@ -3,7 +3,7 @@ package com.t0ugh.server;
 import com.t0ugh.server.config.Configs;
 import com.t0ugh.server.executor.MemoryOperationExecutor;
 import com.t0ugh.server.executor.MessageExecutor;
-import com.t0ugh.server.storage.MemoryDBStorage;
+import com.t0ugh.server.storage.MemoryStorage;
 import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.tick.DeleteKeyTicker;
 import com.t0ugh.server.tick.TickDriverImpl;
@@ -11,7 +11,7 @@ import com.t0ugh.server.tick.TickDriverImpl;
 public class Main {
     public static void main(String[] args) {
 
-        Storage storage = new MemoryDBStorage();
+        Storage storage = new MemoryStorage();
         GlobalContext globalContext = GlobalContext.builder()
                 .storage(storage)
                 .config(Configs.newDefaultConfig()).build();

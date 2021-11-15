@@ -2,11 +2,13 @@ package com.t0ugh.server.handler.impl.set;
 
 
 import com.google.common.collect.Sets;
+import com.t0ugh.sdk.exception.InvalidParamException;
 import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
+import com.t0ugh.server.utils.MessageUtils;
 
 import java.util.Set;
 
@@ -19,9 +21,10 @@ public class SAddHandler extends AbstractHandler {
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws ValueTypeNotMatchException {
+    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws ValueTypeNotMatchException, InvalidParamException {
         Proto.SAddRequest sRequest = request.getSAddRequest();
         // 类型转换, 这一步会删掉重复的元素
+        MessageUtils.assertCollectionNotEmpty(sRequest.getSetValueList());
         Set<String> value = Sets.newHashSet(sRequest.getSetValueList());
         int added = getGlobalContext().getStorage().sAdd(sRequest.getKey(), value);
         responseBuilder.setSAddResponse(Proto.SAddResponse.newBuilder().setAdded(added));

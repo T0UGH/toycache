@@ -7,8 +7,6 @@ import org.junit.Test;
 
 import java.util.Set;
 
-import static org.junit.Assert.*;
-
 public class OtherUtilsTest {
 
     @Before
@@ -29,7 +27,7 @@ public class OtherUtilsTest {
         all.add("e");
         all.add("f");
         all.add("g");
-        Set<String> picked1 = OtherUtils.randomPick(3, all);
+        Set<String> picked1 = StorageUtils.randomPick(3, all);
         System.out.println();
     }
 }

@@ -13,23 +13,39 @@ enum MessageType {
   // 对KEY操作的命令
   Exists = 1;
   Del = 2;
+  Expire = 7;
 //  Type = 3;
 
   // 对String操作的命令
   Get = 4;
   Set = 5;
-//  GetSet = 6; //设置指定 key 的值，并返回 key 的旧值。
-  Expire = 7;
-  Save = 8; //后台开个线程存, 约等于Redis的SAVE
-  RewriteLog = 9; //重写日志(压缩日志)
+//  GetSet = 6; // 设置指定 key 的值，并返回 key 的旧值。
 
-  SAdd = 10; //向集合中添加
-  SCard = 11; //查询集合中元素个数
-  SIsMember = 12; //查询元素是否在集合中
-  SMembers = 13; //返回集合中所有的元素
-  SPop = 14; //随机删除并返回N个元素
+  // 控制操作
+  Save = 8; // 后台开个线程存, 约等于Redis的SAVE
+  RewriteLog = 9; // 重写日志(压缩日志)
+
+  // 集合操作
+  SAdd = 10; // 向集合中添加
+  SCard = 11; // 查询集合中元素个数
+  SIsMember = 12; // 查询元素是否在集合中
+  SMembers = 13; // 返回集合中所有的元素
+  SPop = 14; // 随机删除并返回N个元素
   SRem = 15; // 删除
-  SRandMember = 16; //随机返回N个元素
+  SRandMember = 16; // 随机返回N个元素
+
+  // 列表操作
+  LPush = 17; // 向列表头部插入元素
+  LIndex = 18; // 获取index位置的元素
+  LLen = 19; // 返回列表的长度
+  LPop = 20; // 删除并返回表头元素
+  LRange = 21; // 获取指定范围内的元素列表
+  LTrim = 22; // 对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除
+  LSet = 23; // 通过索引设置列表中的元素
+
+  // map操作
+  HSet = 24; // 向map中插入一个kv对
+  HExists = 25; // 判断map中的kv对存不存在
 
   InnerClearExpire = 101;
   InnerSave = 102;
@@ -73,6 +89,15 @@ message Request {
   SPopRequest sPopRequest = 18;
   SRemRequest sRemRequest = 19;
   SRandMemberRequest sRandMemberRequest = 20;
+  LPushRequest lPushRequest = 21;
+  LIndexRequest lIndexRequest = 22;
+  LLenRequest lLenRequest = 23;
+  LPopRequest lPopRequest = 24;
+  LRangeRequest lRangeRequest = 25;
+  LTrimRequest lTrimRequest = 26;
+  LSetRequest lSetRequest = 27;
+  HSetRequest hSetRequest = 28;
+  HExistsRequest hExistRequest = 29;
 }
 
 message Response {
@@ -97,6 +122,99 @@ message Response {
   SPopResponse sPopResponse = 19;
   SRemResponse sRemResponse = 20;
   SRandMemberResponse sRandMemberResponse = 21;
+  LPushResponse lPushResponse = 22;
+  LIndexResponse lIndexResponse = 23;
+  LLenResponse lLenResponse = 24;
+  LPopResponse lPopResponse = 25;
+  LRangeResponse lRangeResponse = 26;
+  LTrimResponse lTrimResponse = 27;
+  LSetResponse lSetResponse = 28;
+  HSetResponse hSetResponse = 29;
+  HExistsResponse hExistResponse = 30;
+}
+
+message HExistsRequest {
+  string key = 1;
+  string field = 2;
+}
+
+message HExistsResponse {
+  bool ok = 1;
+}
+
+message HSetRequest {
+  string key = 1;
+  string field = 2;
+  string value = 3;
+}
+
+message HSetResponse {
+  bool ok = 1;
+}
+
+message LSetRequest {
+  string key = 1;
+  int32 index = 2;
+  string newValue = 3;
+}
+
+message LSetResponse {
+  bool ok = 1;
+}
+
+message LTrimRequest {
+  string key = 1;
+  int32 start = 2;
+  int32 end = 3;
+}
+
+message LTrimResponse {
+  bool ok = 1;
+}
+
+message LRangeRequest {
+  string key = 1;
+  int32 start = 2;
+  int32 end = 3;
+}
+
+message LRangeResponse {
+  repeated string values = 1;
+}
+
+message LPopRequest {
+  string key = 1;
+}
+
+
+message LPopResponse {
+  string value = 1;
+}
+
+message LLenRequest {
+  string key = 1;
+}
+
+message LLenResponse {
+  uint32 count = 1;
+}
+
+message LIndexRequest {
+  string key = 1;
+  int32 index = 2;
+}
+
+message LIndexResponse {
+  string value = 1;
+}
+
+message LPushRequest {
+  string key = 1;
+  repeated string value = 2;
+}
+
+message LPushResponse {
+  uint32 size = 1;
 }
 
 message SRandMemberRequest {

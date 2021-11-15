@@ -7,7 +7,16 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public class OtherUtils {
+public class StorageUtils {
+
+
+    public static int assertAndConvertIndex(int indexMayNegative, int size) {
+        int converted = indexMayNegative >= 0? indexMayNegative: size + indexMayNegative;
+        if ( converted < 0 || converted >= size)
+            throw new IndexOutOfBoundsException();
+        return converted;
+    }
+
 
     public static Set<String> randomPick(int num, Set<String> all){
         int size = all.size();
