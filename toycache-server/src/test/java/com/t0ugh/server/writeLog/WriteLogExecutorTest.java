@@ -2,10 +2,9 @@ package com.t0ugh.server.writeLog;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.sdk.proto.Proto;
-import com.t0ugh.sdk.proto.ValueObjects;
 import com.t0ugh.server.BaseTest;
+import com.t0ugh.server.storage.MemoryValueObject;
 import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.tick.MessageExecutorTestImpl;
 import com.t0ugh.server.utils.WriteLogUtils;
@@ -77,8 +76,8 @@ public class WriteLogExecutorTest extends BaseTest {
                         .setValue("World")).build();
         testContext.getWriteLogExecutor().submitAndWait(request1);
         Storage storage = testContext.getStorage();
-        storage.backdoor().put("Hello", ValueObjects.newInstance("World"));
-        storage.backdoor().put("Hi", ValueObjects.newInstance("World"));
+        storage.backdoor().put("Hello", MemoryValueObject.newInstance("World"));
+        storage.backdoor().put("Hi", MemoryValueObject.newInstance("World"));
         storage.expireBackdoor().put("Hello", System.currentTimeMillis() + 100000L);
         Proto.Request innerRewrite = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.InnerRewriteLog)

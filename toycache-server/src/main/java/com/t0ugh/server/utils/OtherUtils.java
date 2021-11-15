@@ -1,0 +1,33 @@
+package com.t0ugh.server.utils;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
+public class OtherUtils {
+
+    public static Set<String> randomPick(int num, Set<String> all){
+        int size = all.size();
+        if (num > size){
+            return Sets.newHashSet(all);
+        }
+        if(num < 0){
+            throw new RuntimeException("num or maxValue must be greater than zero");
+        }
+        List<String> allList = Lists.newArrayList(all);
+        Set<String> res = Sets.newHashSet();
+        Random random = new Random(System.currentTimeMillis());
+        for(int i=0; i<num; i++){
+            int index =  random.nextInt(size - i);
+            res.add(allList.get(index));
+            int lastIndex = size-i-1;
+            if(index != lastIndex){
+                allList.set(index, allList.get(lastIndex));
+            }
+        }
+        return res;
+    }
+}

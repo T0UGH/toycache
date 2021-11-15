@@ -1,9 +1,9 @@
 package com.t0ugh.server.handler.impl.key;
 
 import com.t0ugh.sdk.proto.Proto;
-import com.t0ugh.sdk.proto.ValueObjects;
 import com.t0ugh.server.handler.Handler;
 import com.t0ugh.server.BaseTest;
+import com.t0ugh.server.storage.MemoryValueObject;
 import com.t0ugh.server.utils.TestUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -15,7 +15,7 @@ public class DelTest extends BaseTest {
 
     @Before
     public void setUp() throws Exception {
-        testContext.getStorage().backdoor().put("Hello", ValueObjects.newInstance("World"));
+        testContext.getStorage().backdoor().put("Hello", MemoryValueObject.newInstance("World"));
     }
 
     @After

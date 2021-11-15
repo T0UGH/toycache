@@ -6,15 +6,30 @@ import com.t0ugh.sdk.proto.DBProto;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface Storage {
     // todo 后门方法, 开发完记得删除
-    Map<String, DBProto.ValueObject> backdoor();
+    Map<String, MemoryValueObject> backdoor();
     Map<String, Long> expireBackdoor();
     boolean exists(String key);
     String get(String key) throws ValueTypeNotMatchException;
 
     void set(String key, String value);
+
+    int sAdd(String key, Set<String> values) throws ValueTypeNotMatchException;
+
+    int sCard(String key) throws ValueTypeNotMatchException;
+
+    boolean sIsMember(String key, String member) throws ValueTypeNotMatchException;
+
+    Set<String> sMembers(String key) throws ValueTypeNotMatchException;
+
+    Set<String> sPop(String key, int count) throws ValueTypeNotMatchException;
+
+    int sRem(String key, Set<String> members) throws ValueTypeNotMatchException;
+
+    Set<String> sRandMember(String key, int count) throws ValueTypeNotMatchException;
 
     boolean del(String key);
 

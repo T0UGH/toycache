@@ -3,8 +3,8 @@ package com.t0ugh.server.db;
 import com.google.common.collect.Maps;
 import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.sdk.proto.Proto;
-import com.t0ugh.sdk.proto.ValueObjects;
 import com.t0ugh.server.BaseTest;
+import com.t0ugh.server.storage.MemoryValueObject;
 import com.t0ugh.server.tick.MessageExecutorTestImpl;
 import com.t0ugh.server.utils.DBUtils;
 import org.junit.After;
@@ -32,9 +32,9 @@ public class DBExecutorTest extends BaseTest {
             f.delete();
         }
         Map<String, DBProto.ValueObject> kvs = Maps.newHashMap();
-        kvs.put("Hello", ValueObjects.newInstance("World"));
-        kvs.put("Hi", ValueObjects.newInstance("World"));
-        kvs.put("Haha", ValueObjects.newInstance("World"));
+        kvs.put("Hello", MemoryValueObject.newInstance("World").toValueObject());
+        kvs.put("Hi", MemoryValueObject.newInstance("World").toValueObject());
+        kvs.put("Haha", MemoryValueObject.newInstance("World").toValueObject());
         db = DBProto.Database.newBuilder()
                 .setVersion(1L)
                 .putAllData(kvs)

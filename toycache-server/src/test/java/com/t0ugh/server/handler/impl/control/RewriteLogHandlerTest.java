@@ -1,16 +1,14 @@
 package com.t0ugh.server.handler.impl.control;
 
 import com.t0ugh.sdk.proto.Proto;
-import com.t0ugh.sdk.proto.ValueObjects;
 import com.t0ugh.server.BaseTest;
 import com.t0ugh.server.GlobalState;
 import com.t0ugh.server.enums.RewriteLogState;
+import com.t0ugh.server.storage.MemoryValueObject;
 import com.t0ugh.server.tick.MessageExecutorTestImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.security.PrivateKey;
 
 import static org.junit.Assert.*;
 
@@ -36,7 +34,7 @@ public class RewriteLogHandlerTest extends BaseTest {
      * */
     @Test
     public void test1() throws Exception {
-        testContext.getStorage().backdoor().put("Hello", ValueObjects.newInstance("World"));
+        testContext.getStorage().backdoor().put("Hello", MemoryValueObject.newInstance("World"));
         testContext.getStorage().expireBackdoor().put("Hello", System.currentTimeMillis() + 100000L);
         testContext.getGlobalState().setRewriteLogState(RewriteLogState.Normal);
         Proto.Request request = Proto.Request.newBuilder()

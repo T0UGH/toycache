@@ -1,16 +1,19 @@
 package com.t0ugh.server.utils;
 
 import com.t0ugh.sdk.proto.DBProto;
+import com.t0ugh.server.storage.MemoryValueObject;
 
 import java.io.*;
 import java.util.Map;
 
 public class DBUtils {
 
-    public static void loadFromFile(String filePath, Map<String, DBProto.ValueObject> kvs, Map<String, Long> expire) throws IOException {
+    public static void loadFromFile(String filePath, Map<String, MemoryValueObject> kvs, Map<String, Long> expire) throws IOException {
         InputStream inputStream = new FileInputStream(filePath);
         DBProto.Database db = DBProto.Database.parseFrom(inputStream);
-        kvs.putAll(db.getDataMap());
+        db.getDataMap().forEach((k, v) -> {
+            kvs.put(k, MemoryValueObject.fromValueObject(v));
+        });
         expire.putAll(db.getExpireMap());
         inputStream.close();
     }

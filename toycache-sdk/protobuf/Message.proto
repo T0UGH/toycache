@@ -23,6 +23,14 @@ enum MessageType {
   Save = 8; //后台开个线程存, 约等于Redis的SAVE
   RewriteLog = 9; //重写日志(压缩日志)
 
+  SAdd = 10; //向集合中添加
+  SCard = 11; //查询集合中元素个数
+  SIsMember = 12; //查询元素是否在集合中
+  SMembers = 13; //返回集合中所有的元素
+  SPop = 14; //随机删除并返回N个元素
+  SRem = 15; // 删除
+  SRandMember = 16; //随机返回N个元素
+
   InnerClearExpire = 101;
   InnerSave = 102;
   InnerSaveFinish = 103;
@@ -58,6 +66,13 @@ message Request {
   InnerRewriteLogFinishRequest innerRewriteLogFinishRequest = 11;
   RewriteLogRequest rewriteLogRequest = 12;
   InnerSaveFinishRequest innerSaveFinishRequest = 13;
+  SAddRequest sAddRequest = 14;
+  SCardRequest sCardRequest = 15;
+  SIsMemberRequest sIsMemberRequest = 16;
+  SMembersRequest sMembersRequest = 17;
+  SPopRequest sPopRequest = 18;
+  SRemRequest sRemRequest = 19;
+  SRandMemberRequest sRandMemberRequest = 20;
 }
 
 message Response {
@@ -75,6 +90,76 @@ message Response {
   InnerRewriteLogFinishResponse innerRewriteLogFinishResponse = 12;
   RewriteLogResponse rewriteLogResponse = 13;
   InnerSaveFinishResponse innerSaveFinishResponse = 14;
+  SAddResponse sAddResponse = 15;
+  SCardResponse sCardResponse = 16;
+  SIsMemberResponse sIsMemberResponse = 17;
+  SMembersResponse sMembersResponse = 18;
+  SPopResponse sPopResponse = 19;
+  SRemResponse sRemResponse = 20;
+  SRandMemberResponse sRandMemberResponse = 21;
+}
+
+message SRandMemberRequest {
+  string key = 1;
+  uint32 count = 2;
+}
+
+message SRandMemberResponse {
+  repeated string setValue = 1;
+}
+
+message SRemRequest {
+  string key = 1;
+  repeated string members = 2;
+}
+
+message SRemResponse {
+  uint32 deleted = 1;
+}
+
+message SPopRequest {
+  string key = 1;
+  uint32 count = 2;
+}
+
+
+message SPopResponse {
+  repeated string setValue = 1;
+}
+
+message SMembersRequest {
+  string key = 1;
+}
+
+message SMembersResponse {
+  repeated string setValue = 1;
+}
+
+message SIsMemberRequest {
+  string key = 1;
+  string member = 2;
+}
+
+message SIsMemberResponse {
+  bool isMember = 1;
+}
+
+message SCardRequest {
+  string key = 1;
+}
+
+message SCardResponse {
+  int32 size = 1;
+}
+
+message SAddRequest {
+  string key = 1;
+  repeated string setValue = 3;
+}
+
+
+message SAddResponse {
+  int32 added = 1;
 }
 
 message SaveRequest {

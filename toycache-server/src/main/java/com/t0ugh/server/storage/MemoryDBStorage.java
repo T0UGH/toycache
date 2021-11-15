@@ -2,21 +2,26 @@ package com.t0ugh.server.storage;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.server.utils.DBUtils;
+import com.t0ugh.server.utils.OtherUtils;
 import lombok.extern.slf4j.Slf4j;
+import sun.swing.StringUIClientPropertyKey;
 
+import javax.print.attribute.IntegerSyntax;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class MemoryDBStorage implements Storage{
 
-    private final Map<String, DBProto.ValueObject> data;
+    private final Map<String, MemoryValueObject> data;
     private final Map<String, Long> expire;
 
     public MemoryDBStorage() {
@@ -25,7 +30,7 @@ public class MemoryDBStorage implements Storage{
     }
 
     @Override
-    public Map<String, DBProto.ValueObject> backdoor() {
+    public Map<String, MemoryValueObject> backdoor() {
         return data;
     }
 
@@ -41,23 +46,102 @@ public class MemoryDBStorage implements Storage{
 
     @Override
     public String get(String key) throws ValueTypeNotMatchException {
-        DBProto.ValueObject vo = data.get(key);
+        MemoryValueObject vo = data.get(key);
         if(Objects.isNull(vo)){
             return null;
         }
-        if(!Objects.equals(DBProto.ValueType.ValueTypeString, vo.getValueType())){
-            throw new ValueTypeNotMatchException();
-        }
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeString);
         return data.get(key).getStringValue();
     }
 
     @Override
     public void set(String key, String value) {
-        DBProto.ValueObject vo = DBProto.ValueObject.newBuilder()
-                .setValueType(DBProto.ValueType.ValueTypeString)
-                .setStringValue(value)
-                .build();
+        MemoryValueObject vo = MemoryValueObject.newInstance(value);
         data.put(key, vo);
+    }
+
+    @Override
+    public int sAdd(String key, Set<String> values) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            data.put(key, MemoryValueObject.newInstance(values));
+            return values.size();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSet);
+        return (int) values.stream().filter(v -> vo.getSetValue().add(v)).count();
+    }
+
+    @Override
+    public int sCard(String key) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return 0;
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSet);
+        return vo.getSetValue().size();
+    }
+
+    @Override
+    public boolean sIsMember(String key, String member) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return false;
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSet);
+        return false;
+    }
+
+    @Override
+    public Set<String> sMembers(String key) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return Sets.newHashSet();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSet);
+        return vo.getSetValue();
+    }
+
+    @Override
+    public Set<String> sPop(String key, int count) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return Sets.newHashSet();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSet);
+        Set<String> setValue = vo.getSetValue();
+        if (setValue.size() <= count){
+            return setValue;
+        }
+        Set<String> res = OtherUtils.randomPick(count, setValue);
+        setValue.removeAll(res);
+        return res;
+    }
+
+    @Override
+    public int sRem(String key, Set<String> members) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return 0;
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSet);
+        Set<String> setValue = vo.getSetValue();
+        return (int) setValue.stream().filter(v -> members.contains(v) && setValue.remove(v)).count();
+    }
+
+    @Override
+    public Set<String> sRandMember(String key, int count) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return Sets.newHashSet();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSet);
+        Set<String> setValue = vo.getSetValue();
+        if (setValue.size() <= count){
+            return setValue;
+        }
+        Set<String> res = OtherUtils.randomPick(count, setValue);
+        setValue.removeAll(res);
+        return res;
     }
 
     @Override
@@ -80,7 +164,7 @@ public class MemoryDBStorage implements Storage{
         Map<String, Long> newExpire = Maps.newHashMap();
         data.forEach((k, v) -> {
             try {
-                newKvs.put(k, DBProto.ValueObject.parseFrom(v.toByteArray()));
+                newKvs.put(k, DBProto.ValueObject.parseFrom(v.toValueObject().toByteArray()));
             } catch (InvalidProtocolBufferException e) {
                 log.error("", e);
             }
@@ -144,5 +228,11 @@ public class MemoryDBStorage implements Storage{
 
     private static boolean isTimeExpired(long time){
         return time <= System.currentTimeMillis();
+    }
+
+    private void assertTypeMatch(MemoryValueObject vo, DBProto.ValueType valueType) throws ValueTypeNotMatchException {
+        if(!Objects.equals(vo.getValueType(), valueType)){
+            throw new ValueTypeNotMatchException();
+        }
     }
 }

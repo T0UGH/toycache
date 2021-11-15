@@ -28,24 +28,3 @@ enum ValueType {
     ValueTypeSortedSet = 4;
     ValueTypeMap = 5;
 }
-//
-//message ValueString {
-//    string content = 1;
-//}
-//
-//message ValueSet {
-//    repeated string content = 1;
-//}
-//
-//message ValueList {
-//    repeated string content = 1;
-//}
-//
-//
-//message ValueSortedSet {
-//    repeated string content = 1;
-//}
-//
-//message ValueMap {
-//    map<string, string> content = 1;
-//}
