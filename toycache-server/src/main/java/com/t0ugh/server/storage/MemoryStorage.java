@@ -94,7 +94,7 @@ public class MemoryStorage implements Storage{
         }
         MemoryValueObject vo = data.get(key);
         assertTypeMatch(vo, DBProto.ValueType.ValueTypeSet);
-        return vo.getSetValue();
+        return Sets.newHashSet(vo.getSetValue());
     }
 
     @Override
@@ -297,6 +297,64 @@ public class MemoryStorage implements Storage{
         assertTypeMatch(vo, DBProto.ValueType.ValueTypeMap);
         Map<String, String> mapValue = vo.getMapValue();
         return mapValue.containsKey(field);
+    }
+
+    @Override
+    public Optional<String> hGet(String key, String field) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return Optional.empty();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeMap);
+        Map<String, String> mapValue = vo.getMapValue();
+        if(!mapValue.containsKey(field)){
+            return Optional.empty();
+        }
+        return Optional.of(mapValue.get(field));
+    }
+
+    @Override
+    public Map<String, String> hGetAll(String key) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return Maps.newHashMap();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeMap);
+        Map<String, String> mapValue = vo.getMapValue();
+        return Maps.newHashMap(mapValue);
+    }
+
+    @Override
+    public Set<String> hKeys(String key) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return Sets.newHashSet();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeMap);
+        Map<String, String> mapValue = vo.getMapValue();
+        return mapValue.keySet();
+    }
+
+    @Override
+    public int hLen(String key) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return 0;
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeMap);
+        Map<String, String> mapValue = vo.getMapValue();
+        return mapValue.size();
+    }
+
+    @Override
+    public int hDel(String key, Set<String> fields) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return 0;
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeMap);
+        Map<String, String> mapValue = vo.getMapValue();
+        return (int) fields.stream().filter(k -> !Objects.isNull(mapValue.remove(k))).count();
     }
 
     @Override

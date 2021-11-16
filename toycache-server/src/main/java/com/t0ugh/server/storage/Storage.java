@@ -50,6 +50,16 @@ public interface Storage {
 
     boolean hExists(String key, String field) throws ValueTypeNotMatchException;
 
+    Optional<String> hGet(String key, String field) throws ValueTypeNotMatchException;
+
+    Map<String, String> hGetAll(String key) throws ValueTypeNotMatchException;
+
+    Set<String> hKeys(String key) throws ValueTypeNotMatchException;
+
+    int hLen(String key) throws ValueTypeNotMatchException;
+
+    int hDel(String key, Set<String> fields) throws ValueTypeNotMatchException;
+
     boolean del(String key);
 
     void loadFromFile(String filePath) throws IOException;

@@ -129,6 +129,13 @@ public class MessageUtils {
             throw new InvalidParamException();
     }
 
+    public static void assertAllStringNotNullOrEmpty(Collection<String> collection) throws InvalidParamException {
+        for (String str:collection) {
+            if(Strings.isNullOrEmpty(str))
+                throw new InvalidParamException();
+        }
+    }
+
     public static void assertCollectionNotEmpty(Collection<String> collection) throws InvalidParamException {
         if(collection.isEmpty())
             throw new InvalidParamException();

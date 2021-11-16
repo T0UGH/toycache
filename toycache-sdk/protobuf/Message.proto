@@ -46,6 +46,11 @@ enum MessageType {
   // map操作
   HSet = 24; // 向map中插入一个kv对
   HExists = 25; // 判断map中的kv对存不存在
+  HGet = 26; // 获取map中的一个v
+  HGetAll = 27;// 获取map中所有kv对
+  HKeys = 28; // 返回Map中所有的k
+  HLen = 29; // 返回Map中元素个数
+  HDel = 30; //删除Map中元素
 
   InnerClearExpire = 101;
   InnerSave = 102;
@@ -98,6 +103,11 @@ message Request {
   LSetRequest lSetRequest = 27;
   HSetRequest hSetRequest = 28;
   HExistsRequest hExistRequest = 29;
+  HGetRequest hGetRequest = 30;
+  HGetAllRequest hGetAllRequest = 31;
+  HKeysRequest hKeysRequest = 32;
+  HLenRequest hLenRequest = 33;
+  HDelRequest hDelRequest = 34;
 }
 
 message Response {
@@ -131,6 +141,54 @@ message Response {
   LSetResponse lSetResponse = 28;
   HSetResponse hSetResponse = 29;
   HExistsResponse hExistResponse = 30;
+  HGetResponse hGetResponse = 31;
+  HGetAllResponse hGetAllResponse = 32;
+  HKeysResponse hKeysResponse = 33;
+  HLenResponse hLenResponse = 34;
+  HDelResponse hDelResponse = 35;
+}
+
+message HDelRequest {
+  string key = 1;
+  repeated string fields = 2;
+}
+
+
+message HDelResponse {
+  int32 deleted = 1;
+}
+
+message HLenRequest {
+  string key = 1;
+}
+
+message HLenResponse {
+  int32 len = 1;
+}
+
+message HKeysRequest {
+  string key = 1;
+}
+
+message HKeysResponse {
+  repeated string fields = 1;
+}
+
+message HGetAllRequest {
+  string key = 1;
+}
+
+message HGetAllResponse {
+  map<string, string> kvs = 1;
+}
+
+message HGetRequest {
+  string key = 1;
+  string field = 2;
+}
+
+message HGetResponse {
+  string value = 1;
 }
 
 message HExistsRequest {
