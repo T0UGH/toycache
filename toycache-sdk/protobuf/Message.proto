@@ -111,7 +111,7 @@ message Request {
   LTrimRequest lTrimRequest = 26;
   LSetRequest lSetRequest = 27;
   HSetRequest hSetRequest = 28;
-  HExistsRequest hExistRequest = 29;
+  HExistsRequest hExistsRequest = 29;
   HGetRequest hGetRequest = 30;
   HGetAllRequest hGetAllRequest = 31;
   HKeysRequest hKeysRequest = 32;
@@ -156,7 +156,7 @@ message Response {
   LTrimResponse lTrimResponse = 27;
   LSetResponse lSetResponse = 28;
   HSetResponse hSetResponse = 29;
-  HExistsResponse hExistResponse = 30;
+  HExistsResponse hExistsResponse = 30;
   HGetResponse hGetResponse = 31;
   HGetAllResponse hGetAllResponse = 32;
   HKeysResponse hKeysResponse = 33;

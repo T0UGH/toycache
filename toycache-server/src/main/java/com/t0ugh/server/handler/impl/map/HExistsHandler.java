@@ -15,9 +15,9 @@ public class HExistsHandler extends AbstractHandler {
 
     @Override
     public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.HExistsRequest req = request.getHExistRequest();
+        Proto.HExistsRequest req = request.getHExistsRequest();
         MessageUtils.assertStringNotNullOrEmpty(req.getField());
         boolean exists = getGlobalContext().getStorage().hExists(req.getKey(), req.getField());
-        responseBuilder.setHExistResponse(Proto.HExistsResponse.newBuilder().setOk(exists));
+        responseBuilder.setHExistsResponse(Proto.HExistsResponse.newBuilder().setOk(exists));
     }
 }
