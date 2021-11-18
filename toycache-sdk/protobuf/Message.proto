@@ -52,6 +52,15 @@ enum MessageType {
   HLen = 29; // 返回Map中元素个数
   HDel = 30; //删除Map中元素
 
+  // 有序集合操作
+  ZAdd = 31; // 添加元素
+  ZCard = 32; // 元素个数
+  ZCount = 33; // 分数值在 min 和 max 之间的成员的数量
+  ZRank = 34; // 返回有序集中指定成员的排名
+  ZRange = 35; // 返回有序集中，指定区间内的成员按分数值从大到小排序
+  ZRangeByScore = 36; // 返回有序集中，分数值大于等于min小于等于max的所有元素
+  ZRem = 37; // 删除
+
   InnerClearExpire = 101;
   InnerSave = 102;
   InnerSaveFinish = 103;
@@ -108,6 +117,13 @@ message Request {
   HKeysRequest hKeysRequest = 32;
   HLenRequest hLenRequest = 33;
   HDelRequest hDelRequest = 34;
+  ZAddRequest zAddRequest = 35;
+  ZCardRequest zCardRequest = 36;
+  ZCountRequest zCountRequest = 37;
+  ZRankRequest zRankRequest = 38;
+  ZRangeRequest zRangeRequest = 39;
+  ZRangeByScoreRequest zRangeByScoreRequest = 40;
+  ZRemRequest zRemRequest = 41;
 }
 
 message Response {
@@ -146,6 +162,79 @@ message Response {
   HKeysResponse hKeysResponse = 33;
   HLenResponse hLenResponse = 34;
   HDelResponse hDelResponse = 35;
+  ZAddResponse zAddResponse = 36;
+  ZCardResponse zCardResponse = 37;
+  ZCountResponse zCountResponse = 38;
+  ZRankResponse zRankResponse = 39;
+  ZRangeResponse zRangeResponse = 40;
+  ZRangeByScoreResponse zRangeByScoreResponse = 41;
+  ZRemResponse zRemResponse = 42;
+}
+
+message ZRangeByScoreRequest {
+  string key = 1;
+  double min = 2;
+  double max = 3;
+}
+
+message ZRangeByScoreResponse {
+  repeated ComparableString values = 1;
+}
+
+message ZRemRequest {
+  string key = 1;
+  repeated string members = 2;
+}
+
+message ZRemResponse {
+  int32 deleted = 1;
+}
+
+message ZRangeRequest {
+  string key = 1;
+  int32 start = 2;
+  int32 end = 3;
+}
+
+message ZRangeResponse {
+  repeated ComparableString values = 1;
+}
+
+message ZRankRequest {
+  string key = 1;
+  string member = 2;
+}
+
+message ZRankResponse {
+  bool exists = 1;
+  int32 rank = 2;
+}
+
+message ZCardRequest {
+  string key = 1;
+}
+
+message ZCardResponse {
+  int32 count = 1;
+}
+
+message ZCountRequest {
+  string key = 1;
+  double min = 2;
+  double max = 3;
+}
+
+message ZCountResponse {
+  int32 count = 1;
+}
+
+message ZAddRequest {
+  string key = 1;
+  repeated ComparableString values = 2;
+}
+
+message ZAddResponse {
+  int32 added = 1;
 }
 
 message HDelRequest {

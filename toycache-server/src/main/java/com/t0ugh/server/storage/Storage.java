@@ -4,10 +4,7 @@ import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.DBProto;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public interface Storage {
     // todo 后门方法, 开发完记得删除
@@ -59,6 +56,20 @@ public interface Storage {
     int hLen(String key) throws ValueTypeNotMatchException;
 
     int hDel(String key, Set<String> fields) throws ValueTypeNotMatchException;
+
+    int zAdd(String key, NavigableSet<MemoryComparableString> members) throws ValueTypeNotMatchException;
+
+    int zCard(String key) throws ValueTypeNotMatchException;
+
+    int zCount(String key, double min, double max) throws ValueTypeNotMatchException;
+
+    Optional<Integer> zRank(String key, String member) throws ValueTypeNotMatchException;
+
+    NavigableSet<MemoryComparableString> zRange(String key, int start, int end) throws ValueTypeNotMatchException;
+
+    NavigableSet<MemoryComparableString> zRangeByScore(String key, double min, double max) throws ValueTypeNotMatchException;
+
+    int zRem(String key, Set<String> members) throws ValueTypeNotMatchException;
 
     boolean del(String key);
 

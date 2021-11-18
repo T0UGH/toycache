@@ -17,6 +17,16 @@ public class StorageUtils {
         return converted;
     }
 
+    public static int assertAndConvertEndIndex(int endIndexMayNegative, int size) {
+        int converted = endIndexMayNegative >= 0? endIndexMayNegative: size + endIndexMayNegative;
+        if ( converted < 0)
+            throw new IndexOutOfBoundsException();
+        if (converted >= size){
+            return size - 1;
+        }
+        return converted;
+    }
+
 
     public static Set<String> randomPick(int num, Set<String> all){
         int size = all.size();

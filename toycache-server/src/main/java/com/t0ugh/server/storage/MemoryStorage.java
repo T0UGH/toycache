@@ -1,10 +1,10 @@
 package com.t0ugh.server.storage;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Option;
 import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.server.utils.DBUtils;
@@ -204,7 +204,7 @@ public class MemoryStorage implements Storage{
         List<String> listValue = vo.getListValue();
         try{
             int actualStart = StorageUtils.assertAndConvertIndex(start, listValue.size());
-            int actualEnd = StorageUtils.assertAndConvertIndex(end, listValue.size());
+            int actualEnd = StorageUtils.assertAndConvertEndIndex(end, listValue.size());
             if (actualStart > actualEnd){
                 return Lists.newArrayList();
             }
@@ -355,6 +355,86 @@ public class MemoryStorage implements Storage{
         assertTypeMatch(vo, DBProto.ValueType.ValueTypeMap);
         Map<String, String> mapValue = vo.getMapValue();
         return (int) fields.stream().filter(k -> !Objects.isNull(mapValue.remove(k))).count();
+    }
+
+    @Override
+    public int zAdd(String key, NavigableSet<MemoryComparableString> members) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            MemorySortedSet newSortedSet = new MemorySortedSet();
+            newSortedSet.addAll(members);
+            data.put(key, MemoryValueObject.newInstance(newSortedSet));
+            return members.size();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSortedSet);
+        MemorySortedSet sortedSet = vo.getSortedSetValue();
+        return sortedSet.addAll(members);
+    }
+
+    @Override
+    public int zCard(String key) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return 0;
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSortedSet);
+        MemorySortedSet sortedSetValue = vo.getSortedSetValue();
+        return sortedSetValue.card();
+    }
+
+    @Override
+    public int zCount(String key, double min, double max) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return 0;
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSortedSet);
+        MemorySortedSet sortedSetValue = vo.getSortedSetValue();
+        return sortedSetValue.count(min, max);
+    }
+
+    @Override
+    public Optional<Integer> zRank(String key, String member) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return Optional.empty();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSortedSet);
+        MemorySortedSet sortedSetValue = vo.getSortedSetValue();
+        return sortedSetValue.rank(member);
+    }
+
+    @Override
+    public NavigableSet<MemoryComparableString> zRange(String key, int start, int end) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return Sets.newTreeSet();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSortedSet);
+        MemorySortedSet sortedSetValue = vo.getSortedSetValue();
+        return sortedSetValue.range(start, end);
+    }
+
+    @Override
+    public NavigableSet<MemoryComparableString> zRangeByScore(String key, double min, double max) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return Sets.newTreeSet();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSortedSet);
+        MemorySortedSet sortedSetValue = vo.getSortedSetValue();
+        return sortedSetValue.rangeByScore(min, max);
+    }
+
+    @Override
+    public int zRem(String key, Set<String> members) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return 0;
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSortedSet);
+        MemorySortedSet sortedSetValue = vo.getSortedSetValue();
+        return sortedSetValue.removeAll(members);
     }
 
     @Override

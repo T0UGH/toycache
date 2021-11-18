@@ -11,12 +11,17 @@ message Database {
     map<string, uint64> expire = 3;
 }
 
+message ComparableString {
+    string stringValue = 1;
+    double score = 2;
+}
+
 message ValueObject {
     ValueType valueType = 1;
     string stringValue = 2;
     repeated string setValue = 3;
     repeated string listValue = 4;
-    repeated string sortedSetValue = 5;
+    repeated ComparableString sortedSetValue = 5;
     map<string, string> mapValue = 6;
 }
 
