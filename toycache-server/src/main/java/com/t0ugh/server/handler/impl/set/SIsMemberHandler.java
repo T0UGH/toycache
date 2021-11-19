@@ -6,7 +6,7 @@ import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 import com.t0ugh.server.utils.MessageUtils;
 
-@HandlerAnnotation(type = Proto.MessageType.SCard)
+@HandlerAnnotation(type = Proto.MessageType.SIsMember)
 public class SIsMemberHandler extends AbstractHandler<Proto.SIsMemberRequest, Proto.SIsMemberResponse> {
 
     public SIsMemberHandler(GlobalContext globalContext) {

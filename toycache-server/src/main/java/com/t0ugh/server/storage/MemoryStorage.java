@@ -84,7 +84,7 @@ public class MemoryStorage implements Storage{
         }
         MemoryValueObject vo = data.get(key);
         assertTypeMatch(vo, DBProto.ValueType.ValueTypeSet);
-        return false;
+        return vo.getSetValue().contains(member);
     }
 
     @Override
@@ -106,7 +106,9 @@ public class MemoryStorage implements Storage{
         assertTypeMatch(vo, DBProto.ValueType.ValueTypeSet);
         Set<String> setValue = vo.getSetValue();
         if (setValue.size() <= count){
-            return setValue;
+            Set<String> res = Sets.newHashSet(setValue);
+            setValue.clear();
+            return res;
         }
         Set<String> res = StorageUtils.randomPick(count, setValue);
         setValue.removeAll(res);
@@ -121,7 +123,9 @@ public class MemoryStorage implements Storage{
         MemoryValueObject vo = data.get(key);
         assertTypeMatch(vo, DBProto.ValueType.ValueTypeSet);
         Set<String> setValue = vo.getSetValue();
-        return (int) setValue.stream().filter(v -> members.contains(v) && setValue.remove(v)).count();
+        int count = Sets.intersection(setValue, members).size();
+        setValue.removeIf(members::contains);
+        return count;
     }
 
     @Override
