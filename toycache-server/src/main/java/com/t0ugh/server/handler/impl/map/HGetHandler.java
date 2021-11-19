@@ -7,18 +7,17 @@ import com.t0ugh.server.handler.impl.AbstractHandler;
 import com.t0ugh.server.utils.MessageUtils;
 
 @HandlerAnnotation(type = Proto.MessageType.HGet)
-public class HGetHandler extends AbstractHandler {
+public class HGetHandler extends AbstractHandler<Proto.HGetRequest, Proto.HGetResponse> {
 
     public HGetHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.HGetRequest req = request.getHGetRequest();
+    public Proto.HGetResponse doHandle(Proto.HGetRequest req) throws Exception {
         Proto.HGetResponse.Builder builder = Proto.HGetResponse.newBuilder();
         MessageUtils.assertStringNotNullOrEmpty(req.getField());
         getGlobalContext().getStorage().hGet(req.getKey(), req.getField()).ifPresent(builder::setValue);
-        responseBuilder.setHGetResponse(builder);
+        return builder.build();
     }
 }

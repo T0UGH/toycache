@@ -6,17 +6,16 @@ import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
 @HandlerAnnotation(type = Proto.MessageType.InnerClearExpire, checkExpire = false)
-public class InnerClearExpireHandler extends AbstractHandler {
+public class InnerClearExpireHandler extends AbstractHandler<Proto.InnerClearExpireRequest, Proto.InnerClearExpireResponse> {
 
     public InnerClearExpireHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
+    public Proto.InnerClearExpireResponse doHandle(Proto.InnerClearExpireRequest unused) throws Exception {
         int threshold = getGlobalContext().getConfig().getUpperKeyLimitOfPeriodicalDelete();
         int count = getGlobalContext().getStorage().delExpires(threshold);
-        responseBuilder.setInnerClearExpireResponse(
-                Proto.InnerClearExpireResponse.newBuilder().setCleared(count));
+        return Proto.InnerClearExpireResponse.newBuilder().setCleared(count).build();
     }
 }

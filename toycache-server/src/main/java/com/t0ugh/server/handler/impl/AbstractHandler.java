@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -20,7 +21,7 @@ import java.util.Optional;
  * */
 @Slf4j
 @AllArgsConstructor
-public abstract class AbstractHandler implements Handler {
+public abstract class AbstractHandler<Req, Res> implements Handler {
 
 
     @Getter
@@ -43,7 +44,7 @@ public abstract class AbstractHandler implements Handler {
             }
             // 然后调用抽象方法来做实际的处理
             Proto.Response.Builder okBuilder = MessageUtils.okBuilder();
-            doHandle(request, okBuilder);
+
             okBuilder.setMessageType(request.getMessageType());
             // 如果能执行到这里, 基本就是没有异常了, 如果是写请求更新一下内部状态并且向writeLogExecutor提交一个写日志
             if(MessageUtils.isWriteRequest(request.getMessageType(), getGlobalContext().getHandlerFactory())){
@@ -52,8 +53,14 @@ public abstract class AbstractHandler implements Handler {
                 // 向writeLogExecutor提交一个写日志
                 getGlobalContext().getWriteLogExecutor().submit(request);
             }
+            String ori = request.getMessageType().getValueDescriptor().getName();
+            String messageTypeStr = ori.substring(0, 1).toLowerCase(Locale.ROOT) + ori.substring(1);
+            @SuppressWarnings("unchecked")
+            Req req = (Req) request.getField(request.getDescriptorForType().findFieldByName(messageTypeStr + "Request"));
+            Res res = doHandle(req);
+            okBuilder.setField(okBuilder.getDescriptorForType().findFieldByName(messageTypeStr + "Response"), res);
             return okBuilder.build();
-        // 统一的异常处理
+            // 统一的异常处理
         } catch (ValueTypeNotMatchException e) {
             return MessageUtils.responseWithCode(Proto.ResponseCode.ValueTypeNotMatch);
         } catch (InvalidParamException e) {
@@ -65,13 +72,5 @@ public abstract class AbstractHandler implements Handler {
 
     }
 
-    /**
-     * 实际的业务逻辑处理
-     * 实现这个抽象方法的类不需要进行信息校验
-     * @param request 请求
-     * @param responseBuilder 响应的建造器, 需要把对应的响应放进去
-     *                        e.g. responseBuilder.setGetResponse(Proto.GetResponse.newBuilder().setValue(value));
-     * */
-    public abstract void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception;
-
+    public abstract Res doHandle(Req req) throws Exception;
 }

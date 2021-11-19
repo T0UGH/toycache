@@ -1,6 +1,5 @@
 package com.t0ugh.server.handler.impl.control;
 
-import com.t0ugh.sdk.exception.InvalidParamException;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.enums.SaveState;
@@ -11,17 +10,16 @@ import com.t0ugh.server.utils.DBUtils;
 import java.util.Objects;
 
 @HandlerAnnotation(type = Proto.MessageType.Save, checkExpire = false)
-public class SaveHandler extends AbstractHandler {
+public class SaveHandler extends AbstractHandler<Proto.SaveRequest, Proto.SaveResponse> {
 
     public SaveHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws InvalidParamException {
+    public Proto.SaveResponse doHandle(Proto.SaveRequest unused) throws Exception {
         if (Objects.equals(SaveState.Running, getGlobalContext().getGlobalState().getSaveState())){
-            responseBuilder.setSaveResponse(Proto.SaveResponse.newBuilder().setOk(false));
-            return;
+            return Proto.SaveResponse.newBuilder().setOk(false).build();
         }
         getGlobalContext().getGlobalState().setSaveState(SaveState.Running);
         Proto.Request dbRequest = Proto.Request.newBuilder()
@@ -32,11 +30,7 @@ public class SaveHandler extends AbstractHandler {
                         .build())
                 .build();
         getGlobalContext().getDbExecutor().submit(dbRequest);
-        responseBuilder.setSaveResponse(Proto.SaveResponse.newBuilder().setOk(true));
+        return Proto.SaveResponse.newBuilder().setOk(true).build();
     }
 
-//    private void doFinish(Proto.Request unused, Proto.Response.Builder responseBuilder) {
-//        saveState = SaveState.Idle;
-//        responseBuilder.setSaveResponse(Proto.SaveResponse.newBuilder().setOk(true));
-//    }
 }

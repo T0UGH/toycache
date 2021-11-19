@@ -68,7 +68,7 @@ public class MessageUtils {
                 throw new InvalidParamException();
             return Optional.of(key);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
-            log.error("", e);
+//            log.error("", e);
             return Optional.empty();
         }
     }

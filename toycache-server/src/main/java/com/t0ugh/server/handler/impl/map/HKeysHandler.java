@@ -8,16 +8,15 @@ import com.t0ugh.server.handler.impl.AbstractHandler;
 import java.util.Set;
 
 @HandlerAnnotation(type = Proto.MessageType.HKeys)
-public class HKeysHandler extends AbstractHandler {
+public class HKeysHandler extends AbstractHandler<Proto.HKeysRequest, Proto.HKeysResponse> {
 
     public HKeysHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.HKeysRequest req = request.getHKeysRequest();
+    public Proto.HKeysResponse doHandle(Proto.HKeysRequest req) throws Exception {
         Set<String> fields = getGlobalContext().getStorage().hKeys(req.getKey());
-        responseBuilder.setHKeysResponse(Proto.HKeysResponse.newBuilder().addAllFields(fields));
+        return Proto.HKeysResponse.newBuilder().addAllFields(fields).build();
     }
 }

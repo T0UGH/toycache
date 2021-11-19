@@ -11,19 +11,18 @@ import com.t0ugh.server.utils.MessageUtils;
 import java.util.Set;
 
 @HandlerAnnotation(type = Proto.MessageType.HDel, isWrite = true)
-public class HDelHandler extends AbstractHandler {
+public class HDelHandler extends AbstractHandler<Proto.HDelRequest, Proto.HDelResponse> {
 
     public HDelHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.HDelRequest req = request.getHDelRequest();
+    public Proto.HDelResponse doHandle(Proto.HDelRequest req) throws Exception {
         Set<String> fields = Sets.newHashSet(req.getFieldsList());
         MessageUtils.assertCollectionNotEmpty(fields);
         MessageUtils.assertAllStringNotNullOrEmpty(fields);
         int deleted = getGlobalContext().getStorage().hDel(req.getKey(), fields);
-        responseBuilder.setHDelResponse(Proto.HDelResponse.newBuilder().setDeleted(deleted));
+        return Proto.HDelResponse.newBuilder().setDeleted(deleted).build();
     }
 }

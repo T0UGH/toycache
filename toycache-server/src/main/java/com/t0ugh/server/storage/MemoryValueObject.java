@@ -63,7 +63,7 @@ public class MemoryValueObject {
 
     public static MemoryValueObject newInstance(List<String> value) {
         return MemoryValueObject.builder()
-                .valueType(DBProto.ValueType.ValueTypeSet)
+                .valueType(DBProto.ValueType.ValueTypeList)
                 .listValue(Lists.newLinkedList(value))
                 .build();
     }

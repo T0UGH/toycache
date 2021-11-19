@@ -7,21 +7,18 @@ import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
 @HandlerAnnotation(type = Proto.MessageType.Expire, isWrite = true)
-public class ExpireHandler extends AbstractHandler {
+public class ExpireHandler extends AbstractHandler<Proto.ExpireRequest, Proto.ExpireResponse> {
 
     public ExpireHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws InvalidParamException {
-        // 先判断Key是否存在
-        Proto.ExpireRequest eRequest = request.getExpireRequest();
+    public Proto.ExpireResponse doHandle(Proto.ExpireRequest eRequest) throws Exception {
         boolean exists = getGlobalContext().getStorage().exists(eRequest.getKey());
         // 不存在直接返回
         if (!exists) {
-            responseBuilder.setExpireResponse(Proto.ExpireResponse.newBuilder().setOk(false).build());
-            return;
+            return Proto.ExpireResponse.newBuilder().setOk(false).build();
         }
         // 校验参数
         long expireTime = eRequest.getExpireTime();
@@ -30,6 +27,6 @@ public class ExpireHandler extends AbstractHandler {
         }
         //实际的set
         getGlobalContext().getStorage().setExpire(eRequest.getKey(), eRequest.getExpireTime());
-        responseBuilder.setExpireResponse(Proto.ExpireResponse.newBuilder().setOk(true).build());
+        return Proto.ExpireResponse.newBuilder().setOk(true).build();
     }
 }

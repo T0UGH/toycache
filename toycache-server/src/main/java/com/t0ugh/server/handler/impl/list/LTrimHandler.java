@@ -6,16 +6,15 @@ import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
 @HandlerAnnotation(type = Proto.MessageType.LTrim, isWrite = true)
-public class LTrimHandler extends AbstractHandler {
+public class LTrimHandler extends AbstractHandler<Proto.LTrimRequest, Proto.LTrimResponse> {
 
     public LTrimHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.LTrimRequest req = request.getLTrimRequest();
+    public Proto.LTrimResponse doHandle(Proto.LTrimRequest req) throws Exception {
         boolean ok = getGlobalContext().getStorage().lTrim(req.getKey(), req.getStart(), req.getEnd());
-        responseBuilder.setLTrimResponse(Proto.LTrimResponse.newBuilder().setOk(ok));
+        return Proto.LTrimResponse.newBuilder().setOk(ok).build();
     }
 }

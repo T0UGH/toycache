@@ -8,15 +8,14 @@ import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
 @HandlerAnnotation(type = Proto.MessageType.InnerRewriteLogFinish, checkExpire = false)
-public class InnerRewriteLogFinishHandler extends AbstractHandler {
+public class InnerRewriteLogFinishHandler extends AbstractHandler<Proto.InnerRewriteLogFinishRequest, Proto.InnerRewriteLogFinishResponse> {
     public InnerRewriteLogFinishHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request unused, Proto.Response.Builder responseBuilder) throws Exception {
+    public Proto.InnerRewriteLogFinishResponse doHandle(Proto.InnerRewriteLogFinishRequest unused) throws Exception {
         getGlobalContext().getGlobalState().setRewriteLogState(RewriteLogState.Normal);
-        responseBuilder.setInnerRewriteLogFinishResponse(
-                Proto.InnerRewriteLogFinishResponse.newBuilder().setOk(true));
+        return Proto.InnerRewriteLogFinishResponse.newBuilder().setOk(true).build();
     }
 }

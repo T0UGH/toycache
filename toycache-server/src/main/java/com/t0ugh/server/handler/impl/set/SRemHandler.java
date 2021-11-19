@@ -8,17 +8,16 @@ import com.t0ugh.server.handler.impl.AbstractHandler;
 import com.t0ugh.server.utils.MessageUtils;
 
 @HandlerAnnotation(type = Proto.MessageType.SRem, isWrite = true)
-public class SRemHandler extends AbstractHandler {
+public class SRemHandler extends AbstractHandler<Proto.SRemRequest, Proto.SRemResponse> {
 
     public SRemHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.SRemRequest req = request.getSRemRequest();
+    public Proto.SRemResponse doHandle(Proto.SRemRequest req) throws Exception {
         MessageUtils.assertCollectionNotEmpty(req.getMembersList());
         int deleted = getGlobalContext().getStorage().sRem(req.getKey(), Sets.newHashSet(req.getMembersList()));
-        responseBuilder.setSRemResponse(Proto.SRemResponse.newBuilder().setDeleted(deleted));
+        return Proto.SRemResponse.newBuilder().setDeleted(deleted).build();
     }
 }

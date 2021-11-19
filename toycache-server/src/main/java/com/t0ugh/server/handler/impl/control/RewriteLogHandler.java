@@ -9,17 +9,16 @@ import com.t0ugh.server.handler.impl.AbstractHandler;
 import java.util.Objects;
 
 @HandlerAnnotation(type = Proto.MessageType.RewriteLog, checkExpire = false)
-public class RewriteLogHandler extends AbstractHandler {
+public class RewriteLogHandler extends AbstractHandler<Proto.RewriteLogRequest, Proto.RewriteLogResponse> {
 
     public RewriteLogHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request unused, Proto.Response.Builder responseBuilder) throws Exception {
+    public Proto.RewriteLogResponse doHandle(Proto.RewriteLogRequest unused) throws Exception {
         if(Objects.equals(RewriteLogState.Rewriting, getGlobalContext().getGlobalState().getRewriteLogState())){
-            responseBuilder.setRewriteLogResponse(Proto.RewriteLogResponse.newBuilder().setOk(false));
-            return;
+            return Proto.RewriteLogResponse.newBuilder().setOk(false).build();
         }
         Proto.Request request = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.InnerRewriteLog)
@@ -28,6 +27,6 @@ public class RewriteLogHandler extends AbstractHandler {
                 .build();
         getGlobalContext().getGlobalState().setRewriteLogState(RewriteLogState.Rewriting);
         getGlobalContext().getWriteLogExecutor().submit(request);
-        responseBuilder.setRewriteLogResponse(Proto.RewriteLogResponse.newBuilder().setOk(true));
+        return Proto.RewriteLogResponse.newBuilder().setOk(true).build();
     }
 }

@@ -235,7 +235,7 @@ public class MemoryStorage implements Storage{
         List<String> listValue = vo.getListValue();
         try{
             int actualStart = StorageUtils.assertAndConvertIndex(start, listValue.size());
-            int actualEnd = StorageUtils.assertAndConvertIndex(end, listValue.size());
+            int actualEnd = StorageUtils.assertAndConvertEndIndex(end, listValue.size());
             if (actualStart > actualEnd){
                 return false;
             }

@@ -8,16 +8,15 @@ import com.t0ugh.server.handler.impl.AbstractHandler;
 import java.util.Map;
 
 @HandlerAnnotation(type = Proto.MessageType.HGetAll)
-public class HGetAllHandler extends AbstractHandler {
+public class HGetAllHandler extends AbstractHandler<Proto.HGetAllRequest, Proto.HGetAllResponse> {
 
     public HGetAllHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.HGetAllRequest req = request.getHGetAllRequest();
+    public Proto.HGetAllResponse doHandle(Proto.HGetAllRequest req) throws Exception {
         Map<String, String> kvs = getGlobalContext().getStorage().hGetAll(req.getKey());
-        responseBuilder.setHGetAllResponse(Proto.HGetAllResponse.newBuilder().putAllKvs(kvs));
+        return Proto.HGetAllResponse.newBuilder().putAllKvs(kvs).build();
     }
 }

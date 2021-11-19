@@ -9,17 +9,16 @@ import com.t0ugh.server.utils.MessageUtils;
 import java.util.Set;
 
 @HandlerAnnotation(type = Proto.MessageType.SPop, isWrite = true)
-public class SPopHandler extends AbstractHandler {
+public class SPopHandler extends AbstractHandler<Proto.SPopRequest, Proto.SPopResponse> {
 
     public SPopHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.SPopRequest req = request.getSPopRequest();
+    public Proto.SPopResponse doHandle(Proto.SPopRequest req) throws Exception {
         MessageUtils.assertIntNotNegative(req.getCount());
         Set<String> setValue = getGlobalContext().getStorage().sPop(req.getKey(), req.getCount());
-        responseBuilder.setSPopResponse(Proto.SPopResponse.newBuilder().addAllSetValue(setValue));
+        return Proto.SPopResponse.newBuilder().addAllSetValue(setValue).build();
     }
 }

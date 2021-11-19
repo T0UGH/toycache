@@ -2,8 +2,6 @@ package com.t0ugh.server.handler.impl.set;
 
 
 import com.google.common.collect.Sets;
-import com.t0ugh.sdk.exception.InvalidParamException;
-import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.handler.HandlerAnnotation;
@@ -14,19 +12,18 @@ import java.util.Set;
 
 
 @HandlerAnnotation(type = Proto.MessageType.SAdd, isWrite = true)
-public class SAddHandler extends AbstractHandler {
+public class SAddHandler extends AbstractHandler<Proto.SAddRequest, Proto.SAddResponse> {
 
     public SAddHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws ValueTypeNotMatchException, InvalidParamException {
-        Proto.SAddRequest sRequest = request.getSAddRequest();
+    public Proto.SAddResponse doHandle(Proto.SAddRequest sAddRequest) throws Exception {
         // 类型转换, 这一步会删掉重复的元素
-        MessageUtils.assertCollectionNotEmpty(sRequest.getSetValueList());
-        Set<String> value = Sets.newHashSet(sRequest.getSetValueList());
-        int added = getGlobalContext().getStorage().sAdd(sRequest.getKey(), value);
-        responseBuilder.setSAddResponse(Proto.SAddResponse.newBuilder().setAdded(added));
+        MessageUtils.assertCollectionNotEmpty(sAddRequest.getSetValueList());
+        Set<String> value = Sets.newHashSet(sAddRequest.getSetValueList());
+        int added = getGlobalContext().getStorage().sAdd(sAddRequest.getKey(), value);
+        return Proto.SAddResponse.newBuilder().setAdded(added).build();
     }
 }

@@ -8,23 +8,21 @@ import com.t0ugh.server.handler.impl.AbstractHandler;
 import com.t0ugh.server.storage.MemoryComparableString;
 
 import java.util.List;
-import java.util.NavigableSet;
 import java.util.stream.Collectors;
 
 @HandlerAnnotation(type = Proto.MessageType.ZRange)
-public class ZRangeHandler extends AbstractHandler {
+public class ZRangeHandler extends AbstractHandler<Proto.ZRangeRequest, Proto.ZRangeResponse> {
 
     public ZRangeHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.ZRangeRequest req = request.getZRangeRequest();
+    public Proto.ZRangeResponse doHandle(Proto.ZRangeRequest req) throws Exception {
         List<DBProto.ComparableString> l = getGlobalContext().getStorage().zRange(req.getKey(), req.getStart(), req.getEnd())
                 .stream()
                 .map(MemoryComparableString::toComparableString)
                 .collect(Collectors.toList());
-        responseBuilder.setZRangeResponse(Proto.ZRangeResponse.newBuilder().addAllValues(l));
+        return Proto.ZRangeResponse.newBuilder().addAllValues(l).build();
     }
 }

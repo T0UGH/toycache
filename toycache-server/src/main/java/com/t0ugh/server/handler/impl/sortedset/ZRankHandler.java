@@ -9,21 +9,20 @@ import com.t0ugh.server.utils.MessageUtils;
 import java.util.Optional;
 
 @HandlerAnnotation(type = Proto.MessageType.ZRank)
-public class ZRankHandler extends AbstractHandler {
+public class ZRankHandler extends AbstractHandler<Proto.ZRankRequest, Proto.ZRankResponse> {
 
     public ZRankHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.ZRankRequest req = request.getZRankRequest();
+    public Proto.ZRankResponse doHandle(Proto.ZRankRequest req) throws Exception {
         MessageUtils.assertStringNotNullOrEmpty(req.getMember());
         Optional<Integer> op = getGlobalContext().getStorage().zRank(req.getKey(), req.getMember());
         if(op.isPresent()){
-            responseBuilder.setZRankResponse(Proto.ZRankResponse.newBuilder().setExists(true).setRank(op.get()).build());
+            return Proto.ZRankResponse.newBuilder().setExists(true).setRank(op.get()).build();
         } else {
-            responseBuilder.setZRankResponse(Proto.ZRankResponse.newBuilder().setExists(false).build());
+            return Proto.ZRankResponse.newBuilder().setExists(false).build();
         }
     }
 }

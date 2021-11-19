@@ -6,15 +6,15 @@ import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
 @HandlerAnnotation(type = Proto.MessageType.LLen)
-public class LLenHandler extends AbstractHandler {
+public class LLenHandler extends AbstractHandler<Proto.LLenRequest, Proto.LLenResponse> {
 
     public LLenHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        int len = getGlobalContext().getStorage().lLen(request.getLLenRequest().getKey());
-        responseBuilder.setLLenResponse(Proto.LLenResponse.newBuilder().setCount(len));
+    public Proto.LLenResponse doHandle(Proto.LLenRequest lLenRequest) throws Exception {
+        int len = getGlobalContext().getStorage().lLen(lLenRequest.getKey());
+        return Proto.LLenResponse.newBuilder().setCount(len).build();
     }
 }

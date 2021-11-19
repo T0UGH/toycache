@@ -9,17 +9,16 @@ import com.t0ugh.server.utils.MessageUtils;
 import java.util.Set;
 
 @HandlerAnnotation(type = Proto.MessageType.SRandMember)
-public class SRandMemberHandler extends AbstractHandler {
+public class SRandMemberHandler extends AbstractHandler<Proto.SRandMemberRequest, Proto.SRandMemberResponse> {
 
     public SRandMemberHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.SRandMemberRequest req = request.getSRandMemberRequest();
+    public Proto.SRandMemberResponse doHandle(Proto.SRandMemberRequest req) throws Exception {
         MessageUtils.assertIntNotNegative(req.getCount());
         Set<String> setValue = getGlobalContext().getStorage().sRandMember(req.getKey(), req.getCount());
-        responseBuilder.setSRandMemberResponse(Proto.SRandMemberResponse.newBuilder().addAllSetValue(setValue));
+        return Proto.SRandMemberResponse.newBuilder().addAllSetValue(setValue).build();
     }
 }

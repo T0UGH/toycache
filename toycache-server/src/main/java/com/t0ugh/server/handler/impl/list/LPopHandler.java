@@ -6,16 +6,16 @@ import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
 @HandlerAnnotation(type = Proto.MessageType.LPop, isWrite = true)
-public class LPopHandler extends AbstractHandler {
+public class LPopHandler extends AbstractHandler<Proto.LPopRequest, Proto.LPopResponse> {
 
     public LPopHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
+    public Proto.LPopResponse doHandle(Proto.LPopRequest lPopRequest) throws Exception {
         Proto.LPopResponse.Builder lb = Proto.LPopResponse.newBuilder();
-        getGlobalContext().getStorage().lPop(request.getLPopRequest().getKey()).ifPresent(lb::setValue);
-        responseBuilder.setLPopResponse(lb);
+        getGlobalContext().getStorage().lPop(lPopRequest.getKey()).ifPresent(lb::setValue);
+        return lb.build();
     }
 }

@@ -6,17 +6,16 @@ import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
 @HandlerAnnotation(type = Proto.MessageType.LIndex)
-public class LIndexHandler extends AbstractHandler {
+public class LIndexHandler extends AbstractHandler<Proto.LIndexRequest, Proto.LIndexResponse> {
 
     public LIndexHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.LIndexRequest req = request.getLIndexRequest();
+    public Proto.LIndexResponse doHandle(Proto.LIndexRequest req) throws Exception {
         Proto.LIndexResponse.Builder builder = Proto.LIndexResponse.newBuilder();
         getGlobalContext().getStorage().lIndex(req.getKey(), req.getIndex()).ifPresent(builder::setValue);
-        responseBuilder.setLIndexResponse(builder);
+        return builder.build();
     }
 }

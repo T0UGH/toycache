@@ -6,18 +6,16 @@ import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
 @HandlerAnnotation(type = Proto.MessageType.Exists)
-public class ExistsHandler extends AbstractHandler {
+public class ExistsHandler extends AbstractHandler<Proto.ExistsRequest, Proto.ExistsResponse> {
 
     public ExistsHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.ExistsRequest existsRequest = request.getExistsRequest();
+    public Proto.ExistsResponse doHandle(Proto.ExistsRequest existsRequest) throws Exception {
         String key = existsRequest.getKey();
         boolean exists = getGlobalContext().getStorage().exists(key);
-        responseBuilder.setExistsResponse(Proto.ExistsResponse.newBuilder().setExists(exists));
+        return Proto.ExistsResponse.newBuilder().setExists(exists).build();
     }
-
 }

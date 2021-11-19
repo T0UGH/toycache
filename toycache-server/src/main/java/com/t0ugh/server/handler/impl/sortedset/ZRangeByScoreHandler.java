@@ -11,18 +11,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @HandlerAnnotation(type = Proto.MessageType.ZRangeByScore)
-public class ZRangeByScoreHandler extends AbstractHandler {
+public class ZRangeByScoreHandler extends AbstractHandler<Proto.ZRangeByScoreRequest, Proto.ZRangeByScoreResponse> {
 
     public ZRangeByScoreHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.ZRangeByScoreRequest req = request.getZRangeByScoreRequest();
+    public Proto.ZRangeByScoreResponse doHandle(Proto.ZRangeByScoreRequest req) throws Exception {
         List<DBProto.ComparableString> c = getGlobalContext().getStorage()
                 .zRangeByScore(req.getKey(), req.getMin(), req.getMax())
                 .stream().map(MemoryComparableString::toComparableString).collect(Collectors.toList());
-        responseBuilder.setZRangeByScoreResponse(Proto.ZRangeByScoreResponse.newBuilder().addAllValues(c));
+        return Proto.ZRangeByScoreResponse.newBuilder().addAllValues(c).build();
     }
 }

@@ -6,16 +6,15 @@ import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
 @HandlerAnnotation(type = Proto.MessageType.ZCount)
-public class ZCountHandler extends AbstractHandler {
+public class ZCountHandler extends AbstractHandler<Proto.ZCountRequest, Proto.ZCountResponse> {
 
     public ZCountHandler(GlobalContext globalContext) {
         super(globalContext);
     }
 
     @Override
-    public void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception {
-        Proto.ZCountRequest req = request.getZCountRequest();
+    public Proto.ZCountResponse doHandle(Proto.ZCountRequest req) throws Exception {
         int count = getGlobalContext().getStorage().zCount(req.getKey(), req.getMin(), req.getMax());
-        responseBuilder.setZCountResponse(Proto.ZCountResponse.newBuilder().setCount(count));
+        return Proto.ZCountResponse.newBuilder().setCount(count).build();
     }
 }
