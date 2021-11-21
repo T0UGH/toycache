@@ -21,6 +21,7 @@ public class RollBackerFactory {
     public RollBackerFactory(GlobalContext globalContext) {
         this.m = Maps.newHashMap();
         this.globalContext = globalContext;
+        registerAll();
     }
 
 

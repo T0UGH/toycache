@@ -4,6 +4,7 @@ import com.t0ugh.server.config.Configs;
 import com.t0ugh.server.db.DBExecutor;
 import com.t0ugh.server.executor.MemoryOperationExecutor;
 import com.t0ugh.server.handler.HandlerFactory;
+import com.t0ugh.server.rollbacker.RollBackerFactory;
 import com.t0ugh.server.storage.MemoryStorage;
 import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.utils.WriteLogUtils;
@@ -35,6 +36,7 @@ public class BaseTest {
         testContext.setDbExecutor(new DBExecutor(testContext));
         testContext.setWriteLogOutputStream(writeLogOutputStream);
         testContext.setWriteLogExecutor(new WriteLogExecutor(testContext));
+        testContext.setRollBackerFactory(new RollBackerFactory(testContext));
     }
 
     @After

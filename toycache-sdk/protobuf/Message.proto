@@ -183,8 +183,8 @@ message Response {
   ZRangeByScoreResponse zRangeByScoreResponse = 41;
   ZRemResponse zRemResponse = 42;
   MultiResponse multiResponse = 43;
-  CheckGetResponse CheckGetResponse = 44;
-  CheckExistsResponse CheckExistsResponse = 45;
+  CheckGetResponse checkGetResponse = 44;
+  CheckExistsResponse checkExistsResponse = 45;
 }
 
 message MultiResponse {
