@@ -5,12 +5,14 @@ import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.rollbacker.RollBacker;
+import com.t0ugh.server.rollbacker.RollBackerAnnotation;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @RequiredArgsConstructor
+@RollBackerAnnotation(messageType = Proto.MessageType.LTrim)
 public class LTrimRollBacker implements RollBacker {
 
     private boolean doNothing;

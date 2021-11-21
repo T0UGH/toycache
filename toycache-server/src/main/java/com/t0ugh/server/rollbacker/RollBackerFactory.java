@@ -16,7 +16,7 @@ import java.util.Set;
 public class RollBackerFactory {
 
     private final Map<Proto.MessageType, Constructor<? extends RollBacker>> m;
-    private GlobalContext globalContext;
+    private final GlobalContext globalContext;
 
     public RollBackerFactory(GlobalContext globalContext) {
         this.m = Maps.newHashMap();
@@ -28,7 +28,7 @@ public class RollBackerFactory {
         if (!m.containsKey(messageType))
             return Optional.empty();
         try {
-            return Optional.of((RollBacker) m.get(messageType).newInstance(globalContext));
+            return Optional.of(m.get(messageType).newInstance(globalContext));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             return Optional.empty();
         }
@@ -43,7 +43,8 @@ public class RollBackerFactory {
         Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(RollBackerAnnotation.class);
         classSet.forEach(clazz -> {
             try {
-                Proto.MessageType messageType = clazz.getAnnotation(RollBackerAnnotation.class).type();
+                Proto.MessageType messageType = clazz.getAnnotation(RollBackerAnnotation.class).messageType();
+                @SuppressWarnings("unchecked")
                 Constructor<? extends RollBacker> cons = (Constructor<? extends RollBacker>) clazz.getConstructor(GlobalContext.class);
                 register(messageType, cons);
             } catch (NoSuchMethodException e) {

@@ -35,7 +35,7 @@ public abstract class AbstractHandler<Req, Res> implements Handler {
         try {
             // 首先要校验信息
             if (!MessageUtils.containRequest(request)){
-                throw new IllegalArgumentException(String.format("Request[%s] doesn't exist", request.getMessageType().getValueDescriptor().getName()));
+                throw new InvalidParamException();
             }
             Optional<String> optional = MessageUtils.getKeyFromRequest(request);
             // 如果请求中含有key并且需要判断超时, 就检查超时
@@ -44,9 +44,7 @@ public abstract class AbstractHandler<Req, Res> implements Handler {
                 getGlobalContext().getStorage().delIfExpired(optional.get());
             }
             // 然后调用抽象方法来做实际的处理
-            Proto.Response.Builder okBuilder = MessageUtils.okBuilder();
-
-            okBuilder.setMessageType(request.getMessageType());
+            Proto.Response.Builder okBuilder = MessageUtils.okBuilder(request.getMessageType());
             // 如果能执行到这里, 基本就是没有异常了
             // 如果是写请求并且当前不是在执行事务，就更新一下内部状态并且向writeLogExecutor提交一个写日志
             if(!StateUtils.isNowTransaction(globalContext) &&
