@@ -2,7 +2,6 @@ package com.t0ugh.server.handler;
 
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
-import com.t0ugh.server.storage.Storage;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 
@@ -41,7 +40,7 @@ public class HandlerFactory {
         Set<Class<?>> classSet = reflections.getTypesAnnotatedWith(HandlerAnnotation.class);
         classSet.forEach(clazz -> {
             try {
-                Proto.MessageType messageType = clazz.getAnnotation(HandlerAnnotation.class).type();
+                Proto.MessageType messageType = clazz.getAnnotation(HandlerAnnotation.class).messageType();
                 Constructor<?> cons = clazz.getConstructor(GlobalContext.class);
                 register(messageType, (Handler) cons.newInstance(globalContext));
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {

@@ -2,12 +2,13 @@ package com.t0ugh.server.handler.impl.list;
 
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
+import com.t0ugh.server.enums.HandlerType;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
 import java.util.List;
 
-@HandlerAnnotation(type = Proto.MessageType.LRange, isWrite = true)
+@HandlerAnnotation(messageType = Proto.MessageType.LRange, handlerType= HandlerType.Read)
 public class LRangeHandler extends AbstractHandler<Proto.LRangeRequest, Proto.LRangeResponse> {
 
     public LRangeHandler(GlobalContext globalContext) {

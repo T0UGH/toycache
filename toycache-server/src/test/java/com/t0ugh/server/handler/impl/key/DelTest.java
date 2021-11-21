@@ -36,7 +36,7 @@ public class DelTest extends BaseTest {
         Proto.Response response = handler.handle(request);
         TestUtils.assertOK(Proto.MessageType.Del, response);
         assertTrue(response.getDelResponse().getOk());
-        assertNull(testContext.getStorage().get("Hello"));
+        assertNull(testContext.getStorage().get("Hello").orElse(null));
     }
 
     /**
@@ -53,7 +53,7 @@ public class DelTest extends BaseTest {
         Proto.Response response = handler.handle(request);
         TestUtils.assertOK(Proto.MessageType.Del, response);
         assertFalse(response.getDelResponse().getOk());
-        assertNull(testContext.getStorage().get("Hi"));
+        assertNull(testContext.getStorage().get("Hi").orElse(null));
     }
 
     /**
@@ -71,6 +71,6 @@ public class DelTest extends BaseTest {
         Proto.Response response = handler.handle(request);
         TestUtils.assertOK(Proto.MessageType.Del, response);
         assertFalse(response.getDelResponse().getOk());
-        assertNull(testContext.getStorage().get("Hello"));
+        assertNull(testContext.getStorage().get("Hello").orElse(null));
     }
 }

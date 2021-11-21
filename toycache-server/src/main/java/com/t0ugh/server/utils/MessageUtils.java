@@ -2,8 +2,10 @@ package com.t0ugh.server.utils;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.t0ugh.sdk.exception.InvalidParamException;
 import com.t0ugh.sdk.proto.Proto;
+import com.t0ugh.server.enums.HandlerType;
 import com.t0ugh.server.handler.Handler;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.HandlerFactory;
@@ -16,9 +18,53 @@ import java.util.*;
 @Slf4j
 public class MessageUtils {
 
+    public static Optional<HandlerType> getHandlerType(Proto.MessageType messageType, HandlerFactory handlerFactory){
+        Optional<Handler> op = handlerFactory.getHandler(messageType);
+        return op.map(handler -> handler.getClass().getAnnotation(HandlerAnnotation.class).handlerType());
+    }
+
+    public static boolean isTransactionSupported(Proto.MessageType messageType, HandlerFactory handlerFactory){
+        Optional<Handler> op = handlerFactory.getHandler(messageType);
+        Set<HandlerType> supportedHandlerType = Sets.newHashSet(HandlerType.Check, HandlerType.Write);
+        return op.map(handler ->
+                        supportedHandlerType.contains( handler.getClass().getAnnotation(HandlerAnnotation.class).handlerType()))
+                .orElse(false);
+    }
+
     public static Proto.Response.Builder okBuilder() {
         return Proto.Response.newBuilder()
                 .setResponseCode(Proto.ResponseCode.OK);
+    }
+
+    public static Proto.MultiResponse.Builder messageTypeNotSupportedMultiResponseBuilder(Proto.MultiResponse.Builder builder,
+                                                             Proto.Request causedByReq) {
+        return failMultiResponseBuilder(builder, causedByReq,
+                Proto.Response.newBuilder().setResponseCode(Proto.ResponseCode.MessageTypeNotSupported).build());
+    }
+
+    public static Proto.MultiResponse.Builder failMultiResponseBuilder(Proto.MultiResponse.Builder builder,
+                                                          Proto.Request causedByReq, Proto.Response causedByResp) {
+        builder.setPass(false);
+        builder.setCausedByRequest(causedByReq);
+        builder.setCausedByResponse(causedByResp);
+        builder.clearResponses();
+        return builder;
+    }
+
+    public static Proto.Response.Builder okBuilder(Proto.MessageType messageType) {
+        return Proto.Response.newBuilder()
+                .setResponseCode(Proto.ResponseCode.OK)
+                .setMessageType(messageType);
+    }
+
+    public static String getMessageTypeCamelString(Proto.MessageType messageType){
+        String ori = messageType.getValueDescriptor().getName();
+        return ori.substring(0, 1).toLowerCase(Locale.ROOT) + ori.substring(1);
+    }
+
+    public static Proto.Response.Builder builderWithCode(Proto.ResponseCode code) {
+        return Proto.Response.newBuilder()
+                .setResponseCode(code);
     }
 
     public static Proto.Response responseWithCode(Proto.ResponseCode code) {
@@ -29,7 +75,9 @@ public class MessageUtils {
 
     public static boolean isWriteRequest(Proto.MessageType messageType, HandlerFactory handlerFactory){
         Optional<Handler> op = handlerFactory.getHandler(messageType);
-        return op.map(handler -> handler.getClass().getAnnotation(HandlerAnnotation.class).isWrite()).orElse(false);
+        return op.map(handler ->
+                Objects.equals(HandlerType.Write, handler.getClass().getAnnotation(HandlerAnnotation.class).handlerType()))
+                .orElse(false);
     }
 
     /**

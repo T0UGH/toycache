@@ -1,5 +1,6 @@
 package com.t0ugh.server.handler.impl;
 
+import com.t0ugh.sdk.exception.CheckNotPassException;
 import com.t0ugh.sdk.exception.InvalidParamException;
 import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.Proto;
@@ -7,11 +8,11 @@ import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.handler.Handler;
 import com.t0ugh.server.utils.HandlerUtils;
 import com.t0ugh.server.utils.MessageUtils;
+import com.t0ugh.server.utils.StateUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -46,21 +47,27 @@ public abstract class AbstractHandler<Req, Res> implements Handler {
             Proto.Response.Builder okBuilder = MessageUtils.okBuilder();
 
             okBuilder.setMessageType(request.getMessageType());
-            // 如果能执行到这里, 基本就是没有异常了, 如果是写请求更新一下内部状态并且向writeLogExecutor提交一个写日志
-            if(MessageUtils.isWriteRequest(request.getMessageType(), getGlobalContext().getHandlerFactory())){
+            // 如果能执行到这里, 基本就是没有异常了
+            // 如果是写请求并且当前不是在执行事务，就更新一下内部状态并且向writeLogExecutor提交一个写日志
+            if(!StateUtils.isNowTransaction(globalContext) &&
+                    MessageUtils.isWriteRequest(request.getMessageType(), getGlobalContext().getHandlerFactory())){
                 // 更新一下内部状态
                 getGlobalContext().getGlobalState().getUpdateCount().incrementAndGet();
                 // 向writeLogExecutor提交一个写日志
                 getGlobalContext().getWriteLogExecutor().submit(request);
             }
-            String ori = request.getMessageType().getValueDescriptor().getName();
-            String messageTypeStr = ori.substring(0, 1).toLowerCase(Locale.ROOT) + ori.substring(1);
+            String messageTypeStr = MessageUtils.getMessageTypeCamelString(request.getMessageType());
             @SuppressWarnings("unchecked")
             Req req = (Req) request.getField(request.getDescriptorForType().findFieldByName(messageTypeStr + "Request"));
             Res res = doHandle(req);
             okBuilder.setField(okBuilder.getDescriptorForType().findFieldByName(messageTypeStr + "Response"), res);
             return okBuilder.build();
             // 统一的异常处理
+        } catch (CheckNotPassException e) {
+            Proto.Response.Builder builder = MessageUtils.builderWithCode(Proto.ResponseCode.CheckNotPass);
+            String messageTypeStr = MessageUtils.getMessageTypeCamelString(request.getMessageType());
+            builder.setField(builder.getDescriptorForType().findFieldByName(messageTypeStr + "Response"), e.getResponse());
+            return builder.build();
         } catch (ValueTypeNotMatchException e) {
             return MessageUtils.responseWithCode(Proto.ResponseCode.ValueTypeNotMatch);
         } catch (InvalidParamException e) {

@@ -1,10 +1,10 @@
 package com.t0ugh.server.storage;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Option;
 import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.server.utils.DBUtils;
@@ -41,13 +41,17 @@ public class MemoryStorage implements Storage{
     }
 
     @Override
-    public String get(String key) throws ValueTypeNotMatchException {
+    public Optional<String> get(String key) throws ValueTypeNotMatchException {
         MemoryValueObject vo = data.get(key);
         if(Objects.isNull(vo)){
-            return null;
+            return Optional.empty();
         }
         assertTypeMatch(vo, DBProto.ValueType.ValueTypeString);
-        return data.get(key).getStringValue();
+        String value = data.get(key).getStringValue();
+        if(Strings.isNullOrEmpty(value)){
+            return Optional.empty();
+        }
+        return Optional.of(value);
     }
 
     @Override
@@ -154,6 +158,19 @@ public class MemoryStorage implements Storage{
         assertTypeMatch(vo, DBProto.ValueType.ValueTypeList);
         List<String> listValue = vo.getListValue();
         listValue.addAll(0, values);
+        return listValue.size();
+    }
+
+    @Override
+    public int rPush(String key, List<String> values) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            data.put(key, MemoryValueObject.newInstance(values));
+            return values.size();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeList);
+        List<String> listValue = vo.getListValue();
+        listValue.addAll(values);
         return listValue.size();
     }
 

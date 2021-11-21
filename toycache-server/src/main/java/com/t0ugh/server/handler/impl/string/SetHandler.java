@@ -2,11 +2,17 @@ package com.t0ugh.server.handler.impl.string;
 
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
+import com.t0ugh.server.enums.HandlerType;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
+import com.t0ugh.server.utils.MessageUtils;
 
-@HandlerAnnotation(type = Proto.MessageType.Set, isWrite = true)
+import java.util.Optional;
+
+@HandlerAnnotation(messageType = Proto.MessageType.Set, handlerType= HandlerType.Write)
 public class SetHandler extends AbstractHandler<Proto.SetRequest, Proto.SetResponse> {
+
+    private Optional<String> oldValue;
 
     public SetHandler(GlobalContext globalContext) {
         super(globalContext);
@@ -14,7 +20,19 @@ public class SetHandler extends AbstractHandler<Proto.SetRequest, Proto.SetRespo
 
     @Override
     public Proto.SetResponse doHandle(Proto.SetRequest setRequest) throws Exception {
+        oldValue = getGlobalContext().getStorage().get(setRequest.getKey());
+        MessageUtils.assertStringNotNullOrEmpty(setRequest.getValue());
         getGlobalContext().getStorage().set(setRequest.getKey(), setRequest.getValue());
         return Proto.SetResponse.newBuilder().setOk(true).build();
     }
+
+    public void doUndo(Proto.SetRequest setRequest){
+        if(oldValue.isPresent()){
+            getGlobalContext().getStorage().set(setRequest.getKey(), oldValue.get());
+        } else {
+            getGlobalContext().getStorage().del(setRequest.getKey());
+        }
+    }
+
+
 }

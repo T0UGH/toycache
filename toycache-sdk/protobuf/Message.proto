@@ -61,6 +61,12 @@ enum MessageType {
   ZRangeByScore = 36; // 返回有序集中，分数值大于等于min小于等于max的所有元素
   ZRem = 37; // 删除
 
+  // 事务
+  Multi = 38;
+  CheckGet = 39;
+  CheckExists = 40;
+
+
   InnerClearExpire = 101;
   InnerSave = 102;
   InnerSaveFinish = 103;
@@ -80,6 +86,10 @@ enum ResponseCode {
   ValueTypeNotMatch = 3;
   // 指定的Key已经过期了
   KeyExpired = 4;
+  // 不支持此MessageType
+  MessageTypeNotSupported = 5;
+  // Check检查没通过
+  CheckNotPass = 6;
 }
 
 message Request {
@@ -124,6 +134,9 @@ message Request {
   ZRangeRequest zRangeRequest = 39;
   ZRangeByScoreRequest zRangeByScoreRequest = 40;
   ZRemRequest zRemRequest = 41;
+  MultiRequest multiRequest = 42;
+  CheckGetRequest checkGetRequest = 43;
+  CheckExistsRequest checkExistsRequest = 44;
 }
 
 message Response {
@@ -169,6 +182,40 @@ message Response {
   ZRangeResponse zRangeResponse = 40;
   ZRangeByScoreResponse zRangeByScoreResponse = 41;
   ZRemResponse zRemResponse = 42;
+  MultiResponse multiResponse = 43;
+  CheckGetResponse CheckGetResponse = 44;
+  CheckExistsResponse CheckExistsResponse = 45;
+}
+
+message MultiResponse {
+  bool pass = 1;
+  repeated Response responses = 2;
+  Request causedByRequest = 3;
+  Response causedByResponse = 4;
+}
+
+message MultiRequest {
+  repeated Request requests = 1;
+}
+
+message CheckGetRequest {
+  string key = 1;
+  string value = 2;
+}
+
+message CheckGetResponse {
+  bool pass = 1;
+  string actualValue = 2;
+}
+
+message CheckExistsRequest {
+  string key = 1;
+  bool exists = 2;
+}
+
+message CheckExistsResponse {
+  bool pass = 1;
+  bool actualExists = 2;
 }
 
 message ZRangeByScoreRequest {

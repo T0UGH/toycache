@@ -2,10 +2,11 @@ package com.t0ugh.server.handler.impl.key;
 
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
+import com.t0ugh.server.enums.HandlerType;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
-@HandlerAnnotation(type = Proto.MessageType.Exists)
+@HandlerAnnotation(messageType = Proto.MessageType.Exists, handlerType= HandlerType.Read)
 public class ExistsHandler extends AbstractHandler<Proto.ExistsRequest, Proto.ExistsResponse> {
 
     public ExistsHandler(GlobalContext globalContext) {

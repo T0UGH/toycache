@@ -2,6 +2,7 @@ package com.t0ugh.server.handler.impl.control;
 
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
+import com.t0ugh.server.enums.HandlerType;
 import com.t0ugh.server.enums.SaveState;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
@@ -9,7 +10,7 @@ import com.t0ugh.server.utils.DBUtils;
 
 import java.util.Objects;
 
-@HandlerAnnotation(type = Proto.MessageType.Save, checkExpire = false)
+@HandlerAnnotation(messageType = Proto.MessageType.Save, checkExpire = false, handlerType= HandlerType.Other)
 public class SaveHandler extends AbstractHandler<Proto.SaveRequest, Proto.SaveResponse> {
 
     public SaveHandler(GlobalContext globalContext) {

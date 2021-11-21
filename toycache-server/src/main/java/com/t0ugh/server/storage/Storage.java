@@ -11,7 +11,7 @@ public interface Storage {
     Map<String, MemoryValueObject> backdoor();
     Map<String, Long> expireBackdoor();
     boolean exists(String key);
-    String get(String key) throws ValueTypeNotMatchException;
+    Optional<String> get(String key) throws ValueTypeNotMatchException;
 
     void set(String key, String value);
 
@@ -30,6 +30,9 @@ public interface Storage {
     Set<String> sRandMember(String key, int count) throws ValueTypeNotMatchException;
 
     int lPush(String key, List<String> value) throws ValueTypeNotMatchException;
+
+    int rPush(String key, List<String> value) throws ValueTypeNotMatchException;
+
 
     Optional<String> lIndex(String key, int index) throws ValueTypeNotMatchException;
 

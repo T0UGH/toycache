@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
+import com.t0ugh.server.enums.HandlerType;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 import com.t0ugh.server.storage.MemoryComparableString;
@@ -11,7 +12,7 @@ import com.t0ugh.server.storage.MemoryComparableString;
 import java.util.NavigableSet;
 import java.util.stream.Collectors;
 
-@HandlerAnnotation(type = Proto.MessageType.ZAdd, isWrite = true)
+@HandlerAnnotation(messageType = Proto.MessageType.ZAdd, handlerType= HandlerType.Read)
 public class ZAddHandler extends AbstractHandler<Proto.ZAddRequest, Proto.ZAddResponse> {
 
     public ZAddHandler(GlobalContext globalContext) {

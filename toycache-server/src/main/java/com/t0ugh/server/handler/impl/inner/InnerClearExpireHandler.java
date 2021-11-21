@@ -2,10 +2,11 @@ package com.t0ugh.server.handler.impl.inner;
 
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
+import com.t0ugh.server.enums.HandlerType;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
-@HandlerAnnotation(type = Proto.MessageType.InnerClearExpire, checkExpire = false)
+@HandlerAnnotation(messageType = Proto.MessageType.InnerClearExpire, checkExpire = false, handlerType= HandlerType.Write)
 public class InnerClearExpireHandler extends AbstractHandler<Proto.InnerClearExpireRequest, Proto.InnerClearExpireResponse> {
 
     public InnerClearExpireHandler(GlobalContext globalContext) {

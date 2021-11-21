@@ -3,12 +3,13 @@ package com.t0ugh.server.handler.impl.sortedset;
 import com.google.common.base.Strings;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
+import com.t0ugh.server.enums.HandlerType;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 
 import java.util.stream.Collectors;
 
-@HandlerAnnotation(type = Proto.MessageType.ZRem, isWrite = true)
+@HandlerAnnotation(messageType = Proto.MessageType.ZRem, handlerType= HandlerType.Write)
 public class ZRemHandler extends AbstractHandler<Proto.ZRemRequest, Proto.ZRemResponse> {
 
     public ZRemHandler(GlobalContext globalContext) {

@@ -3,11 +3,12 @@ package com.t0ugh.server.handler.impl.map;
 
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
+import com.t0ugh.server.enums.HandlerType;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractHandler;
 import com.t0ugh.server.utils.MessageUtils;
 
-@HandlerAnnotation(type = Proto.MessageType.HSet, isWrite = true)
+@HandlerAnnotation(messageType = Proto.MessageType.HSet, handlerType= HandlerType.Write)
 public class HSetHandler extends AbstractHandler<Proto.HSetRequest, Proto.HSetResponse> {
 
     public HSetHandler(GlobalContext globalContext) {
