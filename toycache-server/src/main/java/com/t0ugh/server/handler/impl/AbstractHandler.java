@@ -63,6 +63,7 @@ public abstract class AbstractHandler<Req, Res> implements Handler {
             // 统一的异常处理
         } catch (CheckNotPassException e) {
             Proto.Response.Builder builder = MessageUtils.builderWithCode(Proto.ResponseCode.CheckNotPass);
+            builder.setMessageType(request.getMessageType());
             String messageTypeStr = MessageUtils.getMessageTypeCamelString(request.getMessageType());
             builder.setField(builder.getDescriptorForType().findFieldByName(messageTypeStr + "Response"), e.getResponse());
             return builder.build();

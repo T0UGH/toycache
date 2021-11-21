@@ -47,9 +47,10 @@ public class MultiHandlerTest extends BaseTest {
                 .setMessageType(Proto.MessageType.Multi)
                 .setMultiRequest(multiRequest)
                 .build();
-        Handler handler = testContext.getHandlerFactory().getHandler(Proto.MessageType.Multi).get();
+        Handler handler = testContext.getHandlerFactory().getHandler(Proto.MessageType.Multi).orElseThrow(UnsupportedOperationException::new);
         Proto.Response response = handler.handle(request);
         TestUtils.assertOK(Proto.MessageType.Multi, response);
+        assertTrue(response.getMultiResponse().getPass());
         assertEquals(2, response.getMultiResponse().getResponsesCount());
         List<Proto.Response> expectedResponses = Lists.newArrayList(
                 Proto.Response.newBuilder()
@@ -70,5 +71,44 @@ public class MultiHandlerTest extends BaseTest {
         for (int i = 0; i < expectedResponses.size(); i++) {
             assertEquals(expectedResponses.get(i), response.getMultiResponse().getResponses(i));
         }
+    }
+
+    @Test
+    public void test2() throws Exception {
+        Proto.MultiRequest multiRequest = Proto.MultiRequest.newBuilder()
+                .addRequests(Proto.Request.newBuilder()
+                        .setMessageType(Proto.MessageType.CheckGet)
+                        .setCheckGetRequest(Proto.CheckGetRequest.newBuilder()
+                                .setKey("Counter")
+                                .setValue("1")
+                                .build())
+                        .build())
+                .addRequests(Proto.Request.newBuilder()
+                        .setMessageType(Proto.MessageType.Set)
+                        .setSetRequest(Proto.SetRequest.newBuilder()
+                                .setKey("Counter")
+                                .setValue("2")
+                                .build())
+                        .build())
+                .build();
+        Proto.Request request = Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.Multi)
+                .setMultiRequest(multiRequest)
+                .build();
+        Handler handler = testContext.getHandlerFactory().getHandler(Proto.MessageType.Multi).orElseThrow(UnsupportedOperationException::new);
+        Proto.Response response = handler.handle(request);
+        TestUtils.assertOK(Proto.MessageType.Multi, response);
+        assertEquals(0, response.getMultiResponse().getResponsesCount());
+        Proto.Response causedByResponse = Proto.Response.newBuilder()
+                .setMessageType(Proto.MessageType.CheckGet)
+                .setResponseCode(Proto.ResponseCode.CheckNotPass)
+                .setCheckGetResponse(Proto.CheckGetResponse.newBuilder()
+                        .setPass(false)
+                        .setActualValue("0")
+                        .build())
+                .build();
+        assertFalse(response.getMultiResponse().getPass());
+        assertEquals(causedByResponse, response.getMultiResponse().getCausedByResponse());
+        assertEquals(multiRequest.getRequests(0), response.getMultiResponse().getCausedByRequest());
     }
 }
