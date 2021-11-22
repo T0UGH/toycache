@@ -3,14 +3,14 @@ package com.t0ugh.server.handler.impl.set;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.enums.HandlerType;
+import com.t0ugh.server.handler.impl.AbstractGenericsHandler;
 import com.t0ugh.server.handler.HandlerAnnotation;
-import com.t0ugh.server.handler.impl.AbstractHandler;
 import com.t0ugh.server.utils.MessageUtils;
 
 import java.util.Set;
 
 @HandlerAnnotation(messageType = Proto.MessageType.SPop, handlerType= HandlerType.Write)
-public class SPopHandler extends AbstractHandler<Proto.SPopRequest, Proto.SPopResponse> {
+public class SPopHandler extends AbstractGenericsHandler<Proto.SPopRequest, Proto.SPopResponse> {
 
     public SPopHandler(GlobalContext globalContext) {
         super(globalContext);

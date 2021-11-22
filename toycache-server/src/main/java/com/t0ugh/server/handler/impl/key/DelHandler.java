@@ -3,11 +3,11 @@ package com.t0ugh.server.handler.impl.key;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.enums.HandlerType;
+import com.t0ugh.server.handler.impl.AbstractGenericsHandler;
 import com.t0ugh.server.handler.HandlerAnnotation;
-import com.t0ugh.server.handler.impl.AbstractHandler;
 
 @HandlerAnnotation(messageType = Proto.MessageType.Del, handlerType= HandlerType.Write)
-public class DelHandler extends AbstractHandler<Proto.DelRequest, Proto.DelResponse> {
+public class DelHandler extends AbstractGenericsHandler<Proto.DelRequest, Proto.DelResponse> {
 
     public DelHandler(GlobalContext globalContext) {
         super(globalContext);

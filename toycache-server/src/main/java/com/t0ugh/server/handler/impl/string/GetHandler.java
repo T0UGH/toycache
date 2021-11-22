@@ -3,11 +3,11 @@ package com.t0ugh.server.handler.impl.string;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.enums.HandlerType;
+import com.t0ugh.server.handler.impl.AbstractGenericsHandler;
 import com.t0ugh.server.handler.HandlerAnnotation;
-import com.t0ugh.server.handler.impl.AbstractHandler;
 
 @HandlerAnnotation(messageType = Proto.MessageType.Get, handlerType= HandlerType.Read)
-public class GetHandler extends AbstractHandler<Proto.GetRequest, Proto.GetResponse> {
+public class GetHandler extends AbstractGenericsHandler<Proto.GetRequest, Proto.GetResponse> {
 
     public GetHandler(GlobalContext globalContext) {
         super(globalContext);

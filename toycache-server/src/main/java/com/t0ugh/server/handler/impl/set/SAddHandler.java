@@ -5,15 +5,15 @@ import com.google.common.collect.Sets;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.enums.HandlerType;
+import com.t0ugh.server.handler.impl.AbstractGenericsHandler;
 import com.t0ugh.server.handler.HandlerAnnotation;
-import com.t0ugh.server.handler.impl.AbstractHandler;
 import com.t0ugh.server.utils.MessageUtils;
 
 import java.util.Set;
 
 
 @HandlerAnnotation(messageType = Proto.MessageType.SAdd, handlerType= HandlerType.Write)
-public class SAddHandler extends AbstractHandler<Proto.SAddRequest, Proto.SAddResponse> {
+public class SAddHandler extends AbstractGenericsHandler<Proto.SAddRequest, Proto.SAddResponse> {
 
     public SAddHandler(GlobalContext globalContext) {
         super(globalContext);

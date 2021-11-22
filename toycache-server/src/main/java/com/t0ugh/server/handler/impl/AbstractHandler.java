@@ -22,7 +22,7 @@ import java.util.Optional;
  * */
 @Slf4j
 @AllArgsConstructor
-public abstract class AbstractHandler<Req, Res> implements Handler {
+public abstract class AbstractHandler implements Handler {
 
 
     @Getter
@@ -54,11 +54,7 @@ public abstract class AbstractHandler<Req, Res> implements Handler {
                 // 向writeLogExecutor提交一个写日志
                 getGlobalContext().getWriteLogExecutor().submit(request);
             }
-            String messageTypeStr = MessageUtils.getMessageTypeCamelString(request.getMessageType());
-            @SuppressWarnings("unchecked")
-            Req req = (Req) request.getField(request.getDescriptorForType().findFieldByName(messageTypeStr + "Request"));
-            Res res = doHandle(req);
-            okBuilder.setField(okBuilder.getDescriptorForType().findFieldByName(messageTypeStr + "Response"), res);
+            doHandle(request, okBuilder);
             return okBuilder.build();
             // 统一的异常处理
         } catch (CheckNotPassException e) {
@@ -78,5 +74,5 @@ public abstract class AbstractHandler<Req, Res> implements Handler {
 
     }
 
-    public abstract Res doHandle(Req req) throws Exception;
+    public abstract void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception;
 }

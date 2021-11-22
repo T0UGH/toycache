@@ -3,12 +3,12 @@ package com.t0ugh.server.handler.impl.map;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.enums.HandlerType;
+import com.t0ugh.server.handler.impl.AbstractGenericsHandler;
 import com.t0ugh.server.handler.HandlerAnnotation;
-import com.t0ugh.server.handler.impl.AbstractHandler;
 import com.t0ugh.server.utils.MessageUtils;
 
 @HandlerAnnotation(messageType = Proto.MessageType.HGet, handlerType= HandlerType.Read)
-public class HGetHandler extends AbstractHandler<Proto.HGetRequest, Proto.HGetResponse> {
+public class HGetHandler extends AbstractGenericsHandler<Proto.HGetRequest, Proto.HGetResponse> {
 
     public HGetHandler(GlobalContext globalContext) {
         super(globalContext);

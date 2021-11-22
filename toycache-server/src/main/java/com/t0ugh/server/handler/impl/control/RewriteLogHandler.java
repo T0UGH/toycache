@@ -4,13 +4,13 @@ import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.enums.HandlerType;
 import com.t0ugh.server.enums.RewriteLogState;
+import com.t0ugh.server.handler.impl.AbstractGenericsHandler;
 import com.t0ugh.server.handler.HandlerAnnotation;
-import com.t0ugh.server.handler.impl.AbstractHandler;
 
 import java.util.Objects;
 
 @HandlerAnnotation(messageType = Proto.MessageType.RewriteLog, checkExpire = false, handlerType= HandlerType.Other)
-public class RewriteLogHandler extends AbstractHandler<Proto.RewriteLogRequest, Proto.RewriteLogResponse> {
+public class RewriteLogHandler extends AbstractGenericsHandler<Proto.RewriteLogRequest, Proto.RewriteLogResponse> {
 
     public RewriteLogHandler(GlobalContext globalContext) {
         super(globalContext);

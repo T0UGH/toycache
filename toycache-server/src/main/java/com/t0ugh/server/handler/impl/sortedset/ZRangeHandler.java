@@ -4,15 +4,15 @@ import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.enums.HandlerType;
+import com.t0ugh.server.handler.impl.AbstractGenericsHandler;
 import com.t0ugh.server.handler.HandlerAnnotation;
-import com.t0ugh.server.handler.impl.AbstractHandler;
 import com.t0ugh.server.storage.MemoryComparableString;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @HandlerAnnotation(messageType = Proto.MessageType.ZRange, handlerType= HandlerType.Read)
-public class ZRangeHandler extends AbstractHandler<Proto.ZRangeRequest, Proto.ZRangeResponse> {
+public class ZRangeHandler extends AbstractGenericsHandler<Proto.ZRangeRequest, Proto.ZRangeResponse> {
 
     public ZRangeHandler(GlobalContext globalContext) {
         super(globalContext);

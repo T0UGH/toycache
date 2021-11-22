@@ -65,8 +65,16 @@ enum MessageType {
   Multi = 38;
   CheckGet = 39;
   CheckExists = 40;
+  CheckLIndex = 41;
+  CheckLLen = 42;
+  CheckLRange = 43;
+  CheckHExists = 44;
+  CheckHGet = 45;
+  CheckHGetAll = 46;
+  CheckHKeys = 47;
+  CheckHLen = 48;
 
-
+  // 内部消息
   InnerClearExpire = 101;
   InnerSave = 102;
   InnerSaveFinish = 103;
@@ -137,6 +145,14 @@ message Request {
   MultiRequest multiRequest = 42;
   CheckGetRequest checkGetRequest = 43;
   CheckExistsRequest checkExistsRequest = 44;
+  CheckLIndexRequest checkLIndexRequest = 45;
+  CheckLLenRequest checkLLenRequest = 46;
+  CheckLRangeRequest checkLRangeRequest = 47;
+  CheckHExistsRequest checkHExistsRequest = 48;
+  CheckHGetRequest checkHGetRequest = 49;
+  CheckHGetAllRequest checkHGetAllRequest = 50;
+  CheckHKeysRequest checkHKeysRequest = 51;
+  CheckHLenRequest checkHLenRequest = 52;
 }
 
 message Response {
@@ -185,6 +201,101 @@ message Response {
   MultiResponse multiResponse = 43;
   CheckGetResponse checkGetResponse = 44;
   CheckExistsResponse checkExistsResponse = 45;
+  CheckLIndexResponse checkLIndexResponse = 46;
+  CheckLLenResponse checkLLenResponse = 47;
+  CheckLRangeResponse checkLRangeResponse = 48;
+  CheckHExistsResponse checkHExistsResponse = 49;
+  CheckHGetResponse checkHGetResponse = 50;
+  CheckHGetAllResponse checkHGetAllResponse = 51;
+  CheckHKeysResponse checkHKeysResponse = 52;
+  CheckHLenResponse checkHLenResponse = 53;
+}
+
+message CheckHLenRequest {
+  string key = 1;
+  int32 len = 2;
+}
+
+message CheckHLenResponse {
+  bool pass = 1;
+  int32 actualLen = 2;
+}
+
+message CheckHKeysRequest {
+  string key = 1;
+  repeated string fields = 2;
+}
+
+message CheckHKeysResponse {
+  bool pass = 1;
+  repeated string actualFields = 2;
+}
+
+message CheckHGetAllRequest {
+  string key = 1;
+  map<string, string> kvs = 2;
+}
+
+message CheckHGetAllResponse {
+  bool pass = 1;
+  map<string, string> actualKvs = 2;
+}
+
+message CheckHGetRequest {
+  string key = 1;
+  string field = 2;
+  string value = 3;
+}
+
+message CheckHGetResponse {
+  bool pass = 1;
+  string actualValue = 2;
+}
+
+message CheckHExistsRequest {
+  string key = 1;
+  string field = 2;
+  bool exists = 3;
+}
+
+message CheckHExistsResponse {
+  bool pass = 1;
+  bool actualExists = 2;
+}
+
+
+message CheckLRangeRequest {
+  string key = 1;
+  int32 start = 2;
+  int32 end = 3;
+  repeated string values = 4;
+}
+
+message CheckLRangeResponse {
+  bool pass = 1;
+  repeated string values = 2;
+}
+
+message CheckLLenRequest {
+  string key = 1;
+  int32 count = 2;
+}
+
+
+message CheckLLenResponse {
+  bool pass = 1;
+  int32 actualCount = 2;
+}
+
+message CheckLIndexRequest {
+  string key = 1;
+  int32 index = 2;
+  string value = 3;
+}
+
+message CheckLIndexResponse {
+  bool pass = 1;
+  string actualValue = 2;
 }
 
 message MultiResponse {

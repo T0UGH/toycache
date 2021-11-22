@@ -5,11 +5,11 @@ import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.enums.HandlerType;
 import com.t0ugh.server.enums.RewriteLogState;
+import com.t0ugh.server.handler.impl.AbstractGenericsHandler;
 import com.t0ugh.server.handler.HandlerAnnotation;
-import com.t0ugh.server.handler.impl.AbstractHandler;
 
 @HandlerAnnotation(messageType = Proto.MessageType.InnerRewriteLogFinish, checkExpire = false, handlerType= HandlerType.Other)
-public class InnerRewriteLogFinishHandler extends AbstractHandler<Proto.InnerRewriteLogFinishRequest, Proto.InnerRewriteLogFinishResponse> {
+public class InnerRewriteLogFinishHandler extends AbstractGenericsHandler<Proto.InnerRewriteLogFinishRequest, Proto.InnerRewriteLogFinishResponse> {
     public InnerRewriteLogFinishHandler(GlobalContext globalContext) {
         super(globalContext);
     }

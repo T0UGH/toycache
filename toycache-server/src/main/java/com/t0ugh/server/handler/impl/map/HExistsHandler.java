@@ -3,12 +3,12 @@ package com.t0ugh.server.handler.impl.map;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.enums.HandlerType;
+import com.t0ugh.server.handler.impl.AbstractGenericsHandler;
 import com.t0ugh.server.handler.HandlerAnnotation;
-import com.t0ugh.server.handler.impl.AbstractHandler;
 import com.t0ugh.server.utils.MessageUtils;
 
 @HandlerAnnotation(messageType = Proto.MessageType.HExists, handlerType= HandlerType.Read)
-public class HExistsHandler extends AbstractHandler<Proto.HExistsRequest, Proto.HExistsResponse> {
+public class HExistsHandler extends AbstractGenericsHandler<Proto.HExistsRequest, Proto.HExistsResponse> {
 
     public HExistsHandler(GlobalContext globalContext) {
         super(globalContext);
