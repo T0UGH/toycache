@@ -76,6 +76,11 @@ enum MessageType {
   CheckSCard = 49;
   CheckSIsMember = 50;
   CheckSMembers = 51;
+  CheckZCard = 52;
+  CheckZCount = 53;
+  CheckZRange = 54;
+  CheckZRangeByScore = 55;
+  CheckZRank = 56;
 
   // 内部消息
   InnerClearExpire = 101;
@@ -158,6 +163,11 @@ message Request {
   CheckHLenRequest checkHLenRequest = 52;
   CheckSIsMemberRequest checkSIsMemberRequest = 53;
   CheckSMembersRequest checkSMembersRequest = 54;
+  CheckZCardRequest checkZCardRequest = 55;
+  CheckZCountRequest checkZCountRequest = 56;
+  CheckZRangeRequest checkZRangeRequest = 57;
+  CheckZRangeByScoreRequest checkZRangeByScoreRequest = 58;
+  CheckZRankRequest checkZRankRequest = 59;
 }
 
 message Response {
@@ -216,6 +226,70 @@ message Response {
   CheckHLenResponse checkHLenResponse = 53;
   CheckSIsMemberResponse checkSIsMemberResponse = 54;
   CheckSMembersResponse checkSMembersResponse = 55;
+  CheckZCardResponse checkZCardResponse = 56;
+  CheckZCountResponse checkZCountResponse = 57;
+  CheckZRangeResponse checkZRangeResponse = 58;
+  CheckZRangeByScoreResponse checkZRangeByScoreResponse = 59;
+  CheckZRankResponse checkZRankResponse = 60;
+}
+
+message CheckZRankRequest {
+  string key = 1;
+  string member = 2;
+  bool exists = 3;
+  int32 rank = 4;
+}
+
+message CheckZRankResponse {
+  bool pass = 1;
+  bool actualExists = 2;
+  int32 actualRank = 3;
+}
+
+message CheckZRangeByScoreRequest {
+  string key = 1;
+  double min = 2;
+  double max = 3;
+  repeated ComparableString values = 4;
+}
+
+message CheckZRangeByScoreResponse {
+  bool pass = 1;
+  repeated ComparableString actualValues = 2;
+}
+
+message CheckZRangeRequest {
+  string key = 1;
+  int32 start = 2;
+  int32 end = 3;
+  repeated ComparableString values = 4;
+}
+
+message CheckZRangeResponse {
+  bool pass = 1;
+  repeated ComparableString actualValues = 2;
+}
+
+message CheckZCountRequest {
+  string key = 1;
+  double min = 2;
+  double max = 3;
+  int32 count = 4;
+}
+
+message CheckZCountResponse {
+  bool pass = 1;
+  int32 actualCount = 2;
+}
+
+message CheckZCardRequest {
+  string key = 1;
+  int32 count = 2;
+}
+
+message CheckZCardResponse {
+  bool pass = 1;
+  int32 actualCount = 2;
 }
 
 message CheckSMembersRequest {

@@ -1,4 +1,4 @@
-package com.t0ugh.server.handler.impl.sortedset;
+package com.t0ugh.server.handler.impl.sort;
 
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;

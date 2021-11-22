@@ -1,7 +1,6 @@
-package com.t0ugh.server.handler.impl.sortedset;
+package com.t0ugh.server.handler.impl.sort;
 
 import com.t0ugh.sdk.proto.Proto;
-import com.t0ugh.server.handler.impl.set.BaseSetHandlerTest;
 import com.t0ugh.server.utils.TestUtils;
 import org.junit.After;
 import org.junit.Before;

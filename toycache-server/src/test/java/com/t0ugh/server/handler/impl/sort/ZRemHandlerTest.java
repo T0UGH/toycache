@@ -1,4 +1,4 @@
-package com.t0ugh.server.handler.impl.sortedset;
+package com.t0ugh.server.handler.impl.sort;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

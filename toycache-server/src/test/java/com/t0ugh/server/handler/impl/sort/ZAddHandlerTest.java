@@ -1,9 +1,8 @@
-package com.t0ugh.server.handler.impl.sortedset;
+package com.t0ugh.server.handler.impl.sort;
 
 import com.google.common.collect.Lists;
 import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.sdk.proto.Proto;
-import com.t0ugh.server.handler.impl.set.BaseSetHandlerTest;
 import com.t0ugh.server.storage.MemoryComparableString;
 import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.utils.TestUtils;
@@ -12,8 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 

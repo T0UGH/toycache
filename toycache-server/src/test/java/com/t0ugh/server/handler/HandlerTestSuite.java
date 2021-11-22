@@ -10,7 +10,7 @@ import com.t0ugh.server.handler.impl.key.ExpireTest;
 import com.t0ugh.server.handler.impl.list.ListHandlerTestSuite;
 import com.t0ugh.server.handler.impl.map.MapHandlerTestSuite;
 import com.t0ugh.server.handler.impl.set.SetHandlerTestSuite;
-import com.t0ugh.server.handler.impl.sortedset.SortedSetHandlerTestSuite;
+import com.t0ugh.server.handler.impl.sort.SortedSetHandlerTestSuite;
 import com.t0ugh.server.handler.impl.string.GetTest;
 import com.t0ugh.server.handler.impl.string.SetTest;
 import org.junit.runner.RunWith;

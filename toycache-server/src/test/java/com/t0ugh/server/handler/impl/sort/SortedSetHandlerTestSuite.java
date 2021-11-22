@@ -1,4 +1,4 @@
-package com.t0ugh.server.handler.impl.sortedset;
+package com.t0ugh.server.handler.impl.sort;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
