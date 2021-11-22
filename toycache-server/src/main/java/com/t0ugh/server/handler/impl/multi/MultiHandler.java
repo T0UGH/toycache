@@ -3,7 +3,6 @@ package com.t0ugh.server.handler.impl.multi;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.enums.HandlerType;
-import com.t0ugh.server.enums.TransactionState;
 import com.t0ugh.server.handler.Handler;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.rollbacker.RollBacker;

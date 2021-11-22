@@ -73,6 +73,9 @@ enum MessageType {
   CheckHGetAll = 46;
   CheckHKeys = 47;
   CheckHLen = 48;
+  CheckSCard = 49;
+  CheckSIsMember = 50;
+  CheckSMembers = 51;
 
   // 内部消息
   InnerClearExpire = 101;
@@ -153,6 +156,8 @@ message Request {
   CheckHGetAllRequest checkHGetAllRequest = 50;
   CheckHKeysRequest checkHKeysRequest = 51;
   CheckHLenRequest checkHLenRequest = 52;
+  CheckSIsMemberRequest checkSIsMemberRequest = 53;
+  CheckSMembersRequest checkSMembersRequest = 54;
 }
 
 message Response {
@@ -209,6 +214,39 @@ message Response {
   CheckHGetAllResponse checkHGetAllResponse = 51;
   CheckHKeysResponse checkHKeysResponse = 52;
   CheckHLenResponse checkHLenResponse = 53;
+  CheckSIsMemberResponse checkSIsMemberResponse = 54;
+  CheckSMembersResponse checkSMembersResponse = 55;
+}
+
+message CheckSMembersRequest {
+  string key = 1;
+  repeated string setValue = 2;
+}
+
+message CheckSMembersResponse {
+  bool pass = 1;
+  repeated string actualSetValue = 2;
+}
+
+message CheckSIsMemberRequest {
+  string key = 1;
+  string member = 2;
+  bool isMember = 3;
+}
+
+message CheckSIsMemberResponse {
+  bool pass = 1;
+  bool actualIsMember = 2;
+}
+
+message CheckSCardRequest {
+  string key = 1;
+  int32 size = 2;
+}
+
+message CheckSCardResponse {
+  bool pass = 1;
+  int32 actualSize = 2;
 }
 
 message CheckHLenRequest {
