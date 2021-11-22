@@ -55,7 +55,11 @@ public class MemoryStorage implements Storage{
     }
 
     @Override
-    public void set(String key, String value) {
+    public void set(String key, String value)  throws ValueTypeNotMatchException{
+        if (data.containsKey(key)){
+            MemoryValueObject vo = data.get(key);
+            assertTypeMatch(vo, DBProto.ValueType.ValueTypeString);
+        }
         MemoryValueObject vo = MemoryValueObject.newInstance(value);
         data.put(key, vo);
     }

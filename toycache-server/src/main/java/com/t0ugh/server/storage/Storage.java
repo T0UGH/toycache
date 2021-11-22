@@ -13,7 +13,7 @@ public interface Storage {
     boolean exists(String key);
     Optional<String> get(String key) throws ValueTypeNotMatchException;
 
-    void set(String key, String value);
+    void set(String key, String value) throws ValueTypeNotMatchException;
 
     int sAdd(String key, Set<String> values) throws ValueTypeNotMatchException;
 

@@ -23,7 +23,7 @@ public class LTrimRollBacker implements RollBacker {
     @NonNull private GlobalContext globalContext;
 
     @Override
-    public void init(Proto.Request request) {
+    public void beforeHandle(Proto.Request request) {
         try {
             Proto.LTrimRequest req = request.getLTrimRequest();
             doNothing = !globalContext.getStorage().exists(req.getKey());

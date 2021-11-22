@@ -71,7 +71,6 @@ public abstract class AbstractHandler implements Handler {
             log.error("MyUnknown Exception: ", e);
             return MessageUtils.responseWithCode(Proto.ResponseCode.Unknown);
         }
-
     }
 
     public abstract void doHandle(Proto.Request request, Proto.Response.Builder responseBuilder) throws Exception;
