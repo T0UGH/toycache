@@ -27,9 +27,10 @@ message ValueObject {
 
 enum ValueType {
     ValueTypeInvalid = 0;
-    ValueTypeString = 1;
-    ValueTypeSet = 2;
-    ValueTypeList = 3;
-    ValueTypeSortedSet = 4;
-    ValueTypeMap = 5;
+    ValueTypeAll = 1;
+    ValueTypeString = 2;
+    ValueTypeSet = 3;
+    ValueTypeList = 4;
+    ValueTypeSortedSet = 5;
+    ValueTypeMap = 6;
 }

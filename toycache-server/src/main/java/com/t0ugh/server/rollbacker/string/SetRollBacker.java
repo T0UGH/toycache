@@ -1,6 +1,7 @@
 package com.t0ugh.server.rollbacker.string;
 
 import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
+import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.rollbacker.AbstractRollBacker;
@@ -27,6 +28,11 @@ public class SetRollBacker extends AbstractRollBacker {
         Proto.DelRequest req = request.getDelRequest();
         oldValue = getGlobalContext().getStorage().get(req.getKey()).get();
 
+    }
+
+    @Override
+    public DBProto.ValueType getValueType() {
+        return DBProto.ValueType.ValueTypeString;
     }
 
     @Override

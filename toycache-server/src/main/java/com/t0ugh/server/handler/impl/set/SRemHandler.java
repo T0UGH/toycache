@@ -18,6 +18,7 @@ public class SRemHandler extends AbstractGenericsHandler<Proto.SRemRequest, Prot
     @Override
     public Proto.SRemResponse doHandle(Proto.SRemRequest req) throws Exception {
         MessageUtils.assertCollectionNotEmpty(req.getMembersList());
+        MessageUtils.assertAllStringNotNullOrEmpty(req.getMembersList());
         int deleted = getGlobalContext().getStorage().sRem(req.getKey(), Sets.newHashSet(req.getMembersList()));
         return Proto.SRemResponse.newBuilder().setDeleted(deleted).build();
     }

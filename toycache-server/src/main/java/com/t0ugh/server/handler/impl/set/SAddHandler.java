@@ -23,13 +23,9 @@ public class SAddHandler extends AbstractGenericsHandler<Proto.SAddRequest, Prot
     public Proto.SAddResponse doHandle(Proto.SAddRequest sAddRequest) throws Exception {
         // 类型转换, 这一步会删掉重复的元素
         MessageUtils.assertCollectionNotEmpty(sAddRequest.getSetValueList());
+        MessageUtils.assertAllStringNotNullOrEmpty(sAddRequest.getSetValueList());
         Set<String> value = Sets.newHashSet(sAddRequest.getSetValueList());
         int added = getGlobalContext().getStorage().sAdd(sAddRequest.getKey(), value);
         return Proto.SAddResponse.newBuilder().setAdded(added).build();
-    }
-
-    public void doUndo(Proto.SAddRequest sAddRequest) throws Exception {
-        // 如果原先key都不存在, 那就直接删key
-        // 如果原先key存在, 那么很可能出现替换情况，所以需要记录一下哪些是新添加的，把新添加的删了就行了
     }
 }

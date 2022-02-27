@@ -27,69 +27,70 @@ public class MultiHandler implements Handler {
 
     @Override
     public Proto.Response handle(Proto.Request request) {
-        try {
-            if (!request.hasMultiRequest()) {
-                return MessageUtils.responseWithCode(Proto.ResponseCode.InvalidParam);
-            }
-
-            Proto.MultiRequest multiRequest = request.getMultiRequest();
-            Stack<RollBacker> rollBackerStack = new Stack<>();
-            Proto.MultiResponse.Builder multiResponseBuilder = Proto.MultiResponse.newBuilder();
-            multiResponseBuilder.setPass(true);
-            StateUtils.startTransaction(globalContext);
-            for (Proto.Request currReq : multiRequest.getRequestsList()) {
-                // 先判断事务支不支持这种MessageType, 如果不支持直接break
-                if (!MessageUtils.isTransactionSupported(currReq.getMessageType(), globalContext.getHandlerFactory())) {
-                    MessageUtils.messageTypeNotSupportedMultiResponseBuilder(multiResponseBuilder, currReq);
-                    break;
-                }
-                // 如果是写命令需要创建一个RollBacker并且压入栈中
-                if (MessageUtils.isWriteRequest(currReq.getMessageType(), globalContext.getHandlerFactory())) {
-                    RollBacker rollBacker = globalContext.getRollBackerFactory().getRollBacker(currReq.getMessageType())
-                            .orElseThrow(UnsupportedOperationException::new);
-                    rollBacker.beforeHandle(currReq);
-                    rollBackerStack.push(rollBacker);
-                }
-                Proto.Response currResp = globalContext.getHandlerFactory().getHandler(currReq.getMessageType())
-                        .orElseThrow(UnsupportedOperationException::new).handle(currReq);
-                // 然后检查currResp是否OK, 如果不OK就break
-                if (!Objects.equals(Proto.ResponseCode.OK, currResp.getResponseCode())) {
-                    MessageUtils.failMultiResponseBuilder(multiResponseBuilder, currReq, currResp);
-                    break;
-                }
-                // ok了就把Response添加一下
-                multiResponseBuilder.addResponses(currResp);
-            }
-
-            if (multiResponseBuilder.getPass()) {
-                // 如果事务通过就需要将所有写请求写入写日志
-                for (Proto.Request currReq : multiRequest.getRequestsList()) {
-                    if (MessageUtils.isWriteRequest(request.getMessageType(), globalContext.getHandlerFactory())) {
-                        // 更新一下内部状态
-                        globalContext.getGlobalState().getUpdateCount().incrementAndGet();
-                        // 向writeLogExecutor提交一个写日志
-                        globalContext.getWriteLogExecutor().submit(request);
-                    }
-                }
-            } else {
-                // 如果事务没有通过就需要回滚
-                while (!rollBackerStack.isEmpty()) {
-                    RollBacker curr = rollBackerStack.pop();
-                    curr.rollBack();
-                }
-            }
-
-            StateUtils.endTransaction(globalContext);
-            return MessageUtils.okBuilder(Proto.MessageType.Multi)
-                    .setMultiResponse(multiResponseBuilder)
-                    .build();
-        } catch (ValueTypeNotMatchException e) {
-            return MessageUtils.responseWithCode(Proto.ResponseCode.ValueTypeNotMatch);
-        } catch (InvalidParamException e) {
+//        try {
+        if (!request.hasMultiRequest()) {
             return MessageUtils.responseWithCode(Proto.ResponseCode.InvalidParam);
-        } catch (Exception e) {
-            log.error("MyUnknown Exception: ", e);
-            return MessageUtils.responseWithCode(Proto.ResponseCode.Unknown);
         }
+
+        Proto.MultiRequest multiRequest = request.getMultiRequest();
+        Stack<RollBacker> rollBackerStack = new Stack<>();
+        Proto.MultiResponse.Builder multiResponseBuilder = Proto.MultiResponse.newBuilder();
+        multiResponseBuilder.setPass(true);
+        StateUtils.startTransaction(globalContext);
+        for (Proto.Request currReq : multiRequest.getRequestsList()) {
+            // 先判断事务支不支持这种MessageType, 如果不支持直接break
+            if (!MessageUtils.isTransactionSupported(currReq.getMessageType(), globalContext.getHandlerFactory())) {
+                MessageUtils.messageTypeNotSupportedMultiResponseBuilder(multiResponseBuilder, currReq);
+                break;
+            }
+            // 如果是写命令需要创建一个RollBacker并且压入栈中
+            if (MessageUtils.isWriteRequest(currReq.getMessageType(), globalContext.getHandlerFactory())) {
+                RollBacker rollBacker = globalContext.getRollBackerFactory().getRollBacker(currReq.getMessageType())
+                        .orElseThrow(UnsupportedOperationException::new);
+                // todo: 这里就可能抛出异常，比如ValueTypeNotMatch，此时应该终止整个事务
+                rollBacker.beforeHandle(currReq);
+                rollBackerStack.push(rollBacker);
+            }
+            Proto.Response currResp = globalContext.getHandlerFactory().getHandler(currReq.getMessageType())
+                    .orElseThrow(UnsupportedOperationException::new).handle(currReq);
+            // 然后检查currResp是否OK, 如果不OK就break
+            if (!Objects.equals(Proto.ResponseCode.OK, currResp.getResponseCode())) {
+                MessageUtils.failMultiResponseBuilder(multiResponseBuilder, currReq, currResp);
+                break;
+            }
+            // ok了就把Response添加一下
+            multiResponseBuilder.addResponses(currResp);
+        }
+
+        if (multiResponseBuilder.getPass()) {
+            // 如果事务通过就需要将所有写请求写入写日志
+            for (Proto.Request currReq : multiRequest.getRequestsList()) {
+                if (MessageUtils.isWriteRequest(request.getMessageType(), globalContext.getHandlerFactory())) {
+                    // 更新一下内部状态
+                    globalContext.getGlobalState().getUpdateCount().incrementAndGet();
+                    // 向writeLogExecutor提交一个写日志
+                    globalContext.getWriteLogExecutor().submit(request);
+                }
+            }
+        } else {
+            // 如果事务没有通过就需要回滚
+            while (!rollBackerStack.isEmpty()) {
+                RollBacker curr = rollBackerStack.pop();
+                curr.rollBack();
+            }
+        }
+
+        StateUtils.endTransaction(globalContext);
+        return MessageUtils.okBuilder(Proto.MessageType.Multi)
+                .setMultiResponse(multiResponseBuilder)
+                .build();
+//        } catch (ValueTypeNotMatchException e) {
+//            return MessageUtils.responseWithCode(Proto.ResponseCode.ValueTypeNotMatch);
+//        } catch (InvalidParamException e) {
+//            return MessageUtils.responseWithCode(Proto.ResponseCode.InvalidParam);
+//        } catch (Exception e) {
+//            log.error("MyUnknown Exception: ", e);
+//            return MessageUtils.responseWithCode(Proto.ResponseCode.Unknown);
+//        }
     }
 }

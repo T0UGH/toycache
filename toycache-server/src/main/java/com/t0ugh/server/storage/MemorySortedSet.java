@@ -96,6 +96,16 @@ public class MemorySortedSet {
         return Optional.of(m.get(stringValue).getScore());
     }
 
+    public Optional<MemoryComparableString> get(String stringValue) {
+        if(!m.containsKey(stringValue)){
+            return Optional.empty();
+        }
+        return Optional.of(m.get(stringValue));
+    }
+
+    public boolean exists(String stringValue) {
+        return m.containsKey(stringValue);
+    }
 
     public Map<String, MemoryComparableString> backdoorM(){
         return m;

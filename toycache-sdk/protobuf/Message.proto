@@ -655,6 +655,8 @@ message SRemResponse {
 message SPopRequest {
   string key = 1;
   uint32 count = 2;
+  bool rand = 3;
+  repeated string setValue = 4;
 }
 
 

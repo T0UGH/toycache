@@ -19,6 +19,7 @@ public class HSetHandler extends AbstractGenericsHandler<Proto.HSetRequest, Prot
     public Proto.HSetResponse doHandle(Proto.HSetRequest req) throws Exception {
 
         MessageUtils.assertStringNotNullOrEmpty(req.getField());
+        MessageUtils.assertStringNotNullOrEmpty(req.getValue());
         getGlobalContext().getStorage().hSet(req.getKey(), req.getField(), req.getValue());
         return Proto.HSetResponse.newBuilder().setOk(true).build();
     }

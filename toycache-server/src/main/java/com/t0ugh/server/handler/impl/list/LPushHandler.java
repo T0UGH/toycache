@@ -17,6 +17,7 @@ public class LPushHandler extends AbstractGenericsHandler<Proto.LPushRequest, Pr
     @Override
     public Proto.LPushResponse doHandle(Proto.LPushRequest req) throws Exception {
         MessageUtils.assertCollectionNotEmpty(req.getValueList());
+        MessageUtils.assertAllStringNotNullOrEmpty(req.getValueList());
         int size = getGlobalContext().getStorage().lPush(req.getKey(), req.getValueList());
         return Proto.LPushResponse.newBuilder().setSize(size).build();
     }

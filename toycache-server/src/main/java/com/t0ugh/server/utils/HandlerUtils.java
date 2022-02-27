@@ -1,6 +1,7 @@
 package com.t0ugh.server.utils;
 
 
+import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.handler.Handler;
@@ -18,5 +19,21 @@ public class HandlerUtils {
     public static boolean needCheckExpire(Proto.MessageType messageType, HandlerFactory handlerFactory) {
         Optional<Handler> op = handlerFactory.getHandler(messageType);
         return op.map(handler -> handler.getClass().getAnnotation(HandlerAnnotation.class).checkExpire()).orElse(false);
+    }
+
+    public static boolean hExistsWithoutCheck(String key, String field, GlobalContext globalContext){
+        try {
+            return globalContext.getStorage().hExists(key, field);
+        } catch (ValueTypeNotMatchException e) {
+            throw new UnsupportedOperationException("uncheck valueType");
+        }
+    }
+
+    public static Optional<String> hGetWithoutCheck(String key, String field, GlobalContext globalContext){
+        try {
+            return globalContext.getStorage().hGet(key, field);
+        } catch (ValueTypeNotMatchException e) {
+            throw new UnsupportedOperationException("uncheck valueType");
+        }
     }
 }

@@ -11,43 +11,26 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 @RollBackerAnnotation(messageType = Proto.MessageType.LTrim)
-public class LTrimRollBacker implements RollBacker {
+public class LTrimRollBacker extends AbstractListRollBacker {
 
-    private boolean doNothing;
     private List<String> headList = Lists.newArrayList();
     private List<String> tailList = Lists.newArrayList();
-    private String key;
 
-    @NonNull private GlobalContext globalContext;
-
-    @Override
-    public void beforeHandle(Proto.Request request) {
-        try {
-            Proto.LTrimRequest req = request.getLTrimRequest();
-            doNothing = !globalContext.getStorage().exists(req.getKey());
-            if(doNothing){
-                return;
-            }
-            key = req.getKey();
-            headList = globalContext.getStorage().lRange(req.getKey(),0,req.getStart());
-            tailList = globalContext.getStorage().lRange(req.getKey(),req.getEnd(),-1);
-        } catch (ValueTypeNotMatchException e) {
-            doNothing = true;
-        }
-
+    public LTrimRollBacker(GlobalContext globalContext) {
+        super(globalContext);
     }
 
     @Override
-    public void rollBack() {
-        try{
-            if(doNothing){
-                return;
-            }
-            globalContext.getStorage().lPush(key, headList);
-            globalContext.getStorage().rPush(key, tailList);
-        } catch (ValueTypeNotMatchException ignored) {}
+    public void doRollBack() throws Exception {
+        getGlobalContext().getStorage().lPush(getKey(), headList);
+        getGlobalContext().getStorage().rPush(getKey(), tailList);
+    }
 
+    @Override
+    public void doBeforeHandle(Proto.Request request) throws Exception {
+        Proto.LTrimRequest req = request.getLTrimRequest();
+        headList = getGlobalContext().getStorage().lRange(req.getKey(),0,req.getStart());
+        tailList = getGlobalContext().getStorage().lRange(req.getKey(),req.getEnd(),-1);
     }
 }

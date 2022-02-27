@@ -41,6 +41,14 @@ public class MemoryStorage implements Storage{
     }
 
     @Override
+    public DBProto.ValueType getValueType(String key) {
+        if (data.containsKey(key)){
+            return data.get(key).getValueType();
+        }
+        return DBProto.ValueType.ValueTypeInvalid;
+    }
+
+    @Override
     public Optional<String> get(String key) throws ValueTypeNotMatchException {
         MemoryValueObject vo = data.get(key);
         if(Objects.isNull(vo)){
@@ -294,6 +302,7 @@ public class MemoryStorage implements Storage{
             int actualIndex = StorageUtils.assertAndConvertIndex(index, listValue.size());
             String val = listValue.set(actualIndex, newValue);
             return true;
+        // 如果发生了数组越界, 就直接返回false
         } catch (IndexOutOfBoundsException e) {
             return false;
         }
@@ -460,6 +469,26 @@ public class MemoryStorage implements Storage{
         assertTypeMatch(vo, DBProto.ValueType.ValueTypeSortedSet);
         MemorySortedSet sortedSetValue = vo.getSortedSetValue();
         return sortedSetValue.removeAll(members);
+    }
+
+    @Override
+    public boolean zExists(String key, String strValue) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return false;
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSortedSet);
+        return vo.getSortedSetValue().exists(strValue);
+    }
+
+    @Override
+    public Optional<MemoryComparableString> zGet(String key, String strValue) throws ValueTypeNotMatchException {
+        if (!data.containsKey(key)){
+            return Optional.empty();
+        }
+        MemoryValueObject vo = data.get(key);
+        assertTypeMatch(vo, DBProto.ValueType.ValueTypeSortedSet);
+        return vo.getSortedSetValue().get(strValue);
     }
 
     @Override

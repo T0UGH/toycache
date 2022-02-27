@@ -9,8 +9,13 @@ import java.util.*;
 public interface Storage {
     // todo 后门方法, 开发完记得删除
     Map<String, MemoryValueObject> backdoor();
+
     Map<String, Long> expireBackdoor();
+
     boolean exists(String key);
+
+    DBProto.ValueType getValueType(String key);
+
     Optional<String> get(String key) throws ValueTypeNotMatchException;
 
     void set(String key, String value) throws ValueTypeNotMatchException;
@@ -73,6 +78,10 @@ public interface Storage {
     NavigableSet<MemoryComparableString> zRangeByScore(String key, double min, double max) throws ValueTypeNotMatchException;
 
     int zRem(String key, Set<String> members) throws ValueTypeNotMatchException;
+
+    boolean zExists(String key, String strValue) throws ValueTypeNotMatchException;
+
+    Optional<MemoryComparableString> zGet(String key, String strValue) throws ValueTypeNotMatchException;
 
     boolean del(String key);
 
