@@ -31,6 +31,8 @@ public class LTrimRollBacker extends AbstractListRollBacker {
     public void doBeforeHandle(Proto.Request request) throws Exception {
         Proto.LTrimRequest req = request.getLTrimRequest();
         headList = getGlobalContext().getStorage().lRange(req.getKey(),0,req.getStart());
+        headList.remove(headList.size() - 1);
         tailList = getGlobalContext().getStorage().lRange(req.getKey(),req.getEnd(),-1);
+        tailList.remove(0);
     }
 }

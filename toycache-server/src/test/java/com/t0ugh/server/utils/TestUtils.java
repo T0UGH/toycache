@@ -4,6 +4,7 @@ import com.t0ugh.sdk.proto.Proto;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -22,6 +23,13 @@ public class TestUtils {
         for (Map.Entry<K, V> entry: actual.entrySet()) {
             assertTrue(expect.containsKey(entry.getKey()));
             assertEquals(entry.getValue(), expect.get(entry.getKey()));
+        }
+    }
+
+    public static<E> void assertCollectionEquals(Collection<E> actual, Collection<E> expect) throws Exception {
+        assertEquals(actual.size(), expect.size());
+        for (E e: actual){
+            assertTrue(expect.contains(e));
         }
     }
 }
