@@ -42,7 +42,7 @@ public abstract class AbstractRollBacker implements RollBacker{
         try{
             this.request = request;
             // 首先看看Key是否Exists
-            String key = MessageUtils.getKeyFromRequest(request).orElseThrow(InvalidParamException::new);
+            key = MessageUtils.getKeyFromRequest(request).orElseThrow(InvalidParamException::new);
             keyExists = globalContext.getStorage().exists(key);
             // 后面惰性检查删除的时候可能会把expireTime删掉, Rollback会把它复原(就像从来没有执行过这个请求一样, 即使它确实过期了)
             originalExpireTime = globalContext.getStorage().expireBackdoor().getOrDefault(key, null);

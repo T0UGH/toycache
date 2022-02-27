@@ -26,13 +26,4 @@ public class SetHandler extends AbstractGenericsHandler<Proto.SetRequest, Proto.
         return Proto.SetResponse.newBuilder().setOk(true).build();
     }
 
-    public void doUndo(Proto.SetRequest setRequest){
-        if(oldValue.isPresent()){
-            getGlobalContext().getStorage().set(setRequest.getKey(), oldValue.get());
-        } else {
-            getGlobalContext().getStorage().del(setRequest.getKey());
-        }
-    }
-
-
 }

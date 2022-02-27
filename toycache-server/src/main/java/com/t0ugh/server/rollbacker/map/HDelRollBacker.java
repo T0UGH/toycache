@@ -4,13 +4,13 @@ import com.google.common.collect.Maps;
 import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
-import com.t0ugh.server.rollbacker.AbstractRollBacker;
 import com.t0ugh.server.rollbacker.RollBackerAnnotation;
 import com.t0ugh.server.utils.HandlerUtils;
 import com.t0ugh.server.utils.MessageUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @RollBackerAnnotation(messageType = Proto.MessageType.HDel)
 public class HDelRollBacker extends AbstractMapRollBacker {
 
-    private Map<String, String> mapExist = Maps.newHashMap();
+    private Map<String, String> mapExists = Maps.newHashMap();
 
     public HDelRollBacker(GlobalContext globalContext) {
         super(globalContext);
@@ -27,7 +27,7 @@ public class HDelRollBacker extends AbstractMapRollBacker {
 
     @Override
     public void doRollBack() throws Exception {
-        mapExist.entrySet().forEach(entry -> {
+        mapExists.entrySet().forEach(entry -> {
             try {
                 getGlobalContext().getStorage().hSet(getKey(), entry.getKey(), entry.getValue());
             } catch (ValueTypeNotMatchException ignored) {}
@@ -40,10 +40,9 @@ public class HDelRollBacker extends AbstractMapRollBacker {
         List<String> fieldsNeedDel = hDelRequest.getFieldsList();
         MessageUtils.assertCollectionNotEmpty(fieldsNeedDel);
         MessageUtils.assertAllStringNotNullOrEmpty(fieldsNeedDel);
-        Map<String, String> mapExist = fieldsNeedDel.stream()
-                .filter(f -> HandlerUtils.hExistsWithoutCheck(hDelRequest.getKey(), f, getGlobalContext()))
-                .collect(Collectors.toMap(f -> f,
-                        f -> HandlerUtils.hGetWithoutCheck(getKey(), f, getGlobalContext()).get()));
-
+        for (String field: fieldsNeedDel) {
+            Optional<String> op = getGlobalContext().getStorage().hGet(getKey(), field);
+            op.ifPresent(s -> mapExists.put(field, s));
+        }
     }
 }
