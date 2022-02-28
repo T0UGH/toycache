@@ -10,12 +10,15 @@ import com.t0ugh.server.rollbacker.RollBackerAnnotation;
 import com.t0ugh.server.utils.MessageUtils;
 
 import java.util.Objects;
+import java.util.Set;
 
 /**
- * 把之前添加的删掉就行
+ * 原先没有的删掉, 原先有的就不用删了
  * */
 @RollBackerAnnotation(messageType = Proto.MessageType.SAdd)
 public class SAddRollBacker extends AbstractSetRollBacker {
+
+    Set<String> originNotExists = Sets.newHashSet();
 
     public SAddRollBacker(GlobalContext globalContext) {
         super(globalContext);
@@ -24,7 +27,7 @@ public class SAddRollBacker extends AbstractSetRollBacker {
     @Override
     public void doRollBack() throws Exception {
         Proto.SAddRequest sAddRequest = getRequest().getSAddRequest();
-        getGlobalContext().getStorage().sRem(sAddRequest.getKey(), Sets.newHashSet(sAddRequest.getSetValueList()));
+        getGlobalContext().getStorage().sRem(sAddRequest.getKey(), originNotExists);
     }
 
     @Override
@@ -32,5 +35,10 @@ public class SAddRollBacker extends AbstractSetRollBacker {
         Proto.SAddRequest sAddRequest = request.getSAddRequest();
         MessageUtils.assertCollectionNotEmpty(sAddRequest.getSetValueList());
         MessageUtils.assertAllStringNotNullOrEmpty(sAddRequest.getSetValueList());
+        for(String s: sAddRequest.getSetValueList()){
+            if(!getGlobalContext().getStorage().sIsMember(getKey(), s)){
+                originNotExists.add(s);
+            }
+        }
     }
 }

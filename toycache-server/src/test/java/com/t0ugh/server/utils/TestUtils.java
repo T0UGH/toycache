@@ -1,11 +1,20 @@
 package com.t0ugh.server.utils;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.sdk.proto.Proto;
+import com.t0ugh.server.GlobalContext;
+import com.t0ugh.server.handler.Handler;
+import com.t0ugh.server.rollbacker.RollBacker;
+import com.t0ugh.server.storage.MemoryValueObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -31,5 +40,29 @@ public class TestUtils {
         for (E e: actual){
             assertTrue(expect.contains(e));
         }
+    }
+
+
+    public static Object copyCollectionByValueType(MemoryValueObject memoryValueObject){
+        switch (memoryValueObject.getValueType()){
+            case ValueTypeSet:
+                return Sets.newHashSet(memoryValueObject.getSetValue());
+            case ValueTypeList:
+                return Lists.newArrayList(memoryValueObject.getListValue());
+            case ValueTypeSortedSet:
+                return Sets.newTreeSet(memoryValueObject.getSortedSetValue().backdoorS());
+        }
+        return null;
+    }
+
+    public static void testRollBackerCollectionUnchanged(Proto.Request request, String key, GlobalContext testContext) throws Exception {
+        Collection<String> origin = (Collection<String>) copyCollectionByValueType(testContext.getStorage().backdoor().get(key));
+        RollBacker rollBacker = testContext.getRollBackerFactory().getRollBacker(request.getMessageType()).get();
+        rollBacker.beforeHandle(request);
+        Handler handler = testContext.getHandlerFactory().getHandler(request.getMessageType()).get();
+        Proto.Response response = handler.handle(request);
+        TestUtils.assertOK(request.getMessageType(), response);
+        rollBacker.rollBack();
+        TestUtils.assertCollectionEquals(origin, (Collection<String>) copyCollectionByValueType(testContext.getStorage().backdoor().get(key)));
     }
 }
