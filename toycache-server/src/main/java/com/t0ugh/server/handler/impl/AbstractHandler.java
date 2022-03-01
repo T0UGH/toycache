@@ -55,21 +55,23 @@ public abstract class AbstractHandler implements Handler {
                 getGlobalContext().getWriteLogExecutor().submit(request);
             }
             doHandle(request, okBuilder);
+            okBuilder.setClientTId(request.getClientTId());
             return okBuilder.build();
             // 统一的异常处理
         } catch (CheckNotPassException e) {
             Proto.Response.Builder builder = MessageUtils.builderWithCode(Proto.ResponseCode.CheckNotPass);
             builder.setMessageType(request.getMessageType());
+            builder.setClientTId(request.getClientTId());
             String messageTypeStr = MessageUtils.getMessageTypeCamelString(request.getMessageType());
             builder.setField(builder.getDescriptorForType().findFieldByName(messageTypeStr + "Response"), e.getResponse());
             return builder.build();
         } catch (ValueTypeNotMatchException e) {
-            return MessageUtils.responseWithCode(Proto.ResponseCode.ValueTypeNotMatch);
+            return MessageUtils.responseWithCode(Proto.ResponseCode.ValueTypeNotMatch, request.getClientTId());
         } catch (InvalidParamException e) {
-            return MessageUtils.responseWithCode(Proto.ResponseCode.InvalidParam);
+            return MessageUtils.responseWithCode(Proto.ResponseCode.InvalidParam, request.getClientTId());
         } catch (Exception e) {
             log.error("MyUnknown Exception: ", e);
-            return MessageUtils.responseWithCode(Proto.ResponseCode.Unknown);
+            return MessageUtils.responseWithCode(Proto.ResponseCode.Unknown, request.getClientTId());
         }
     }
 

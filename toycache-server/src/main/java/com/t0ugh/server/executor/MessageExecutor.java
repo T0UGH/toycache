@@ -1,9 +1,7 @@
 package com.t0ugh.server.executor;
 
 import com.t0ugh.sdk.proto.Proto;
-import com.t0ugh.server.callback.Callback;
-
-import java.util.concurrent.ExecutionException;
+import com.t0ugh.sdk.callback.Callback;
 
 public interface MessageExecutor {
     void submit(Proto.Request request, Callback... callbacks);

@@ -67,9 +67,9 @@ public class MessageUtils {
                 .setResponseCode(code);
     }
 
-    public static Proto.Response responseWithCode(Proto.ResponseCode code) {
+    public static Proto.Response responseWithCode(Proto.ResponseCode code, String clientTId) {
         return Proto.Response.newBuilder()
-                .setResponseCode(code).build();
+                .setResponseCode(code).setClientTId(clientTId).build();
     }
 
 

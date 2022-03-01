@@ -4,7 +4,6 @@ import com.google.common.base.Strings;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.executor.AbstractMessageExecutor;
-import com.t0ugh.server.callback.Callback;
 import com.t0ugh.server.utils.DBUtils;
 import com.t0ugh.server.utils.MessageUtils;
 import lombok.extern.slf4j.Slf4j;

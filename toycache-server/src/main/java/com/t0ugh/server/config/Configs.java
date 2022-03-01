@@ -7,6 +7,7 @@ public class Configs {
                 .nettyServerPort(8114)
                 .tickInterval(100)
                 .dbBaseFilePath("D:\\tmp\\tcdb\\dev")
+                .writeLogBaseFilePath("D:\\tmp\\tcwlog\\dev")
                 .upperKeyLimitOfPeriodicalDelete(100).build();
     }
 

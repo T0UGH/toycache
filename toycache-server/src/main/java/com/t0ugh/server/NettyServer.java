@@ -30,18 +30,19 @@ public class NettyServer {
     }
 
     //服务器端业务处理器
-    private class TCInboundHandler extends ChannelInboundHandlerAdapter
+    private class ToyCacheMessageHandler extends ChannelInboundHandlerAdapter
     {
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception
         {
             Proto.Request request = (Proto.Request) msg;
             //直接向ME提交消息就行, 并且放一个Callback
+            log.info(request.toString());
             globalContext.getMemoryOperationExecutor().submit(request, new SendResponseCallback(ctx));
         }
     }
 
-    public void runServer()
+    public void startServer()
     {
         //创建reactor 线程组
         EventLoopGroup bossLoopGroup = new NioEventLoopGroup(1);
@@ -72,7 +73,7 @@ public class NettyServer {
                     ch.pipeline().addLast(new ProtobufVarint32LengthFieldPrepender());
                     ch.pipeline().addLast(new ProtobufDecoder(Proto.Request.getDefaultInstance()));
                     ch.pipeline().addLast(new ProtobufEncoder());
-                    ch.pipeline().addLast(new TCInboundHandler());
+                    ch.pipeline().addLast(new ToyCacheMessageHandler());
                 }
             });
             // 6 开始绑定server

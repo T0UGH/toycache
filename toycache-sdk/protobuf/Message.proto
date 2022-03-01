@@ -110,12 +110,12 @@ enum ResponseCode {
 
 message Request {
   MessageType messageType = 1;
-  ExistsRequest existsRequest = 2;
-  DelRequest delRequest = 3;
-  GetRequest getRequest = 4;
-  SetRequest setRequest = 5;
-  ExpireRequest expireRequest = 6;
-  InnerClearExpireRequest innerClearExpireRequest = 7;
+  string clientTId = 2;
+  ExistsRequest existsRequest = 3;
+  DelRequest delRequest = 4;
+  GetRequest getRequest = 5;
+  SetRequest setRequest = 6;
+  ExpireRequest expireRequest = 7;
   InnerSaveRequest innerSaveRequest = 8;
   SaveRequest saveRequest = 9;
   InnerRewriteLogRequest innerRewriteLogRequest = 10;
@@ -168,17 +168,18 @@ message Request {
   CheckZRangeRequest checkZRangeRequest = 57;
   CheckZRangeByScoreRequest checkZRangeByScoreRequest = 58;
   CheckZRankRequest checkZRankRequest = 59;
+  InnerClearExpireRequest innerClearExpireRequest = 60;
 }
 
 message Response {
   MessageType messageType = 1;
   ResponseCode responseCode = 2;
-  ExistsResponse existsResponse = 3;
-  DelResponse delResponse = 4;
-  GetResponse getResponse = 5;
-  SetResponse setResponse = 6;
-  ExpireResponse expireResponse = 7;
-  InnerClearExpireResponse innerClearExpireResponse = 8;
+  string clientTId = 3;
+  ExistsResponse existsResponse = 4;
+  DelResponse delResponse = 5;
+  GetResponse getResponse = 6;
+  SetResponse setResponse = 7;
+  ExpireResponse expireResponse = 8;
   InnerSaveResponse innerSaveResponse = 9;
   SaveResponse saveResponse = 10;
   InnerRewriteLogResponse innerRewriteLogResponse = 11;
@@ -231,6 +232,7 @@ message Response {
   CheckZRangeResponse checkZRangeResponse = 58;
   CheckZRangeByScoreResponse checkZRangeByScoreResponse = 59;
   CheckZRankResponse checkZRankResponse = 60;
+  InnerClearExpireResponse innerClearExpireResponse = 61;
 }
 
 message CheckZRankRequest {

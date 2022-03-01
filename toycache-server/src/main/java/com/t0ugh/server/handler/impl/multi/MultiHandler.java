@@ -29,7 +29,7 @@ public class MultiHandler implements Handler {
     public Proto.Response handle(Proto.Request request) {
 //        try {
         if (!request.hasMultiRequest()) {
-            return MessageUtils.responseWithCode(Proto.ResponseCode.InvalidParam);
+            return MessageUtils.responseWithCode(Proto.ResponseCode.InvalidParam, request.getClientTId());
         }
 
         Proto.MultiRequest multiRequest = request.getMultiRequest();

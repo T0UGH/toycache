@@ -2,7 +2,7 @@ package com.t0ugh.server.executor;
 
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
-import com.t0ugh.server.callback.Callback;
+import com.t0ugh.sdk.callback.Callback;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
