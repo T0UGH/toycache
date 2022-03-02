@@ -30,6 +30,7 @@ public class Dispatcher {
     public void dispatch(Proto.Response response){
         BlockingQueue<Proto.Response> queue = responseMap.get(response.getClientTId());
         if (!Objects.isNull(queue)){
+            responseMap.remove(response.getClientTId());
             queue.offer(response);
         }
     }

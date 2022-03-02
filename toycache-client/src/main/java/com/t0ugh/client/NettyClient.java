@@ -79,11 +79,11 @@ public class NettyClient {
             {
                 if (futureListener.isSuccess())
                 {
-                    log.info("EchoClient客户端连接成功!");
+                    log.info("ToyCache客户端连接成功!");
 
                 } else
                 {
-                    log.info("EchoClient客户端连接失败!");
+                    log.info("ToyCache客户端连接失败!");
                 }
 
             });
