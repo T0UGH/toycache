@@ -23,4 +23,10 @@ public class Config {
     private int rewriteLogTick;
     // 如果写日志超过多少KB就重写
     private int rewriteLogSizeKBThreshold;
+    // buffer中最多存储多少个Request
+    private int maxBufferSize;
+    // 服务器的唯一标识符
+    private int serverId;
+    // 运行Id, 用来标识一组集群服务器
+    private int clusterId;
 }

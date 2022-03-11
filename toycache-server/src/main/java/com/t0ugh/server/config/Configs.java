@@ -8,7 +8,9 @@ public class Configs {
                 .tickInterval(100)
                 .dbBaseFilePath("D:\\tmp\\tcdb\\dev")
                 .writeLogBaseFilePath("D:\\tmp\\tcwlog\\dev")
-                .upperKeyLimitOfPeriodicalDelete(100).build();
+                .upperKeyLimitOfPeriodicalDelete(100)
+                .maxBufferSize(100)
+                .build();
     }
 
     public static Config newTestConfig() {
@@ -22,6 +24,8 @@ public class Configs {
                 .rewriteLogTick(2)
                 .dbBaseFilePath("D:\\tmp\\tcdb\\test")
                 .writeLogBaseFilePath("D:\\tmp\\tcwlog\\test")
-                .upperKeyLimitOfPeriodicalDelete(10).build();
+                .upperKeyLimitOfPeriodicalDelete(10)
+                .maxBufferSize(100)
+                .build();
     }
 }

@@ -35,11 +35,12 @@ public class Bootstrap {
         globalContext = GlobalContext.builder()
                 .storage(storage)
                 .config(config)
-                .globalState(GlobalState.newInstance())
+                .globalState(GlobalState.newInstance(config.getServerId(), config.getClusterId()))
                 .build();
 
         MessageExecutor messageExecutor = new MemoryOperationExecutor(globalContext);
         globalContext.setMemoryOperationExecutor(messageExecutor);
+        //todo: 需要加一个功能，根据配置判断是否从RDB或者AOF中加载文件
         OutputStream writeLogOutputStream = new FileOutputStream(WriteLogUtils
                 .getWriteLogFilePath(globalContext.getConfig().getWriteLogBaseFilePath()), true);
         globalContext.setHandlerFactory(new HandlerFactory(globalContext));

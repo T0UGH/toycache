@@ -1,5 +1,6 @@
 package com.t0ugh.server;
 
+import com.t0ugh.server.config.Config;
 import com.t0ugh.server.config.Configs;
 import com.t0ugh.server.db.DBExecutor;
 import com.t0ugh.server.executor.MemoryOperationExecutor;
@@ -23,10 +24,13 @@ public class BaseTest {
     public void setUpBase() throws Exception {
 
         Storage storage = new MemoryStorage();
+        Config config = Configs.newTestConfig();
+        config.setClusterId(1);
+        config.setServerId(1);
         testContext = GlobalContext.builder()
                 .storage(storage)
-                .config(Configs.newTestConfig())
-                .globalState(GlobalState.newInstance())
+                .config(config)
+                .globalState(GlobalState.newInstance(config.getServerId(), config.getClusterId()))
                 .build();
         // todo: 因为是测试所以append=false
         OutputStream writeLogOutputStream = new FileOutputStream(WriteLogUtils

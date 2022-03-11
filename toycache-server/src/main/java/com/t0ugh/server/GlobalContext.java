@@ -4,6 +4,7 @@ import com.t0ugh.server.config.Config;
 import com.t0ugh.server.executor.MessageExecutor;
 import com.t0ugh.server.handler.HandlerFactory;
 import com.t0ugh.server.rollbacker.RollBackerFactory;
+import com.t0ugh.server.storage.RequestBuffer;
 import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.tick.TickDriver;
 import lombok.Builder;
@@ -24,4 +25,5 @@ public class GlobalContext {
     private MessageExecutor writeLogExecutor;
     private RollBackerFactory rollBackerFactory;
     private TickDriver tickDriver;
+    private RequestBuffer requestBuffer;
 }

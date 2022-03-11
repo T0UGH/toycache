@@ -110,13 +110,13 @@ enum ResponseCode {
 
 message Request {
   MessageType messageType = 1;
-  string clientTId = 2;
-  ExistsRequest existsRequest = 3;
-  DelRequest delRequest = 4;
-  GetRequest getRequest = 5;
-  SetRequest setRequest = 6;
-  ExpireRequest expireRequest = 7;
-  InnerSaveRequest innerSaveRequest = 8;
+  int64 writeId = 2;
+  string clientTId = 3;
+  ExistsRequest existsRequest = 4;
+  DelRequest delRequest = 5;
+  GetRequest getRequest = 6;
+  SetRequest setRequest = 7;
+  ExpireRequest expireRequest = 8;
   SaveRequest saveRequest = 9;
   InnerRewriteLogRequest innerRewriteLogRequest = 10;
   InnerRewriteLogFinishRequest innerRewriteLogFinishRequest = 11;
@@ -169,18 +169,19 @@ message Request {
   CheckZRangeByScoreRequest checkZRangeByScoreRequest = 58;
   CheckZRankRequest checkZRankRequest = 59;
   InnerClearExpireRequest innerClearExpireRequest = 60;
+  InnerSaveRequest innerSaveRequest = 61;
 }
 
 message Response {
   MessageType messageType = 1;
   ResponseCode responseCode = 2;
-  string clientTId = 3;
-  ExistsResponse existsResponse = 4;
-  DelResponse delResponse = 5;
-  GetResponse getResponse = 6;
-  SetResponse setResponse = 7;
-  ExpireResponse expireResponse = 8;
-  InnerSaveResponse innerSaveResponse = 9;
+  int64 writeId = 3;
+  string clientTId = 4;
+  ExistsResponse existsResponse = 5;
+  DelResponse delResponse = 6;
+  GetResponse getResponse = 7;
+  SetResponse setResponse = 8;
+  ExpireResponse expireResponse = 9;
   SaveResponse saveResponse = 10;
   InnerRewriteLogResponse innerRewriteLogResponse = 11;
   InnerRewriteLogFinishResponse innerRewriteLogFinishResponse = 12;
@@ -233,6 +234,7 @@ message Response {
   CheckZRangeByScoreResponse checkZRangeByScoreResponse = 59;
   CheckZRankResponse checkZRankResponse = 60;
   InnerClearExpireResponse innerClearExpireResponse = 61;
+  InnerSaveResponse innerSaveResponse = 62;
 }
 
 message CheckZRankRequest {
@@ -657,7 +659,7 @@ message SRemResponse {
 message SPopRequest {
   string key = 1;
   uint32 count = 2;
-  bool rand = 3;
+  bool unRand = 3;
   repeated string setValue = 4;
 }
 

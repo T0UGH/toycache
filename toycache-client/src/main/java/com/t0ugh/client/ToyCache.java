@@ -2,6 +2,7 @@ package com.t0ugh.client;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.t0ugh.sdk.callback.Callback;
 import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.sdk.proto.Proto;
 import io.netty.channel.Channel;
@@ -469,6 +470,14 @@ public class ToyCache {
 
     public Transaction transaction() {
         return new Transaction(context);
+    }
+
+    public void talkAsync(Proto.Request request, List<Callback> callbacks){
+        context.getDispatcher().talkAsync(request, callbacks);
+    }
+
+    public Proto.Response talkSync(Proto.Request request) throws InterruptedException {
+        return context.getDispatcher().talkSync(request);
     }
 
 }
