@@ -14,13 +14,13 @@ import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
-public class ToyCache {
+public class ToyCacheClient {
 
     private GlobalContext context;
     private String serverIp;
     private int serverPort;
 
-    public ToyCache(String serverIp, int serverPort){
+    public ToyCacheClient(String serverIp, int serverPort){
         this.serverIp = serverIp;
         this.serverPort = serverPort;
         init();

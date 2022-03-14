@@ -135,6 +135,13 @@ public class MessageUtils {
                 .build();
     }
 
+    public static Proto.Request newInnerStartSyncRequest(){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.InnerStartSync)
+                .setInnerStartSyncRequest(Proto.InnerStartSyncRequest.newBuilder())
+                .build();
+    }
+
     public static Proto.Request newSetRequest(String key, String value){
         return Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.Set)

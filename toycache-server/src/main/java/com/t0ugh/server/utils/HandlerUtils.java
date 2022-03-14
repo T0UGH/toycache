@@ -8,6 +8,7 @@ import com.t0ugh.server.handler.Handler;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.HandlerFactory;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 public class HandlerUtils {

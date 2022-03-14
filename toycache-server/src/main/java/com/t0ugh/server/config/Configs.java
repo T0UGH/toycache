@@ -9,6 +9,7 @@ public class Configs {
                 .dbBaseFilePath("D:\\tmp\\tcdb\\dev")
                 .writeLogBaseFilePath("D:\\tmp\\tcwlog\\dev")
                 .upperKeyLimitOfPeriodicalDelete(100)
+                .syncSlaveTick(25)
                 .maxBufferSize(100)
                 .build();
     }
@@ -25,6 +26,7 @@ public class Configs {
                 .dbBaseFilePath("D:\\tmp\\tcdb\\test")
                 .writeLogBaseFilePath("D:\\tmp\\tcwlog\\test")
                 .upperKeyLimitOfPeriodicalDelete(10)
+                .syncSlaveTick(25)
                 .maxBufferSize(100)
                 .build();
     }

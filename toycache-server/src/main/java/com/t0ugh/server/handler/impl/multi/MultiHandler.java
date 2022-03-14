@@ -1,7 +1,5 @@
 package com.t0ugh.server.handler.impl.multi;
 
-import com.t0ugh.sdk.exception.InvalidParamException;
-import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.enums.HandlerType;
@@ -67,7 +65,7 @@ public class MultiHandler implements Handler {
             for (Proto.Request currReq : multiRequest.getRequestsList()) {
                 if (MessageUtils.isWriteRequest(request.getMessageType(), globalContext.getHandlerFactory())) {
                     // 更新一下内部状态
-                    globalContext.getGlobalState().getUpdateCount().incrementAndGet();
+                    globalContext.getGlobalState().getWriteCount().incrementAndGet();
                     // 向writeLogExecutor提交一个写日志
                     globalContext.getWriteLogExecutor().submit(request);
                 }

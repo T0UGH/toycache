@@ -18,6 +18,13 @@ public class DBUtils {
         inputStream.close();
     }
 
+    public static void applyDb(DBProto.Database db, Map<String, MemoryValueObject> kvs, Map<String, Long> expire) {
+        db.getDataMap().forEach((k, v) -> {
+            kvs.put(k, MemoryValueObject.fromValueObject(v));
+        });
+        expire.putAll(db.getExpireMap());
+    }
+
     public static void writeToFile(DBProto.Database database, String filePath) throws IOException {
         OutputStream outputStream = new FileOutputStream(filePath);
         database.writeTo(outputStream);

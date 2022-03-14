@@ -3,6 +3,7 @@ package com.t0ugh.server.storage;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.primitives.Longs;
 import com.t0ugh.sdk.proto.Proto;
 
 import java.util.List;
@@ -35,5 +36,16 @@ public class RequestBuffer {
             return Optional.empty();
         }
         return Optional.of(request);
+    }
+
+    public boolean exists(long writeId) {
+        return bufferMap.containsKey(writeId);
+    }
+
+    public long minWriteId(){
+        if (buffer.size() == 0){
+            return Long.MAX_VALUE;
+        }
+        return buffer.get(0).getWriteId();
     }
 }

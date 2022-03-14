@@ -7,11 +7,11 @@ import static org.junit.Assert.*;
 
 public class ToyCacheTest {
 
-    private ToyCache toyCache;
+    private ToyCacheClient toyCache;
 
     @Before
     public void setUp() {
-        toyCache = new ToyCache("127.0.0.1", 8114);
+        toyCache = new ToyCacheClient("127.0.0.1", 8114);
     }
 
     @Test

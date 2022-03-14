@@ -506,7 +506,12 @@ public class MemoryStorage implements Storage{
     }
 
     @Override
-    public DBProto.Database toUnModifiableDB() {
+    public void applyDb(DBProto.Database db) {
+        DBUtils.applyDb(db, data, expire);
+    }
+
+    @Override
+    public DBProto.Database toUnModifiableDB(long lastWriteId) {
         Map<String, DBProto.ValueObject> newKvs = Maps.newHashMap();
         Map<String, Long> newExpire = Maps.newHashMap();
         data.forEach((k, v) -> {
@@ -518,7 +523,7 @@ public class MemoryStorage implements Storage{
         });
         newExpire.putAll(expire);
         return DBProto.Database.newBuilder()
-                .setVersion(1L)
+                .setLastWriteId(lastWriteId)
                 .putAllData(newKvs)
                 .putAllExpire(newExpire)
                 .build();

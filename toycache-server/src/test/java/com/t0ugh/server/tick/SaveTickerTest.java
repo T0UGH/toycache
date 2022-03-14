@@ -29,7 +29,7 @@ public class SaveTickerTest extends BaseTest {
      * */
     @Test
     public void testSendRequest() throws Exception {
-        testContext.getGlobalState().getUpdateCount().set(testContext.getConfig().getSaveCheckLimit());
+        testContext.getGlobalState().getWriteCount().set(testContext.getConfig().getSaveCheckLimit());
         for(int i = 0; i < testContext.getConfig().getSaveCheckTick(); i ++){
             tickDriver.tickManually();
         }
@@ -45,7 +45,7 @@ public class SaveTickerTest extends BaseTest {
      * */
     @Test
     public void testSendRequest3() throws Exception {
-        testContext.getGlobalState().getUpdateCount().set(testContext.getConfig().getSaveCheckLimit());
+        testContext.getGlobalState().getWriteCount().set(testContext.getConfig().getSaveCheckLimit());
         for(int i = 0; i < testContext.getConfig().getSaveCheckTick(); i ++){
             tickDriver.tickManually();
         }
@@ -54,7 +54,7 @@ public class SaveTickerTest extends BaseTest {
         Proto.Request request = messageExecutorForTest.requestList.get(0);
         assertEquals(Proto.MessageType.Save, request.getMessageType());
         assertTrue(request.hasSaveRequest());
-        testContext.getGlobalState().getUpdateCount().addAndGet(testContext.getConfig().getSaveCheckLimit());
+        testContext.getGlobalState().getWriteCount().addAndGet(testContext.getConfig().getSaveCheckLimit());
         for(int i = 0; i < testContext.getConfig().getSaveCheckTick(); i ++){
             tickDriver.tickManually();
         }
@@ -70,7 +70,7 @@ public class SaveTickerTest extends BaseTest {
      * */
     @Test
     public void testSendRequest2() throws Exception {
-        testContext.getGlobalState().getUpdateCount().set(testContext.getConfig().getSaveCheckLimit() - 1);
+        testContext.getGlobalState().getWriteCount().set(testContext.getConfig().getSaveCheckLimit() - 1);
         for(int i = 0; i < testContext.getConfig().getSaveCheckTick(); i ++){
             tickDriver.tickManually();
         }

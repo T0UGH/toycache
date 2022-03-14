@@ -37,6 +37,7 @@ public class Dispatcher {
         this.context = context;
     }
 
+    //只有channelRead里才会调用
     public void dispatch(Proto.Response response){
         BlockingQueue<Proto.Response> queue = responseMap.get(response.getClientTId());
         if (!Objects.isNull(queue)){
@@ -80,6 +81,7 @@ public class Dispatcher {
         String key = request.getClientTId();
         requestMap.put(key, request);
         callbackMap.put(request.getClientTId(), callbacks);
+        context.getChannel().writeAndFlush(request);
     }
 
     private void assertResponseOK(Proto.Response response){

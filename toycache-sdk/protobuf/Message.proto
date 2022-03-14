@@ -88,7 +88,11 @@ enum MessageType {
   InnerSaveFinish = 103;
   InnerRewriteLog = 104;
   InnerRewriteLogFinish = 105;
+  InnerUpdateLastWriteId = 106;
+  InnerStartSync = 107;
 
+  MasterOf = 108;//客户端发给主服务器，告诉它某个服务器是它的新的从服务器
+  Sync = 109;//主服务器发给从服务器, 里面可能有快照也可能有缓存, 让从服务器应用这些命令
 }
 
 enum ResponseCode {
@@ -170,6 +174,10 @@ message Request {
   CheckZRankRequest checkZRankRequest = 59;
   InnerClearExpireRequest innerClearExpireRequest = 60;
   InnerSaveRequest innerSaveRequest = 61;
+  MasterOfRequest masterOfRequest = 62;
+  SyncRequest syncRequest = 63;
+  InnerUpdateLastWriteIdRequest innerUpdateLastWriteIdRequest = 64;
+  InnerStartSyncRequest innerStartSyncRequest = 65;
 }
 
 message Response {
@@ -235,6 +243,48 @@ message Response {
   CheckZRankResponse checkZRankResponse = 60;
   InnerClearExpireResponse innerClearExpireResponse = 61;
   InnerSaveResponse innerSaveResponse = 62;
+  MasterOfResponse masterOfResponse = 63;
+  SyncResponse syncResponse = 64;
+  InnerUpdateLastWriteIdResponse innerUpdateLastWriteIdResponse = 65;
+  InnerStartSyncResponse innerStartSyncResponse = 66;
+}
+
+message InnerStartSyncRequest{}
+
+message InnerStartSyncResponse{}
+
+message InnerUpdateLastWriteIdRequest {
+  int64 clusterId = 1;
+  int64 serverId = 2;
+  int64 lastWriteId = 3;
+}
+
+message InnerUpdateLastWriteIdResponse {}
+
+message SyncRequest {
+  string ip = 1;
+  int32 port = 2;
+  int64 clusterId = 3;
+  int64 serverId = 4;
+  int64 lastWriteId = 5;
+  Database db = 6;
+  repeated Request syncRequests = 7;
+}
+
+message SyncResponse {
+  int64 clusterId = 1;
+  int64 serverId = 2;
+  int64 lastWriteId = 3;
+}
+
+message MasterOfRequest {
+  string ip = 1;
+  int32 port = 2;
+  int64 serverId = 3;
+}
+
+message MasterOfResponse {
+  bool ok = 1;
 }
 
 message CheckZRankRequest {

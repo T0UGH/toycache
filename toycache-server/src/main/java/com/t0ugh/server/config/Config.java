@@ -9,6 +9,7 @@ public class Config {
     // 定期删除策略最多一次删除多少个键
     private int upperKeyLimitOfPeriodicalDelete;
     private int periodicalDeleteTick;
+    private String nettyServerIp;
     private int nettyServerPort;
     // tick间隔, 单位毫秒(MILLISECONDS)
     private int tickInterval;
@@ -21,6 +22,8 @@ public class Config {
     private int saveCheckLimit;
     // 多少个tick检查一次是否需要重写日志
     private int rewriteLogTick;
+    // 多少个tick与从服务器通信一次
+    private int syncSlaveTick;
     // 如果写日志超过多少KB就重写
     private int rewriteLogSizeKBThreshold;
     // buffer中最多存储多少个Request

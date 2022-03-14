@@ -9,8 +9,7 @@ import com.t0ugh.server.handler.HandlerFactory;
 import com.t0ugh.server.rollbacker.RollBackerFactory;
 import com.t0ugh.server.storage.MemoryStorage;
 import com.t0ugh.server.storage.Storage;
-import com.t0ugh.server.tick.DeleteKeyTicker;
-import com.t0ugh.server.tick.TickDriverImpl;
+import com.t0ugh.server.tick.*;
 import com.t0ugh.server.utils.WriteLogUtils;
 import com.t0ugh.server.writeLog.WriteLogExecutor;
 import lombok.Getter;
@@ -52,7 +51,13 @@ public class Bootstrap {
         TickDriverImpl tickDriver = new TickDriverImpl(globalContext);
         globalContext.setTickDriver(tickDriver);
         DeleteKeyTicker deleteKeyTicker = new DeleteKeyTicker(globalContext);
+        RewriteLogTicker rewriteLogTicker = new RewriteLogTicker(globalContext);
+        SyncSlaveTicker syncSlaveTicker = new SyncSlaveTicker(globalContext);
+        SaveTicker saveTicker = new SaveTicker(globalContext);
         tickDriver.register(deleteKeyTicker);
+        tickDriver.register(rewriteLogTicker);
+        tickDriver.register(syncSlaveTicker);
+        tickDriver.register(saveTicker);
         tickDriver.start();
 
         NettyServer nettyServer = new NettyServer(globalContext);

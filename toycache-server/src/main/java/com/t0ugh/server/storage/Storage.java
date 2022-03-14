@@ -87,7 +87,9 @@ public interface Storage {
 
     void loadFromFile(String filePath) throws IOException;
 
-    DBProto.Database toUnModifiableDB();
+    void applyDb(DBProto.Database db);
+
+    DBProto.Database toUnModifiableDB(long lastWriteId);
 
     boolean isExpired(String key);
 

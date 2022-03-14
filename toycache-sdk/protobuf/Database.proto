@@ -6,7 +6,7 @@ option java_package = "com.t0ugh.sdk.proto";
 option java_outer_classname = "DBProto";
 
 message Database {
-    uint64 version = 1;
+    int64 lastWriteId = 1;
     map<string, ValueObject> data = 2;
     map<string, uint64> expire = 3;
 }

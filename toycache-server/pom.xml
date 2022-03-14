@@ -28,6 +28,12 @@
             <artifactId>reflections</artifactId>
             <version>0.9.12</version>
         </dependency>
+        <dependency>
+            <groupId>com.t0ugh</groupId>
+            <artifactId>toycache-client</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

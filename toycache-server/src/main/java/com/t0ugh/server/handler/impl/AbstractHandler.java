@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 /**
@@ -46,16 +47,24 @@ public abstract class AbstractHandler implements Handler {
             // 然后调用抽象方法来做实际的处理
             Proto.Response.Builder okBuilder = MessageUtils.okBuilder(request.getMessageType());
             // 如果能执行到这里, 基本就是没有异常了
-            // 如果是写请求并且当前不是在执行事务，就更新一下内部状态并且向writeLogExecutor提交一个写日志
+            // 如果是写请求并且当前不是在执行事务，就更新一下内部状态并且向writeLogExecutor提交一个写日志，并且将写命令放入缓存
             if(!StateUtils.isNowTransaction(globalContext) &&
                     MessageUtils.isWriteRequest(request.getMessageType(), getGlobalContext().getHandlerFactory())){
                 // 更新一下内部状态
-                getGlobalContext().getGlobalState().getUpdateCount().incrementAndGet();
+                long writeId = getGlobalContext().getGlobalState().getWriteCount().incrementAndGet();
+                // 为Request和Response设置writeId
+                Field field = request.getClass().getDeclaredField("writeId_");
+                field.setAccessible(true);
+                field.set(request, writeId);
+                okBuilder.setWriteId(writeId);
                 // 向writeLogExecutor提交一个写日志
                 getGlobalContext().getWriteLogExecutor().submit(request);
+                // 将写命令放入缓存
+                getGlobalContext().getRequestBuffer().add(request);
             }
             doHandle(request, okBuilder);
             okBuilder.setClientTId(request.getClientTId());
+
             return okBuilder.build();
             // 统一的异常处理
         } catch (CheckNotPassException e) {
