@@ -6,6 +6,7 @@ option java_package = "com.t0ugh.sdk.proto";
 option java_outer_classname = "Proto";
 
 import "Database.proto";
+import "ZooKeeper.proto";
 
 enum MessageType {
   Invalid = 0;
@@ -91,9 +92,10 @@ enum MessageType {
   InnerMasterUpdateFollowerProcess = 106;
   InnerStartSync = 107;
   InnerCreateClient = 108;
+  InnerCreateFollowerToZK = 109;
 
-  MasterOf = 109;//客户端发给主服务器，告诉它某个服务器是它的新的从服务器
-  Sync = 110;//主服务器发给从服务器, 里面可能有快照也可能有缓存, 让从服务器应用这些命令
+  FollowerOf = 110;//客户端发给主服务器，告诉它某个服务器是它的新的从服务器
+  Sync = 111;//主服务器发给从服务器, 里面可能有快照也可能有缓存, 让从服务器应用这些命令
 }
 
 enum ResponseCode {
@@ -177,12 +179,13 @@ message Request {
   CheckZRankRequest checkZRankRequest = 59;
   InnerClearExpireRequest innerClearExpireRequest = 60;
   InnerSaveRequest innerSaveRequest = 61;
-  MasterOfRequest masterOfRequest = 62;
+  FollowerOfRequest followerOfRequest = 62;
   SyncRequest syncRequest = 63;
   InnerMasterUpdateFollowerProcessRequest innerMasterUpdateFollowerProcessRequest = 64;
   InnerStartSyncRequest innerStartSyncRequest = 65;
   InnerRewriteLogRequest innerRewriteLogRequest = 66;
   InnerCreateClientRequest innerCreateClientRequest = 67;
+  InnerCreateFollowerToZKRequest innerCreateFollowerToZKRequest = 68;
 }
 
 message Response {
@@ -248,11 +251,21 @@ message Response {
   CheckZRankResponse checkZRankResponse = 60;
   InnerClearExpireResponse innerClearExpireResponse = 61;
   InnerSaveResponse innerSaveResponse = 62;
-  MasterOfResponse masterOfResponse = 63;
+  FollowerOfResponse followerOfResponse = 63;
   SyncResponse syncResponse = 64;
   InnerMasterUpdateFollowerProcessResponse innerMasterUpdateFollowerProcessResponse = 65;
   InnerStartSyncResponse innerStartSyncResponse = 66;
   InnerCreateClientResponse innerCreateClientResponse = 67;
+  InnerCreateFollowerToZKResponse innerCreateFollowerToZKResponse = 68;
+}
+
+message InnerCreateFollowerToZKRequest {
+  string deletePath = 1;
+  string createPath = 2;
+  ServerMeta serverMeta = 3;
+}
+
+message InnerCreateFollowerToZKResponse {
 }
 
 message InnerCreateClientRequest{
@@ -288,13 +301,11 @@ message SyncRequest {
 message SyncResponse {
 }
 
-message MasterOfRequest {
-  string ip = 1;
-  int32 port = 2;
-  int64 serverId = 3;
+message FollowerOfRequest {
+  int64 groupId = 1;
 }
 
-message MasterOfResponse {
+message FollowerOfResponse {
   bool ok = 1;
 }
 

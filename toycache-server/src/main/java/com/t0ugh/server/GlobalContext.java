@@ -23,6 +23,7 @@ public class GlobalContext {
     private MessageExecutor dbExecutor;
     private MessageExecutor sendSyncExecutor;
     private MessageExecutor createToyCacheClientExecutor;
+    private MessageExecutor createFollowerToZKExecutor;
     private HandlerFactory handlerFactory;
     private GlobalState globalState;
     private OutputStream writeLogOutputStream;
