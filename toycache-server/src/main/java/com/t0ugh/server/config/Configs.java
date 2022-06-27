@@ -9,14 +9,16 @@ public class Configs {
                 .dbBaseFilePath("D:\\tmp\\tcdb\\dev")
                 .writeLogBaseFilePath("D:\\tmp\\tcwlog\\dev")
                 .upperKeyLimitOfPeriodicalDelete(100)
-                .syncSlaveTick(25)
+                .syncFollowerTick(25)
                 .maxBufferSize(100)
                 .build();
     }
 
     public static Config newTestConfig() {
         return Config.builder()
+                .serverId(1)
                 .periodicalDeleteTick(5)
+                .nettyServerIp("127.0.0.1")
                 .nettyServerPort(8114)
                 .tickInterval(100)
                 .saveCheckLimit(5)
@@ -26,8 +28,11 @@ public class Configs {
                 .dbBaseFilePath("D:\\tmp\\tcdb\\test")
                 .writeLogBaseFilePath("D:\\tmp\\tcwlog\\test")
                 .upperKeyLimitOfPeriodicalDelete(10)
-                .syncSlaveTick(25)
+                .syncFollowerTick(25)
                 .maxBufferSize(100)
+                .zookeeperHeartBeatTick(10)
+                .zookeeperServerIp("127.0.0.1")
+                .zookeeperServerPort(2181)
                 .build();
     }
 }

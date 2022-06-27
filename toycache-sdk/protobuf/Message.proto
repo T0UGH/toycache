@@ -116,13 +116,13 @@ message Request {
   MessageType messageType = 1;
   int64 writeId = 2;
   string clientTId = 3;
-  ExistsRequest existsRequest = 4;
-  DelRequest delRequest = 5;
-  GetRequest getRequest = 6;
-  SetRequest setRequest = 7;
-  ExpireRequest expireRequest = 8;
-  SaveRequest saveRequest = 9;
-  InnerRewriteLogRequest innerRewriteLogRequest = 10;
+  int64 epoch = 4;
+  ExistsRequest existsRequest = 5;
+  DelRequest delRequest = 6;
+  GetRequest getRequest = 7;
+  SetRequest setRequest = 8;
+  ExpireRequest expireRequest = 9;
+  SaveRequest saveRequest = 10;
   InnerRewriteLogFinishRequest innerRewriteLogFinishRequest = 11;
   RewriteLogRequest rewriteLogRequest = 12;
   InnerSaveFinishRequest innerSaveFinishRequest = 13;
@@ -178,6 +178,7 @@ message Request {
   SyncRequest syncRequest = 63;
   InnerUpdateLastWriteIdRequest innerUpdateLastWriteIdRequest = 64;
   InnerStartSyncRequest innerStartSyncRequest = 65;
+  InnerRewriteLogRequest innerRewriteLogRequest = 66;
 }
 
 message Response {
@@ -262,19 +263,13 @@ message InnerUpdateLastWriteIdRequest {
 message InnerUpdateLastWriteIdResponse {}
 
 message SyncRequest {
-  string ip = 1;
-  int32 port = 2;
-  int64 clusterId = 3;
-  int64 serverId = 4;
-  int64 lastWriteId = 5;
-  Database db = 6;
-  repeated Request syncRequests = 7;
+  int64 groupId = 1;
+  int64 serverId = 2;
+  Database db = 3;
+  repeated Request syncRequests = 4;
 }
 
 message SyncResponse {
-  int64 clusterId = 1;
-  int64 serverId = 2;
-  int64 lastWriteId = 3;
 }
 
 message MasterOfRequest {

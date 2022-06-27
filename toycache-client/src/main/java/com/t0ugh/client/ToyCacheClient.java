@@ -19,6 +19,7 @@ public class ToyCacheClient {
     private GlobalContext context;
     private String serverIp;
     private int serverPort;
+    private NettyClient nettyClient;
 
     public ToyCacheClient(String serverIp, int serverPort){
         this.serverIp = serverIp;
@@ -29,9 +30,14 @@ public class ToyCacheClient {
     private void init(){
         context = GlobalContext.builder().build();
         context.setDispatcher(new Dispatcher(context));
-        NettyClient nettyClient = new NettyClient(serverIp, serverPort, context);
+        nettyClient = new NettyClient(serverIp, serverPort, context);
         Channel channel = nettyClient.connect();
         context.setChannel(channel);
+    }
+
+    public void close(){
+        nettyClient.close();
+        context.getChannel().close();
     }
 
     public boolean exists(String key) throws InterruptedException {

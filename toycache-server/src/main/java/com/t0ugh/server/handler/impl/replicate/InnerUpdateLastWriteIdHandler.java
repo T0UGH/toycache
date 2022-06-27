@@ -19,9 +19,9 @@ public class InnerUpdateLastWriteIdHandler extends AbstractGenericsHandler<Proto
     @Override
     protected Proto.InnerUpdateLastWriteIdResponse doHandle(Proto.InnerUpdateLastWriteIdRequest req) throws Exception {
         GlobalState state = getGlobalContext().getGlobalState();
-        if (Objects.equals(state.getClusterId(), req.getClusterId())){
-            long originLastWriteId = state.getSlavesProgress().get(req.getServerId());
-            state.getSlavesProgress().put(req.getServerId(), Long.max(originLastWriteId, req.getLastWriteId()));
+        if (Objects.equals(state.getGroupId(), req.getClusterId())){
+            long originLastWriteId = state.getFollowerProcess().get(req.getServerId());
+            state.getFollowerProcess().put(req.getServerId(), Long.max(originLastWriteId, req.getLastWriteId()));
         }
         return Proto.InnerUpdateLastWriteIdResponse.newBuilder().build();
     }

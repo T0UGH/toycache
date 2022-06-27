@@ -1,0 +1,14 @@
+syntax = "proto3";
+//定义protobuf的包名称空间
+package toycache;
+
+option java_package = "com.t0ugh.sdk.proto";
+option java_outer_classname = "ZKProto";
+
+message ServerMeta {
+    uint64 serverId = 1;
+    uint64 epoch = 2;
+    uint64 lastWriteId = 3;
+    string serverIp = 4;
+    int32 serverPort = 5;
+}

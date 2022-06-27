@@ -6,16 +6,16 @@ import com.t0ugh.server.utils.MessageUtils;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class SyncSlaveTicker implements Ticker{
+public class SyncFollowerTicker implements Ticker{
     private int count;
     private final ExecutorService executorService;
     private final GlobalContext globalContext;
     private final int interval;
 
-    public SyncSlaveTicker(GlobalContext globalContext) {
+    public SyncFollowerTicker(GlobalContext globalContext) {
         executorService = Executors.newSingleThreadExecutor();
         this.globalContext = globalContext;
-        this.interval = globalContext.getConfig().getRewriteLogTick();
+        this.interval = globalContext.getConfig().getSyncFollowerTick();
     }
 
     public void shutdown() {

@@ -9,6 +9,7 @@ import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.tick.TickDriver;
 import lombok.Builder;
 import lombok.Data;
+import org.apache.zookeeper.ZooKeeper;
 
 import java.io.OutputStream;
 
@@ -19,6 +20,7 @@ public class GlobalContext {
     private Storage storage;
     private MessageExecutor memoryOperationExecutor;
     private MessageExecutor dbExecutor;
+    private MessageExecutor SendSyncExecutor;
     private HandlerFactory handlerFactory;
     private GlobalState globalState;
     private OutputStream writeLogOutputStream;
@@ -26,4 +28,5 @@ public class GlobalContext {
     private RollBackerFactory rollBackerFactory;
     private TickDriver tickDriver;
     private RequestBuffer requestBuffer;
+    private ZooKeeper zooKeeper;
 }

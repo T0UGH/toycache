@@ -34,7 +34,7 @@ public class Bootstrap {
         globalContext = GlobalContext.builder()
                 .storage(storage)
                 .config(config)
-                .globalState(GlobalState.newInstance(config.getServerId(), config.getClusterId()))
+                .globalState(GlobalState.newInstance(config.getServerId(), config.getGroupId()))
                 .build();
 
         MessageExecutor messageExecutor = new MemoryOperationExecutor(globalContext);
@@ -52,7 +52,7 @@ public class Bootstrap {
         globalContext.setTickDriver(tickDriver);
         DeleteKeyTicker deleteKeyTicker = new DeleteKeyTicker(globalContext);
         RewriteLogTicker rewriteLogTicker = new RewriteLogTicker(globalContext);
-        SyncSlaveTicker syncSlaveTicker = new SyncSlaveTicker(globalContext);
+        SyncFollowerTicker syncSlaveTicker = new SyncFollowerTicker(globalContext);
         SaveTicker saveTicker = new SaveTicker(globalContext);
         tickDriver.register(deleteKeyTicker);
         tickDriver.register(rewriteLogTicker);

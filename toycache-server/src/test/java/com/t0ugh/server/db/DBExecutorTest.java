@@ -36,7 +36,7 @@ public class DBExecutorTest extends BaseTest {
         kvs.put("Hi", MemoryValueObject.newInstance("World").toValueObject());
         kvs.put("Haha", MemoryValueObject.newInstance("World").toValueObject());
         db = DBProto.Database.newBuilder()
-                .setVersion(1L)
+                .setLastWriteId(1L)
                 .putAllData(kvs)
                 .build();
         messageExecutorTestImpl = new MessageExecutorTestImpl();

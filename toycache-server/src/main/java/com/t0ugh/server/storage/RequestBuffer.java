@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.google.common.primitives.Longs;
 import com.t0ugh.sdk.proto.Proto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +20,13 @@ public class RequestBuffer {
         this.maxSize = maxSize;
         buffer = Lists.newLinkedList();
         bufferMap = Maps.newHashMap();
+    }
+
+    public List<Proto.Request> subList(long writeId){
+        int start = (int) (writeId - minWriteId());
+        if (start < 0 || start >= buffer.size())
+            return new ArrayList<>();
+        return new ArrayList<>(buffer.subList(start, buffer.size()));
     }
 
     public void add(Proto.Request request){

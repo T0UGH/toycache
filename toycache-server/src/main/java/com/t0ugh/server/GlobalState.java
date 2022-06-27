@@ -10,7 +10,6 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Data
@@ -22,21 +21,25 @@ public class GlobalState {
     private TransactionState transactionState;
     private MasterState masterState;
     private long serverId;
-    private long clusterId;
+    private long groupId;
     private String masterIp;
     private int masterPort;
-    private Map<Long, ToyCacheClient> slavesClient; // 用于与slaves通信
+    private long epoch;
+    private Map<Long, ToyCacheClient> followerClients; // 用于与slaves通信
     private ToyCacheClient masterClient; //用于与master通信
-    private Map<Long, Long> slavesProgress; // slave的serverId -> slave当前同步到的writeId是多少
-    public static GlobalState newInstance(long serverId, long clusterId){
+    private Map<Long, Long> followerProcess; // slave的serverId -> slave当前同步到的writeId是多少
+    // todo: 初始化不全
+    public static GlobalState newInstance(long serverId, long groupId){
         return GlobalState.builder()
                 .saveState(SaveState.Idle)
                 .rewriteLogState(RewriteLogState.Normal)
-                .writeCount(new AtomicLong(0))
+                .writeCount(new AtomicLong(0))//todo: 不应该直接设为0，应该根据读取到的日志条数进行设置
                 .masterState(MasterState.Master)
                 .serverId(serverId)
-                .clusterId(clusterId)
-                .slavesProgress(Maps.newHashMap())
+                .groupId(groupId)
+                .epoch(0) //todo: 不应该直接设为0,应该根据读取到的日志进行设置
+                .followerProcess(Maps.newConcurrentMap())
+                .followerClients(Maps.newConcurrentMap())
                 .build();
     }
 }

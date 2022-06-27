@@ -25,12 +25,12 @@ public class BaseTest {
 
         Storage storage = new MemoryStorage();
         Config config = Configs.newTestConfig();
-        config.setClusterId(1);
+        config.setGroupId(1);
         config.setServerId(1);
         testContext = GlobalContext.builder()
                 .storage(storage)
                 .config(config)
-                .globalState(GlobalState.newInstance(config.getServerId(), config.getClusterId()))
+                .globalState(GlobalState.newInstance(config.getServerId(), config.getGroupId()))
                 .build();
         // todo: 因为是测试所以append=false
         OutputStream writeLogOutputStream = new FileOutputStream(WriteLogUtils
