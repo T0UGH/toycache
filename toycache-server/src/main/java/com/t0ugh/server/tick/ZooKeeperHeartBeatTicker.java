@@ -37,6 +37,7 @@ public class ZooKeeperHeartBeatTicker implements Ticker{
                         .setServerId(globalState.getServerId())
                         .setLastWriteId(globalState.getWriteCount().get())
                         .setEpoch(globalState.getEpoch())
+                        .setGroupId(globalState.getGroupId())
                         .setServerIp(globalContext.getConfig().getNettyServerIp())
                         .setServerPort(globalContext.getConfig().getNettyServerPort())
                         .build();

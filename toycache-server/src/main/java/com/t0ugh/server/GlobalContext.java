@@ -20,7 +20,8 @@ public class GlobalContext {
     private Storage storage;
     private MessageExecutor memoryOperationExecutor;
     private MessageExecutor dbExecutor;
-    private MessageExecutor SendSyncExecutor;
+    private MessageExecutor sendSyncExecutor;
+    private MessageExecutor createToyCacheClientExecutor;
     private HandlerFactory handlerFactory;
     private GlobalState globalState;
     private OutputStream writeLogOutputStream;

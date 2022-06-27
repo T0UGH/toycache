@@ -33,6 +33,7 @@ public class MasterChildWatcher implements Watcher {
                     try {
                         ZKProto.ServerMeta serverMeta = ZKProto.ServerMeta.parseFrom(data);
                         // 主要就更新process
+                        // todo: 这个更新交给主线程做
                         globalContext1.getGlobalState().getFollowerProcess().put(serverMeta.getServerId(), serverMeta.getLastWriteId());
                     } catch (InvalidProtocolBufferException e) {
                         e.printStackTrace();
@@ -48,6 +49,7 @@ public class MasterChildWatcher implements Watcher {
             onNodeDataChanged();
         } else if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
             // 从表中删掉
+            // todo: 这个删除也交给主线程去做
             globalContext.getGlobalState().getFollowerProcess().remove(followerId);
             globalContext.getGlobalState().getFollowerClients().remove(followerId);
             // 删除watcher, 删除自己

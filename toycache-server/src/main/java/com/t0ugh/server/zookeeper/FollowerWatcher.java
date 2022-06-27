@@ -30,9 +30,7 @@ public class FollowerWatcher implements Watcher {
                     try {
                         ZKProto.ServerMeta serverMeta = ZKProto.ServerMeta.parseFrom(data);
                         GlobalContext globalContext = (GlobalContext) ctx;
-                        // todo: 需不需要更新masterId，可能也不需要其实
-                        // todo: 这里会更新epoch，需不需要把epoch设置为线程安全的，起码设置为volatile的
-                        // todo: 这个回调又是在哪个线程中执行的? 根据博客显示，这些回调是在EventThread这个zk内部的特殊线程中执行的
+                        // todo: 这个更新交给主线程去做
                         globalContext.getGlobalState().setEpoch(serverMeta.getEpoch());
                     } catch (InvalidProtocolBufferException e) {
                         log.error("", e);

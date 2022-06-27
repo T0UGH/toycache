@@ -22,7 +22,9 @@ public class SendSyncExecutor extends AbstractMessageExecutor {
     public Proto.Response doRequest(Proto.Request request) throws Exception {
         if(Objects.equals(Proto.MessageType.Sync, request.getMessageType())){
             Proto.SyncRequest syncRequest = request.getSyncRequest();
-            getGlobalContext().getGlobalState().getFollowerClients().get(syncRequest.getServerId()).talkAsync(request, new ArrayList<>());
+            // 有可能不存在, 因为ToyCacheClient的创建有可能滞后
+            if (getGlobalContext().getGlobalState().getFollowerClients().containsKey(syncRequest.getServerId()))
+                getGlobalContext().getGlobalState().getFollowerClients().get(syncRequest.getServerId()).talkAsync(request, new ArrayList<>());
         }
         // todo: 直接null不太好吧
         return null;

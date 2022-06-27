@@ -2,6 +2,7 @@ package com.t0ugh.server.zookeeper;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.t0ugh.client.ToyCacheClient;
+import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.sdk.proto.ZKProto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.utils.ZKUtils;
@@ -51,9 +52,19 @@ public class MasterWatcher implements Watcher {
                     // 如果ok了就用data更新一下，并且添加一个子节点的Watcher。
                     try {
                         ZKProto.ServerMeta serverMeta = ZKProto.ServerMeta.parseFrom(data);
-                        globalContext1.getGlobalState().getFollowerClients()
-                                .put(serverMeta.getServerId(), new ToyCacheClient(serverMeta.getServerIp(), serverMeta.getServerPort()));
-                        globalContext1.getGlobalState().getFollowerProcess().put(serverMeta.getServerId(), serverMeta.getLastWriteId());
+
+                        globalContext1.getMemoryOperationExecutor().submit(
+                                Proto.Request.newBuilder()
+                                        .setMessageType(Proto.MessageType.InnerMasterUpdateFollowerProcess)
+                                        .setInnerMasterUpdateFollowerProcessRequest(Proto.InnerMasterUpdateFollowerProcessRequest.newBuilder()
+                                                .setGroupId(serverMeta.getGroupId())
+                                                .setLastWriteId(serverMeta.getLastWriteId())
+                                                .setServerId(serverMeta.getServerId())
+                                                .setIp(serverMeta.getServerIp())
+                                                .setPort(serverMeta.getServerPort())
+                                                .build())
+                                        .build()
+                        );
                         new MasterChildWatcher(globalContext1, serverMeta.getServerId()).addWatch();
                     } catch (InvalidProtocolBufferException | KeeperException e) {
                         log.error("", e);

@@ -88,11 +88,12 @@ enum MessageType {
   InnerSaveFinish = 103;
   InnerRewriteLog = 104;
   InnerRewriteLogFinish = 105;
-  InnerUpdateLastWriteId = 106;
+  InnerMasterUpdateFollowerProcess = 106;
   InnerStartSync = 107;
+  InnerCreateClient = 108;
 
-  MasterOf = 108;//客户端发给主服务器，告诉它某个服务器是它的新的从服务器
-  Sync = 109;//主服务器发给从服务器, 里面可能有快照也可能有缓存, 让从服务器应用这些命令
+  MasterOf = 109;//客户端发给主服务器，告诉它某个服务器是它的新的从服务器
+  Sync = 110;//主服务器发给从服务器, 里面可能有快照也可能有缓存, 让从服务器应用这些命令
 }
 
 enum ResponseCode {
@@ -176,9 +177,10 @@ message Request {
   InnerSaveRequest innerSaveRequest = 61;
   MasterOfRequest masterOfRequest = 62;
   SyncRequest syncRequest = 63;
-  InnerUpdateLastWriteIdRequest innerUpdateLastWriteIdRequest = 64;
+  InnerMasterUpdateFollowerProcessRequest innerMasterUpdateFollowerProcessRequest = 64;
   InnerStartSyncRequest innerStartSyncRequest = 65;
   InnerRewriteLogRequest innerRewriteLogRequest = 66;
+  InnerCreateClientRequest innerCreateClientRequest = 67;
 }
 
 message Response {
@@ -246,21 +248,32 @@ message Response {
   InnerSaveResponse innerSaveResponse = 62;
   MasterOfResponse masterOfResponse = 63;
   SyncResponse syncResponse = 64;
-  InnerUpdateLastWriteIdResponse innerUpdateLastWriteIdResponse = 65;
+  InnerMasterUpdateFollowerProcessResponse innerMasterUpdateFollowerProcessResponse = 65;
   InnerStartSyncResponse innerStartSyncResponse = 66;
+  InnerCreateClientResponse innerCreateClientResponse = 67;
 }
+
+message InnerCreateClientRequest{
+  string ip = 1;
+  int32 port = 2;
+  int64 serverId = 3;
+}
+
+message InnerCreateClientResponse{}
 
 message InnerStartSyncRequest{}
 
 message InnerStartSyncResponse{}
 
-message InnerUpdateLastWriteIdRequest {
+message InnerMasterUpdateFollowerProcessRequest {
   int64 groupId = 1;
   int64 serverId = 2;
   int64 lastWriteId = 3;
+  string ip = 4;
+  int32 port = 5;
 }
 
-message InnerUpdateLastWriteIdResponse {}
+message InnerMasterUpdateFollowerProcessResponse {}
 
 message SyncRequest {
   int64 groupId = 1;

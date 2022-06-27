@@ -12,13 +12,13 @@ public class SyncSlaveResponseCallback implements Callback {
 
     @Override
     public void callback(Proto.Request request, Proto.Response response) {
-        globalContext.getMemoryOperationExecutor().submit(Proto.Request.newBuilder()
-                .setMessageType(Proto.MessageType.InnerUpdateLastWriteId)
-                .setInnerUpdateLastWriteIdRequest(Proto.InnerUpdateLastWriteIdRequest.newBuilder()
-                        .setClusterId(response.getSyncResponse().getClusterId())
-                        .setServerId(response.getSyncResponse().getServerId())
-                        .setLastWriteId(response.getSyncResponse().getLastWriteId())
-                        .build())
-                .build());
+//        globalContext.getMemoryOperationExecutor().submit(Proto.Request.newBuilder()
+//                .setMessageType(Proto.MessageType.InnerUpdateLastWriteId)
+//                .setInnerUpdateLastWriteIdRequest(Proto.InnerUpdateLastWriteIdRequest.newBuilder()
+//                        .setClusterId(response.getSyncResponse().getClusterId())
+//                        .setServerId(response.getSyncResponse().getServerId())
+//                        .setLastWriteId(response.getSyncResponse().getLastWriteId())
+//                        .build())
+//                .build());
     }
 }

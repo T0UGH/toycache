@@ -9,6 +9,7 @@ message ServerMeta {
     uint64 serverId = 1;
     uint64 epoch = 2;
     uint64 lastWriteId = 3;
-    string serverIp = 4;
-    int32 serverPort = 5;
+    uint64 groupId = 4;
+    string serverIp = 5;
+    int32 serverPort = 6;
 }
