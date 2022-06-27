@@ -8,6 +8,7 @@ import com.t0ugh.server.storage.RequestBuffer;
 import com.t0ugh.server.storage.RequestRollBackers;
 import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.tick.TickDriver;
+import com.t0ugh.server.zookeeper.ZKState;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.zookeeper.ZooKeeper;
@@ -33,4 +34,5 @@ public class GlobalContext {
     private RequestBuffer requestBuffer;
     private RequestRollBackers requestRollBackers;
     private ZooKeeper zooKeeper;
+    private ZKState zkState;
 }

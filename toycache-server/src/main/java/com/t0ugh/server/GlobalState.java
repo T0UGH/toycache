@@ -9,6 +9,7 @@ import com.t0ugh.server.enums.TransactionState;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -28,6 +29,7 @@ public class GlobalState {
     private Map<Long, ToyCacheClient> followerClients; // 用于与slaves通信
     private ToyCacheClient masterClient; //用于与master通信
     private Map<Long, Long> followerProcess; // slave的serverId -> slave当前同步到的writeId是多少
+    private Map<Long, Long> followerProcessForVote;
     // todo: 初始化不全
     public static GlobalState newInstance(long serverId, long groupId){
         return GlobalState.builder()
@@ -40,6 +42,7 @@ public class GlobalState {
                 .epoch(0) //todo: 不应该直接设为0,应该根据读取到的日志进行设置
                 .followerProcess(Maps.newConcurrentMap())
                 .followerClients(Maps.newConcurrentMap())
+                .followerProcessForVote(new Hashtable<>())
                 .build();
     }
 }
