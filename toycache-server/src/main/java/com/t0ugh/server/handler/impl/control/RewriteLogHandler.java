@@ -24,7 +24,9 @@ public class RewriteLogHandler extends AbstractGenericsHandler<Proto.RewriteLogR
         Proto.Request request = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.InnerRewriteLog)
                 .setInnerRewriteLogRequest(Proto.InnerRewriteLogRequest.newBuilder()
-                        .setDb(getGlobalContext().getStorage().toUnModifiableDB(getGlobalContext().getGlobalState().getWriteCount().get())))
+                        .setDb(getGlobalContext().getStorage().toUnModifiableDB(
+                                getGlobalContext().getGlobalState().getWriteCount().get(),
+                                getGlobalContext().getGlobalState().getEpoch())))
                 .build();
         getGlobalContext().getGlobalState().setRewriteLogState(RewriteLogState.Rewriting);
         getGlobalContext().getWriteLogExecutor().submit(request);

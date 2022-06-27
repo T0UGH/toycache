@@ -1,83 +1,80 @@
 package com.t0ugh.server.handler.impl.replicate;
 
+import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.enums.HandlerType;
+import com.t0ugh.server.handler.Handler;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.handler.impl.AbstractGenericsHandler;
+import com.t0ugh.server.utils.MessageUtils;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
-// todo: 看看这个方法对不对
-@HandlerAnnotation(messageType = Proto.MessageType.Sync, checkExpire = false, handlerType= HandlerType.Other)
-public class SyncHandler extends AbstractGenericsHandler<Proto.SyncRequest, Proto.SyncResponse> {
+public class SyncHandler implements Handler {
+
+    private final GlobalContext globalContext;
 
     public SyncHandler(GlobalContext globalContext) {
-        super(globalContext);
+        this.globalContext = globalContext;
     }
 
     @Override
-    protected Proto.SyncResponse doHandle(Proto.SyncRequest syncRequest) throws Exception {
-//        long masterClusterId = syncRequest.getClusterId();
-//        if (!Objects.equals(masterClusterId, getGlobalContext().getGlobalState().getGroupId())){
-//            handleClusterIdUnMatched(syncRequest);
-//        }
-//        handleClusterIdMatched(syncRequest);
-        return null;
+    public Proto.Response handle(Proto.Request request) {
+        // 1 先判断合不合适
+        if (!request.hasSyncRequest()) {
+            return MessageUtils.responseWithCode(Proto.ResponseCode.InvalidParam, request.getClientTId());
+        }
+        Proto.SyncRequest syncRequest = request.getSyncRequest();
+        // 判断是不是同一个组
+        if (Objects.equals(syncRequest.getGroupId(), globalContext.getGlobalState().getGroupId())){
+            return MessageUtils.responseWithCode(Proto.ResponseCode.SyncError, request.getClientTId());
+        }
+        // 判断是不是老领导, 老领导的命令就不听了
+        if (syncRequest.getEpoch() < globalContext.getGlobalState().getEpoch()){
+            return MessageUtils.responseWithCode(Proto.ResponseCode.SyncError, request.getClientTId());
+        }
+        // 判断是不是没东西, 没东西就不更新但是返回一个OK
+        if (!syncRequest.hasDb() && syncRequest.getSyncRequestsCount() == 0){
+            return MessageUtils.okBuilder(Proto.MessageType.Sync).setSyncResponse(Proto.SyncResponse.newBuilder().build()).build();
+        }
+        // 如果有快照就应用快照
+        if (syncRequest.hasDb()){
+            DBProto.Database db = syncRequest.getDb();
+            globalContext.getStorage().applyDb(syncRequest.getDb());
+            globalContext.getGlobalState().getWriteCount().set(db.getLastWriteId());
+            return MessageUtils.okBuilder(Proto.MessageType.Sync).setSyncResponse(Proto.SyncResponse.newBuilder().build()).build();
+        }
+        // 如果没有快照就看看能不能应用Request
+        // 1 有空隙和严丝合缝都不放
+        // 2 没有空隙的时候要检查第一条是否符合, 符合的话就用后面的替换掉
+        // 3 不符合就不应用, 并且把自己的updateCount退一格
+        List<Proto.Request> requests = syncRequest.getSyncRequestsList();
+        Proto.Request firstRequest = requests.get(0);
+        Optional<Proto.Request> localRequest = globalContext.getRequestBuffer().get(firstRequest.getWriteId());
+        if (!localRequest.isPresent()){
+            // 不合适, 就返回一个错误就行
+            return MessageUtils.responseWithCode(Proto.ResponseCode.SyncError, request.getClientTId());
+        }
+        // 没匹配上, 别忘了退格
+        if(localRequest.get().getEpoch() != firstRequest.getEpoch()){
+            globalContext.getGlobalState().getWriteCount().set(firstRequest.getWriteId());
+            return MessageUtils.responseWithCode(Proto.ResponseCode.SyncError, request.getClientTId());
+        }
+        // 匹配上了, 先将系统回滚到指定位置
+        int rollBackCount = (int) (globalContext.getGlobalState().getWriteCount().get() - firstRequest.getWriteId());
+        boolean success = globalContext.getRequestRollBackers().rollBack(rollBackCount);
+        // 如果不成功, 说明系统回滚不过去了, 直接将WriteCount置为0, 然后发快照吧
+        if (!success){
+            globalContext.getGlobalState().getWriteCount().set(0L);
+        }
+        for(Proto.Request curr: requests){
+            // todo: 这里直接调用的是那个老的，需要改一下AbstractHandler里的逻辑
+            globalContext.getHandlerFactory().getHandler(curr.getMessageType()).orElseThrow(UnsupportedOperationException::new).handle(request);
+        }
+        return MessageUtils.okBuilder(Proto.MessageType.Sync).setSyncResponse(Proto.SyncResponse.newBuilder().build()).build();
     }
 
-    private void handleClusterIdUnMatched(Proto.SyncRequest syncRequest) throws Exception {
-        // 如果clusterId不匹配, 首先要更新clusterId
-//        getGlobalContext().getGlobalState().setGroupId(syncRequest.getClusterId());
-//        // 如果携带了Snapshot就直接应用, 并且把writeCount置为对应的值
-//        // todo: 这个isNull用的对不对
-//        if (!Objects.isNull(syncRequest.getDb())&&!syncRequest.getDb().getDataMap().isEmpty()){
-//            getGlobalContext().getStorage().applyDb(syncRequest.getDb());
-//            getGlobalContext().getGlobalState().getWriteCount().set(syncRequest.getDb().getLastWriteId());
-//            return;
-//        }
-//        // 如果携带了Requests要查看Requests是否是从1开始的
-//        if (!Objects.equals(0, syncRequest.getSyncRequestsCount())){
-//            Proto.Request firstRequest = syncRequest.getSyncRequests(0);
-//            // 是从1开始的就应用
-//            if (Objects.equals(1, firstRequest.getWriteId())){
-//                for (Proto.Request request: syncRequest.getSyncRequestsList()) {
-//                    getGlobalContext().getHandlerFactory().getHandler(request.getMessageType()).get().handle(request);
-//                    // 这里不用更新writeCount, 因为handle方法会更新这个值
-//                }
-//            }
-//        }
-
-    }
-
-    private void handleClusterIdMatched(Proto.SyncRequest syncRequest) throws Exception {
-//        // 如果携带了Snapshot, 首先设置
-//        if (!Objects.isNull(syncRequest.getDb())&&!syncRequest.getDb().getDataMap().isEmpty()){
-//            if(syncRequest.getDb().getLastWriteId() >= getGlobalContext().getGlobalState().getWriteCount().get()){
-//                getGlobalContext().getStorage().applyDb(syncRequest.getDb());
-//                getGlobalContext().getGlobalState().getWriteCount().set(syncRequest.getDb().getLastWriteId());
-//            }
-//            return;
-//        }
-//        // 如果携带了Requests要查看Requests是否是从1开始的
-//        if (!Objects.equals(0, syncRequest.getSyncRequestsCount())){
-//            Proto.Request firstRequest = syncRequest.getSyncRequests(0);
-//            // 但是第一条Request与lastWriteId有间隔, 则不应用
-//            long lastWriteId = getGlobalContext().getGlobalState().getWriteCount().get();
-//            if (firstRequest.getWriteId() > lastWriteId){
-//                return;
-//            }
-//            // lastWriteId过小, 则不应用
-//            if (syncRequest.getLastWriteId() < lastWriteId){
-//                return;
-//            }
-//            // 否则应用在getGlobalContext().getGlobalState().getWriteCount().get()与lastWriteId之间的数据
-//            for (Proto.Request request: syncRequest.getSyncRequestsList()) {
-//                if (request.getWriteId() > lastWriteId){
-//                    // 这里不用更新writeCount, 因为handle方法会更新这个值
-//                    getGlobalContext().getHandlerFactory().getHandler(request.getMessageType()).get().handle(request);
-//                }
-//            }
-//        }
-    }
 }

@@ -27,7 +27,8 @@ public class SaveHandler extends AbstractGenericsHandler<Proto.SaveRequest, Prot
                 .setMessageType(Proto.MessageType.InnerSave)
                 .setInnerSaveRequest(Proto.InnerSaveRequest.newBuilder()
                         // todo: 这里实现的比较简单，只是将所有的Cache备份了一遍然后一起存，应改为Redis的方式
-                        .setDb(getGlobalContext().getStorage().toUnModifiableDB(getGlobalContext().getGlobalState().getWriteCount().get()))
+                        .setDb(getGlobalContext().getStorage().toUnModifiableDB(getGlobalContext().getGlobalState().getWriteCount().get(),
+                                getGlobalContext().getGlobalState().getEpoch()))
                         .setFilePath(DBUtils.genFilePath(getGlobalContext().getConfig().getDbBaseFilePath()))
                         .build())
                 .build();

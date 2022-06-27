@@ -111,6 +111,8 @@ enum ResponseCode {
   MessageTypeNotSupported = 5;
   // Check检查没通过
   CheckNotPass = 6;
+  // Sync的时候发生的错误
+  SyncError = 7;
 }
 
 message Request {
@@ -278,8 +280,9 @@ message InnerMasterUpdateFollowerProcessResponse {}
 message SyncRequest {
   int64 groupId = 1;
   int64 serverId = 2;
-  Database db = 3;
-  repeated Request syncRequests = 4;
+  int64 epoch = 3;
+  Database db = 4;
+  repeated Request syncRequests = 5;
 }
 
 message SyncResponse {

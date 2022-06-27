@@ -61,6 +61,8 @@ public abstract class AbstractHandler implements Handler {
                 getGlobalContext().getWriteLogExecutor().submit(request);
                 // 将写命令放入缓存
                 getGlobalContext().getRequestBuffer().add(request);
+                // 生成一个RollBack并放入
+                getGlobalContext().getRequestRollBackers().add(request);
             }
             doHandle(request, okBuilder);
             okBuilder.setClientTId(request.getClientTId());

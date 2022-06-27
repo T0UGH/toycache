@@ -82,7 +82,7 @@ public class WriteLogExecutorTest extends BaseTest {
         Proto.Request innerRewrite = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.InnerRewriteLog)
                 .setInnerRewriteLogRequest(Proto.InnerRewriteLogRequest.newBuilder()
-                        .setDb(storage.toUnModifiableDB(testContext.getGlobalState().getWriteCount().get()))
+                        .setDb(storage.toUnModifiableDB(testContext.getGlobalState().getWriteCount().get(), testContext.getGlobalState().getEpoch()))
                         .build())
                 .build();
         testContext.getWriteLogExecutor().submitAndWait(innerRewrite);

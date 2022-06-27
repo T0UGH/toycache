@@ -28,18 +28,20 @@ public class InnerStartSyncHandler extends AbstractGenericsHandler<Proto.InnerSt
             long currLastWriteId = process.getValue();
             long followerId = process.getKey();
             RequestBuffer requestBuffer = getGlobalContext().getRequestBuffer();
-            Proto.SyncRequest.Builder syncRequestBuilder = Proto.SyncRequest.newBuilder().setServerId(followerId);
+            Proto.SyncRequest.Builder syncRequestBuilder = Proto.SyncRequest.newBuilder().setServerId(followerId)
+                    .setEpoch(getGlobalContext().getGlobalState().getEpoch());
             if (requestBuffer.minWriteId() > currLastWriteId + 1){
                 // 只能发快照了
-                syncRequestBuilder.setDb(getGlobalContext().getStorage().toUnModifiableDB(getGlobalContext().getGlobalState().getWriteCount().get()));
+                syncRequestBuilder.setDb(getGlobalContext().getStorage().toUnModifiableDB(getGlobalContext().getGlobalState().getWriteCount().get(),
+                        getGlobalContext().getGlobalState().getEpoch()));
             } else {
                 // 找到对应的RequestBuffer中的数据, 发送过去
-                List<Proto.Request> requests = requestBuffer.subList(currLastWriteId + 1);
+                List<Proto.Request> requests = requestBuffer.subList(currLastWriteId);
                 if (requests.size() > 0)
                     syncRequestBuilder.addAllSyncRequests(requests);
             }
             // 如果有快照或者如果有值得发送的Requests就发
-            if (!Objects.isNull(syncRequestBuilder.getDb()) || syncRequestBuilder.getSyncRequestsCount() > 0){
+            if (syncRequestBuilder.hasDb() || syncRequestBuilder.getSyncRequestsCount() > 0){
                 //发送
                 Proto.Request request = Proto.Request.newBuilder()
                         .setMessageType(Proto.MessageType.Sync)

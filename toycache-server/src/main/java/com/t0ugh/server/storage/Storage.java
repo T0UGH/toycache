@@ -89,7 +89,7 @@ public interface Storage {
 
     void applyDb(DBProto.Database db);
 
-    DBProto.Database toUnModifiableDB(long lastWriteId);
+    DBProto.Database toUnModifiableDB(long lastWriteId, long lastEpoch);
 
     boolean isExpired(String key);
 
