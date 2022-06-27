@@ -255,7 +255,7 @@ message InnerStartSyncRequest{}
 message InnerStartSyncResponse{}
 
 message InnerUpdateLastWriteIdRequest {
-  int64 clusterId = 1;
+  int64 groupId = 1;
   int64 serverId = 2;
   int64 lastWriteId = 3;
 }
