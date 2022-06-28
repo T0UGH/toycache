@@ -24,7 +24,7 @@ ToyCache是一个分布式内存数据库。大致仿照Redis的功能。支持�
 
 总体设计如下图所示
 
-![](.\doc\mainDesign.png)
+![](https://healthlung.oss-cn-beijing.aliyuncs.com/maindesign.png)
 
 - 首先客户端服务器之间通过`Netty`进行通信，通信格式为`Protobuf`格式。
 
@@ -410,7 +410,7 @@ tickDriver.start();
 
 对应类图如下
 
-![](.\doc\tickClass.png)
+![](https://healthlung.oss-cn-beijing.aliyuncs.com/tickClass.png)
 
 
 
@@ -547,7 +547,7 @@ zk中节点设计如下
 
 主节点、从节点、zk之间的通信如下图所示
 
-![](.\doc\masterfollower.png)
+![](https://healthlung.oss-cn-beijing.aliyuncs.com/masterfollower.png)
 
 首先，主节点和从节点都会定期向zk发HeartBeat来进行元数据同步，元数据如下
 
