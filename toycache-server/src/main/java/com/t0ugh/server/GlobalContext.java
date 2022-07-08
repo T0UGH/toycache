@@ -35,4 +35,5 @@ public class GlobalContext {
     private RequestRollBackers requestRollBackers;
     private ZooKeeper zooKeeper;
     private ZKState zkState;
+    private NettyServer nettyServer;
 }

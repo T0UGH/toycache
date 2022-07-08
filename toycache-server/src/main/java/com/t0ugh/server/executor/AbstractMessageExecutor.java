@@ -43,6 +43,10 @@ public abstract class AbstractMessageExecutor implements MessageExecutor{
         executorService.submit(new RunnableCommand(request)).get();
     }
 
+    public void shutdown(){
+        executorService.shutdown();
+    }
+
     protected GlobalContext getGlobalContext(){
         return globalContext;
     }

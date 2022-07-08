@@ -30,6 +30,11 @@ public class MessageExecutorTestImpl implements MessageExecutor {
     }
 
     @Override
+    public void shutdown() {
+
+    }
+
+    @Override
     public void submitAndWait(Proto.Request request, Callback... callbacks) throws ExecutionException, InterruptedException {
         requestList.add(request);
     }

@@ -13,17 +13,20 @@ import com.t0ugh.server.tick.*;
 import com.t0ugh.server.utils.WriteLogUtils;
 import com.t0ugh.server.writeLog.WriteLogExecutor;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
-public class Bootstrap {
+@Slf4j
+public class ToyCacheServer {
 
     @Getter
     private GlobalContext globalContext;
 
-    public Bootstrap(){}
+    public ToyCacheServer(){}
 
     public void startDev() throws FileNotFoundException {
         start(Configs.newDefaultConfig());
@@ -48,7 +51,7 @@ public class Bootstrap {
         globalContext.setWriteLogExecutor(new WriteLogExecutor(globalContext));
         globalContext.setRollBackerFactory(new RollBackerFactory(globalContext));
 
-        TickDriverImpl tickDriver = new TickDriverImpl(globalContext);
+        TickDriver tickDriver = new TickDriverImpl(globalContext);
         globalContext.setTickDriver(tickDriver);
         DeleteKeyTicker deleteKeyTicker = new DeleteKeyTicker(globalContext);
         RewriteLogTicker rewriteLogTicker = new RewriteLogTicker(globalContext);
@@ -61,7 +64,24 @@ public class Bootstrap {
         tickDriver.start();
 
         NettyServer nettyServer = new NettyServer(globalContext);
+        globalContext.setNettyServer(nettyServer);
         nettyServer.startServer();
+    }
+
+    public void stop(){
+        globalContext.getNettyServer().stopServer();
+        globalContext.getTickDriver().shutdown();
+        globalContext.getMemoryOperationExecutor().shutdown();
+        globalContext.getDbExecutor().shutdown();
+        globalContext.getCreateFollowerToZKExecutor().shutdown();
+        globalContext.getCreateToyCacheClientExecutor().shutdown();
+        globalContext.getSendSyncExecutor().shutdown();
+        try {
+            globalContext.getWriteLogOutputStream().close();
+        } catch (IOException e) {
+            log.error("",e);
+        }
+        globalContext.getWriteLogExecutor().shutdown();
     }
 
     public void startTest() throws FileNotFoundException {

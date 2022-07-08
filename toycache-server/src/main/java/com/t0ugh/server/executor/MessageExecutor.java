@@ -11,4 +11,6 @@ public interface MessageExecutor {
     void submitAndWait(Proto.Request request, Callback... callbacks) throws Exception;
 
     void submitAndWait(Proto.Request request) throws Exception;
+
+    void shutdown();
 }

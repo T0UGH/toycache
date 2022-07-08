@@ -1,24 +1,32 @@
 package com.t0ugh.server;
 
-import com.t0ugh.server.config.Configs;
-import com.t0ugh.server.db.DBExecutor;
-import com.t0ugh.server.executor.MemoryOperationExecutor;
-import com.t0ugh.server.executor.MessageExecutor;
-import com.t0ugh.server.handler.HandlerFactory;
-import com.t0ugh.server.rollbacker.RollBackerFactory;
-import com.t0ugh.server.storage.MemoryStorage;
-import com.t0ugh.server.storage.Storage;
-import com.t0ugh.server.tick.DeleteKeyTicker;
-import com.t0ugh.server.tick.TickDriverImpl;
-import com.t0ugh.server.utils.WriteLogUtils;
-import com.t0ugh.server.writeLog.WriteLogExecutor;
+import lombok.Builder;
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
-        new Bootstrap().startDev();
+        ToyCacheServer toyCacheServer = new ToyCacheServer();
+        Signal sg = new Signal("TERM"); // kill -15 pid
+        // 监听信号量
+        Signal.handle(sg, signal -> System.exit(0));
+        // 注册关闭钩子
+        Runtime.getRuntime().addShutdownHook(new Thread(StopRunnable.builder().toyCacheServer(toyCacheServer).build()));
+
+        toyCacheServer.startDev();
+    }
+
+}
+
+@Builder
+class StopRunnable implements Runnable{
+
+    private ToyCacheServer toyCacheServer;
+
+    @Override
+    public void run() {
+        toyCacheServer.stop();
     }
 }

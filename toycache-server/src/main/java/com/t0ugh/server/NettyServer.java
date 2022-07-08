@@ -21,6 +21,8 @@ public class NettyServer {
     private final GlobalContext globalContext;
     private final int serverPort;
     ServerBootstrap b;
+    EventLoopGroup bossLoopGroup;
+    EventLoopGroup workerLoopGroup;
 
     public NettyServer(GlobalContext globalContext)
     {
@@ -45,8 +47,8 @@ public class NettyServer {
     public void startServer()
     {
         //创建reactor 线程组
-        EventLoopGroup bossLoopGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerLoopGroup = new NioEventLoopGroup();
+        bossLoopGroup = new NioEventLoopGroup(1);
+        workerLoopGroup = new NioEventLoopGroup();
 
         try
         {
@@ -84,18 +86,16 @@ public class NettyServer {
 
             // 7 等待通道关闭的异步任务结束
             // 服务监听通道会一直等待通道关闭的异步任务结束
-            ChannelFuture closeFuture = channelFuture.channel().closeFuture();
-            closeFuture.sync();
+//            ChannelFuture closeFuture = channelFuture.channel().closeFuture();
+//            closeFuture.sync();
         } catch (Exception e)
         {
             e.printStackTrace();
-        } finally
-        {
-            // 8 优雅关闭EventLoopGroup，
-            // 释放掉所有资源包括创建的线程
-            workerLoopGroup.shutdownGracefully();
-            bossLoopGroup.shutdownGracefully();
         }
+    }
 
+    public void stopServer(){
+        workerLoopGroup.shutdownGracefully();
+        bossLoopGroup.shutdownGracefully();
     }
 }
