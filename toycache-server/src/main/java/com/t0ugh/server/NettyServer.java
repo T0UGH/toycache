@@ -23,6 +23,7 @@ public class NettyServer {
     ServerBootstrap b;
     EventLoopGroup bossLoopGroup;
     EventLoopGroup workerLoopGroup;
+    Channel channel;
 
     public NettyServer(GlobalContext globalContext)
     {
@@ -83,7 +84,7 @@ public class NettyServer {
             ChannelFuture channelFuture = b.bind().sync();
             log.info(" 服务器启动成功，监听端口: " +
                     channelFuture.channel().localAddress());
-
+            channel = channelFuture.channel();
             // 7 等待通道关闭的异步任务结束
             // 服务监听通道会一直等待通道关闭的异步任务结束
 //            ChannelFuture closeFuture = channelFuture.channel().closeFuture();
@@ -95,6 +96,7 @@ public class NettyServer {
     }
 
     public void stopServer(){
+        channel.close();
         workerLoopGroup.shutdownGracefully();
         bossLoopGroup.shutdownGracefully();
     }
