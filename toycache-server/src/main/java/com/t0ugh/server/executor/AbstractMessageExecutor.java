@@ -23,24 +23,41 @@ public abstract class AbstractMessageExecutor implements MessageExecutor{
     }
 
     public void submit(Proto.Request request, Callback... callbacks){
-        beforeSubmit(request);
-        executorService.submit(new RunnableCommand(request, callbacks));
+        try{
+            beforeSubmit(request);
+            executorService.submit(new RunnableCommand(request, callbacks));
+        } catch (RuntimeException e){
+            handleException(request, e, callbacks);
+        }
     }
 
     public void submit(Proto.Request request){
-        beforeSubmit(request);
-        executorService.submit(new RunnableCommand(request));
+        try{
+            beforeSubmit(request);
+            executorService.submit(new RunnableCommand(request));
+        } catch (RuntimeException e){
+            handleException(request, e);
+        }
     }
 
     public void submitAndWait(Proto.Request request, Callback... callbacks) throws Exception{
-        beforeSubmit(request);
-        executorService.submit(new RunnableCommand(request, callbacks)).get();
-
+        try{
+            beforeSubmit(request);
+            executorService.submit(new RunnableCommand(request, callbacks)).get();
+        } catch (RuntimeException e){
+            handleException(request, e, callbacks);
+        }
     }
 
     public void submitAndWait(Proto.Request request) throws Exception{
         beforeSubmit(request);
         executorService.submit(new RunnableCommand(request)).get();
+        try{
+            beforeSubmit(request);
+            executorService.submit(new RunnableCommand(request)).get();
+        } catch (RuntimeException e){
+            handleException(request, e);
+        }
     }
 
     public void shutdown(){
@@ -56,6 +73,10 @@ public abstract class AbstractMessageExecutor implements MessageExecutor{
     }
 
     protected void beforeSubmit(Proto.Request request){
+
+    }
+
+    protected void handleException(Proto.Request request, RuntimeException runtimeException, Callback... callbacks){
 
     }
 

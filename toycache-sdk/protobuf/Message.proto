@@ -115,6 +115,8 @@ enum ResponseCode {
   CheckNotPass = 6;
   // Sync的时候发生的错误
   SyncError = 7;
+  // 服务器繁忙
+  ServerBusy = 8;
 }
 
 message Request {

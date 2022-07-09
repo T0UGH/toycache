@@ -1,10 +1,13 @@
 package com.t0ugh.server.executor;
 
+import com.t0ugh.sdk.callback.Callback;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.handler.Handler;
+import com.t0ugh.server.utils.MessageUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -27,5 +30,13 @@ public class MemoryOperationExecutor extends AbstractMessageExecutor {
                 .getHandler(request.getMessageType())
                 .orElseThrow(UnsupportedOperationException::new);
         return handler.handle(request);
+    }
+
+    @Override
+    protected void handleException(Proto.Request request, RuntimeException runtimeException, Callback... callbacks){
+        Proto.Response response = MessageUtils.responseWithCode(Proto.ResponseCode.ServerBusy, request.getClientTId());
+        Arrays.stream(callbacks).forEach(callback -> {
+            callback.callback(request, response);
+        });
     }
 }
