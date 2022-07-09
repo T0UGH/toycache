@@ -98,9 +98,7 @@ public abstract class AbstractMessageExecutor implements MessageExecutor{
                     callback.callback(request, response);
                 });
             } catch (Exception e){
-                //todo 这样处理Exception太暴力了
                 log.error("RunnableCommand", e);
-                e.printStackTrace();
             }
 
         }

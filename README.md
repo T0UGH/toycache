@@ -136,76 +136,101 @@ public interface MessageExecutor {
 由于大多数`Executor`功能都差不多，因此抽象出来一个抽象类，来放公共逻辑。
 
 ```java
+package com.t0ugh.server.executor;
 @Slf4j
 public abstract class AbstractMessageExecutor implements MessageExecutor{
 
-    private final GlobalContext globalContext;
-    private final ExecutorService executorService;
+  private final GlobalContext globalContext;
+  private final ExecutorService executorService;
 
-    protected AbstractMessageExecutor(GlobalContext globalContext, ExecutorService executorService) {
-        this.globalContext = globalContext;
-        this.executorService = executorService;
+  protected AbstractMessageExecutor(GlobalContext globalContext, ExecutorService executorService) {
+    this.globalContext = globalContext;
+    this.executorService = executorService;
+  }
+
+  public void submit(Proto.Request request, Callback... callbacks){
+    try{
+      beforeSubmit(request);
+      executorService.submit(new RunnableCommand(request, callbacks));
+    } catch (RuntimeException e){
+      handleException(request, e, callbacks);
     }
+  }
 
-    public void submit(Proto.Request request, Callback... callbacks){
-        beforeSubmit(request);
-        executorService.submit(new RunnableCommand(request, callbacks));
+  public void submit(Proto.Request request){
+    try{
+      beforeSubmit(request);
+      executorService.submit(new RunnableCommand(request));
+    } catch (RuntimeException e){
+      handleException(request, e);
     }
+  }
 
-    public void submit(Proto.Request request){
-        beforeSubmit(request);
-        executorService.submit(new RunnableCommand(request));
+  public void submitAndWait(Proto.Request request, Callback... callbacks) throws Exception{
+    try{
+      beforeSubmit(request);
+      executorService.submit(new RunnableCommand(request, callbacks)).get();
+    } catch (RuntimeException e){
+      handleException(request, e, callbacks);
     }
+  }
 
-    public void submitAndWait(Proto.Request request, Callback... callbacks) throws Exception{
-        beforeSubmit(request);
-        executorService.submit(new RunnableCommand(request, callbacks)).get();
+  public void submitAndWait(Proto.Request request) throws Exception{
+    beforeSubmit(request);
+    executorService.submit(new RunnableCommand(request)).get();
+    try{
+      beforeSubmit(request);
+      executorService.submit(new RunnableCommand(request)).get();
+    } catch (RuntimeException e){
+      handleException(request, e);
+    }
+  }
+
+  public void shutdown(){
+    executorService.shutdown();
+  }
+
+  protected GlobalContext getGlobalContext(){
+    return globalContext;
+  }
+
+  protected ExecutorService getExecutorService(){
+    return executorService;
+  }
+
+  protected void beforeSubmit(Proto.Request request){
+
+  }
+
+  protected void handleException(Proto.Request request, RuntimeException runtimeException, Callback... callbacks){
+
+  }
+
+  public abstract Proto.Response doRequest(Proto.Request request) throws Exception;
+
+  @RequiredArgsConstructor
+  @AllArgsConstructor
+  private class RunnableCommand implements Runnable {
+
+    @NonNull
+    private final Proto.Request request;
+    private Callback[] callbacks = new Callback[0];
+
+    @Override
+    public void run() {
+      try{
+        Proto.Response response = doRequest(request);
+        Arrays.stream(callbacks).forEach(callback -> {
+          callback.callback(request, response);
+        });
+      } catch (Exception e){
+        log.error("RunnableCommand", e);
+      }
 
     }
-
-    public void submitAndWait(Proto.Request request) throws Exception{
-        beforeSubmit(request);
-        executorService.submit(new RunnableCommand(request)).get();
-    }
-
-    protected GlobalContext getGlobalContext(){
-        return globalContext;
-    }
-
-    protected ExecutorService getExecutorService(){
-        return executorService;
-    }
-
-    protected void beforeSubmit(Proto.Request request){
-
-    }
-
-    public abstract Proto.Response doRequest(Proto.Request request) throws Exception;
-
-    @RequiredArgsConstructor
-    @AllArgsConstructor
-    private class RunnableCommand implements Runnable {
-
-        @NonNull
-        private final Proto.Request request;
-        private Callback[] callbacks = new Callback[0];
-
-        @Override
-        public void run() {
-            try{
-                Proto.Response response = doRequest(request);
-                Arrays.stream(callbacks).forEach(callback -> {
-                    callback.callback(request, response);
-                });
-            } catch (Exception e){
-                //todo 这样处理Exception太暴力了
-                log.error("RunnableCommand", e);
-                e.printStackTrace();
-            }
-
-        }
-    }
+  }
 }
+
 ```
 
 - 可以看到这里开了一个单线程的`ExecutorService`，它处理`Request`，处理完成之后调用`Callback`。
@@ -218,17 +243,26 @@ public abstract class AbstractMessageExecutor implements MessageExecutor{
 @Slf4j
 public class MemoryOperationExecutor extends AbstractMessageExecutor {
 
-    public MemoryOperationExecutor(GlobalContext globalContext) {
-        super(globalContext, Executors.newSingleThreadExecutor());
-    }
+  public MemoryOperationExecutor(GlobalContext globalContext) {
+    super(globalContext, new ThreadPoolExecutor(1, 1,
+            0L, TimeUnit.MILLISECONDS,new LinkedBlockingQueue<>(10000)));
+  }
 
-    @Override
-    public Proto.Response doRequest(Proto.Request request) {
-        Handler handler = getGlobalContext().getHandlerFactory()
-                .getHandler(request.getMessageType())
-                .orElseThrow(UnsupportedOperationException::new);
-        return handler.handle(request);
-    }
+  @Override
+  public Proto.Response doRequest(Proto.Request request) {
+    Handler handler = getGlobalContext().getHandlerFactory()
+            .getHandler(request.getMessageType())
+            .orElseThrow(UnsupportedOperationException::new);
+    return handler.handle(request);
+  }
+
+  @Override
+  protected void handleException(Proto.Request request, RuntimeException runtimeException, Callback... callbacks){
+    Proto.Response response = MessageUtils.responseWithCode(Proto.ResponseCode.ServerBusy, request.getClientTId());
+    Arrays.stream(callbacks).forEach(callback -> {
+      callback.callback(request, response);
+    });
+  }
 }
 ```
 
