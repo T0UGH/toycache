@@ -3,10 +3,12 @@ package com.t0ugh.server.executor;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.sdk.callback.Callback;
 
-public interface MessageExecutor {
-    void submit(Proto.Request request, Callback... callbacks);
+import java.util.concurrent.Future;
 
-    void submit(Proto.Request request);
+public interface MessageExecutor {
+    Future<Proto.Response> submit(Proto.Request request, Callback... callbacks);
+
+    Future<Proto.Response> submit(Proto.Request request);
 
     void submitAndWait(Proto.Request request, Callback... callbacks) throws Exception;
 

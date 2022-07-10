@@ -501,6 +501,7 @@ public class MemoryStorage implements Storage{
     }
 
     @Override
+    @Deprecated
     public void loadFromFile(String filePath) throws IOException {
         DBUtils.loadFromFile(filePath, data, expire);
     }
@@ -577,6 +578,30 @@ public class MemoryStorage implements Storage{
         }
         expire.remove(key);
         return true;
+    }
+
+    @Override
+    public Optional<DBProto.KeyValue> cloneValue(String key) {
+        if (!data.containsKey(key)){
+            return Optional.empty();
+        }
+        return Optional.of(DBProto.KeyValue.newBuilder().setKey(key).setValueObject(data.get(key).toValueObject()).build());
+    }
+
+    @Override
+    public Set<String> keys() {
+        return Sets.newHashSet(data.keySet());
+    }
+
+    @Override
+    public DBProto.DatabaseMeta getDatabaseMeta(long lastWriteId, long lastEpoch) {
+        Map<String, Long> newExpire = Maps.newHashMap();
+        newExpire.putAll(expire);
+        return DBProto.DatabaseMeta.newBuilder()
+                .setLastWriteId(lastWriteId)
+                .setLastEpoch(lastEpoch)
+                .putAllExpire(newExpire)
+                .build();
     }
 
     private static boolean isTimeExpired(long time){

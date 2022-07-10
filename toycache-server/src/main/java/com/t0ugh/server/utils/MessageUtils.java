@@ -179,6 +179,15 @@ public class MessageUtils {
                 .build();
     }
 
+    public static Proto.Request newInnerCloneValueRequest(String key){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.InnerCloneValue)
+                .setInnerCloneValueRequest(Proto.InnerCloneValueRequest.newBuilder()
+                        .setKey(key)
+                        .build())
+                .build();
+    }
+
     public static void assertStringNotNullOrEmpty(String str) throws InvalidParamException {
         if(Strings.isNullOrEmpty(str))
             throw new InvalidParamException();

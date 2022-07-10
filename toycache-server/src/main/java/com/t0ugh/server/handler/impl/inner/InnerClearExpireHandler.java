@@ -6,7 +6,7 @@ import com.t0ugh.server.enums.HandlerType;
 import com.t0ugh.server.handler.impl.AbstractGenericsHandler;
 import com.t0ugh.server.handler.HandlerAnnotation;
 
-@HandlerAnnotation(messageType = Proto.MessageType.InnerClearExpire, checkExpire = false, handlerType= HandlerType.Write)
+@HandlerAnnotation(messageType = Proto.MessageType.InnerClearExpire, checkExpire = false, handlerType= HandlerType.Other)
 public class InnerClearExpireHandler extends AbstractGenericsHandler<Proto.InnerClearExpireRequest, Proto.InnerClearExpireResponse> {
 
     public InnerClearExpireHandler(GlobalContext globalContext) {

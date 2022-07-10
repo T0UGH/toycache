@@ -5,6 +5,7 @@ import com.t0ugh.sdk.exception.InvalidParamException;
 import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
+import com.t0ugh.server.enums.SaveState;
 import com.t0ugh.server.handler.Handler;
 import com.t0ugh.server.utils.HandlerUtils;
 import com.t0ugh.server.utils.MessageUtils;
@@ -14,6 +15,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -63,6 +65,10 @@ public abstract class AbstractHandler implements Handler {
                 getGlobalContext().getRequestBuffer().add(request);
                 // 生成一个RollBack并放入
                 getGlobalContext().getRequestRollBackers().add(request);
+                // 如果当前开启了RDB复制, 将这个写命令放入
+                if (Objects.equals(getGlobalContext().getGlobalState().getSaveState(), SaveState.Running)){
+                    getGlobalContext().getRdbBuffer().add(request);
+                }
             }
             doHandle(request, okBuilder);
             okBuilder.setClientTId(request.getClientTId());

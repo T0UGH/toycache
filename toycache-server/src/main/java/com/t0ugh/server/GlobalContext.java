@@ -1,5 +1,6 @@
 package com.t0ugh.server;
 
+import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.config.Config;
 import com.t0ugh.server.executor.MessageExecutor;
 import com.t0ugh.server.handler.HandlerFactory;
@@ -14,6 +15,7 @@ import lombok.Data;
 import org.apache.zookeeper.ZooKeeper;
 
 import java.io.OutputStream;
+import java.util.List;
 
 @Data
 @Builder
@@ -36,4 +38,5 @@ public class GlobalContext {
     private ZooKeeper zooKeeper;
     private ZKState zkState;
     private NettyServer nettyServer;
+    private List<Proto.Request> rdbBuffer;
 }

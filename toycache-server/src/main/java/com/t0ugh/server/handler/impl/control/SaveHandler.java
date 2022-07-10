@@ -1,5 +1,6 @@
 package com.t0ugh.server.handler.impl.control;
 
+import com.google.common.collect.Lists;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.enums.HandlerType;
@@ -8,7 +9,9 @@ import com.t0ugh.server.handler.impl.AbstractGenericsHandler;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.utils.DBUtils;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @HandlerAnnotation(messageType = Proto.MessageType.Save, checkExpire = false, handlerType= HandlerType.Other)
 public class SaveHandler extends AbstractGenericsHandler<Proto.SaveRequest, Proto.SaveResponse> {
@@ -23,13 +26,16 @@ public class SaveHandler extends AbstractGenericsHandler<Proto.SaveRequest, Prot
             return Proto.SaveResponse.newBuilder().setOk(false).build();
         }
         getGlobalContext().getGlobalState().setSaveState(SaveState.Running);
+        getGlobalContext().setRdbBuffer(Lists.newArrayList());
+        Set<String> keys = getGlobalContext().getStorage().keys();
         Proto.Request dbRequest = Proto.Request.newBuilder()
-                .setMessageType(Proto.MessageType.InnerSave)
-                .setInnerSaveRequest(Proto.InnerSaveRequest.newBuilder()
-                        // todo: 这里实现的比较简单，只是将所有的Cache备份了一遍然后一起存，应改为Redis的方式
-                        .setDb(getGlobalContext().getStorage().toUnModifiableDB(getGlobalContext().getGlobalState().getWriteCount().get(),
-                                getGlobalContext().getGlobalState().getEpoch()))
+                .setMessageType(Proto.MessageType.InnerStartSave)
+                .setInnerStartSaveRequest(Proto.InnerStartSaveRequest.newBuilder()
                         .setFilePath(DBUtils.genFilePath(getGlobalContext().getConfig().getDbBaseFilePath()))
+                        .setDatabaseMeta(getGlobalContext().getStorage()
+                                .getDatabaseMeta(getGlobalContext().getGlobalState().getWriteCount().get(),
+                                        getGlobalContext().getGlobalState().getEpoch()))
+                        .addAllKeys(keys)
                         .build())
                 .build();
         getGlobalContext().getDbExecutor().submit(dbRequest);

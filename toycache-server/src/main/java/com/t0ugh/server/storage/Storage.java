@@ -85,6 +85,7 @@ public interface Storage {
 
     boolean del(String key);
 
+    @Deprecated
     void loadFromFile(String filePath) throws IOException;
 
     void applyDb(DBProto.Database db);
@@ -100,4 +101,10 @@ public interface Storage {
     int delExpires(int threshold);
 
     boolean delExpire(String key);
+
+    Optional<DBProto.KeyValue> cloneValue(String key);
+
+    Set<String> keys();
+
+    DBProto.DatabaseMeta getDatabaseMeta(long lastWriteId, long lastEpoch);
 }

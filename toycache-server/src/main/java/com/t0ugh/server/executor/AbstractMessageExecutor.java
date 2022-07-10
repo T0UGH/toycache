@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 @Slf4j
 public abstract class AbstractMessageExecutor implements MessageExecutor{
@@ -22,28 +24,30 @@ public abstract class AbstractMessageExecutor implements MessageExecutor{
         this.executorService = executorService;
     }
 
-    public void submit(Proto.Request request, Callback... callbacks){
+    public Future<Proto.Response> submit(Proto.Request request, Callback... callbacks){
         try{
             beforeSubmit(request);
-            executorService.submit(new RunnableCommand(request, callbacks));
+            return (Future<Proto.Response>) executorService.submit(new CallableCommand(request, callbacks));
         } catch (RuntimeException e){
             handleException(request, e, callbacks);
+            return null;
         }
     }
 
-    public void submit(Proto.Request request){
+    public Future<Proto.Response> submit(Proto.Request request){
         try{
             beforeSubmit(request);
-            executorService.submit(new RunnableCommand(request));
+            return (Future<Proto.Response>) executorService.submit(new CallableCommand(request));
         } catch (RuntimeException e){
             handleException(request, e);
+            return null;
         }
     }
 
     public void submitAndWait(Proto.Request request, Callback... callbacks) throws Exception{
         try{
             beforeSubmit(request);
-            executorService.submit(new RunnableCommand(request, callbacks)).get();
+            executorService.submit(new CallableCommand(request, callbacks)).get();
         } catch (RuntimeException e){
             handleException(request, e, callbacks);
         }
@@ -51,10 +55,10 @@ public abstract class AbstractMessageExecutor implements MessageExecutor{
 
     public void submitAndWait(Proto.Request request) throws Exception{
         beforeSubmit(request);
-        executorService.submit(new RunnableCommand(request)).get();
+        executorService.submit(new CallableCommand(request)).get();
         try{
             beforeSubmit(request);
-            executorService.submit(new RunnableCommand(request)).get();
+            executorService.submit(new CallableCommand(request)).get();
         } catch (RuntimeException e){
             handleException(request, e);
         }
@@ -84,23 +88,19 @@ public abstract class AbstractMessageExecutor implements MessageExecutor{
 
     @RequiredArgsConstructor
     @AllArgsConstructor
-    private class RunnableCommand implements Runnable {
+    private class CallableCommand implements Callable<Proto.Response> {
 
         @NonNull
         private final Proto.Request request;
         private Callback[] callbacks = new Callback[0];
 
         @Override
-        public void run() {
-            try{
-                Proto.Response response = doRequest(request);
-                Arrays.stream(callbacks).forEach(callback -> {
-                    callback.callback(request, response);
-                });
-            } catch (Exception e){
-                log.error("RunnableCommand", e);
-            }
-
+        public Proto.Response call() throws Exception {
+            Proto.Response response = doRequest(request);
+            Arrays.stream(callbacks).forEach(callback -> {
+                callback.callback(request, response);
+            });
+            return response;
         }
     }
 }

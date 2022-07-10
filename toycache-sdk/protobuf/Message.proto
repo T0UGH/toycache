@@ -93,9 +93,11 @@ enum MessageType {
   InnerStartSync = 107;
   InnerCreateClient = 108;
   InnerCreateFollowerToZK = 109;
+  InnerStartSave = 110;
+  InnerCloneValue = 111;
 
-  FollowerOf = 110;//客户端发给主服务器，告诉它某个服务器是它的新的从服务器
-  Sync = 111;//主服务器发给从服务器, 里面可能有快照也可能有缓存, 让从服务器应用这些命令
+  FollowerOf = 201;//客户端发给主服务器，告诉它某个服务器是它的新的从服务器
+  Sync = 202;//主服务器发给从服务器, 里面可能有快照也可能有缓存, 让从服务器应用这些命令
 }
 
 enum ResponseCode {
@@ -188,6 +190,8 @@ message Request {
   InnerRewriteLogRequest innerRewriteLogRequest = 66;
   InnerCreateClientRequest innerCreateClientRequest = 67;
   InnerCreateFollowerToZKRequest innerCreateFollowerToZKRequest = 68;
+  InnerStartSaveRequest innerStartSaveRequest = 69;
+  InnerCloneValueRequest innerCloneValueRequest = 70;
 }
 
 message Response {
@@ -259,6 +263,26 @@ message Response {
   InnerStartSyncResponse innerStartSyncResponse = 66;
   InnerCreateClientResponse innerCreateClientResponse = 67;
   InnerCreateFollowerToZKResponse innerCreateFollowerToZKResponse = 68;
+  InnerStartSaveResponse innerStartSaveResponse = 69;
+  InnerCloneValueResponse innerCloneValueResponse = 70;
+}
+
+message InnerCloneValueRequest {
+    string key = 1;
+}
+
+message InnerCloneValueResponse {
+  KeyValue keyValue = 1;
+}
+
+message InnerStartSaveRequest {
+  string filePath = 1;
+  DatabaseMeta databaseMeta = 2;
+  repeated string keys = 3;
+}
+
+message InnerStartSaveResponse {
+
 }
 
 message InnerCreateFollowerToZKRequest {
@@ -785,7 +809,7 @@ message InnerSaveFinishRequest {
 }
 
 message InnerSaveFinishResponse {
-  bool ok = 1;
+  repeated Request requests = 1;
 }
 
 message RewriteLogRequest {

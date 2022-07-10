@@ -7,6 +7,7 @@ import com.t0ugh.sdk.callback.Callback;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class MessageExecutorTestImpl implements MessageExecutor {
     public List<Proto.Request> requestList;
@@ -15,13 +16,15 @@ public class MessageExecutorTestImpl implements MessageExecutor {
     }
 
     @Override
-    public void submit(Proto.Request request) {
+    public Future<Proto.Response> submit(Proto.Request request) {
         requestList.add(request);
+        return null;
     }
 
     @Override
-    public void submit(Proto.Request request, Callback... callbacks) {
+    public Future<Proto.Response> submit(Proto.Request request, Callback... callbacks) {
         requestList.add(request);
+        return null;
     }
 
     @Override
