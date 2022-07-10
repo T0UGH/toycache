@@ -15,6 +15,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -66,8 +68,13 @@ public abstract class AbstractHandler implements Handler {
                 // 生成一个RollBack并放入
                 getGlobalContext().getRequestRollBackers().add(request);
                 // 如果当前开启了RDB复制, 将这个写命令放入
-                if (Objects.equals(getGlobalContext().getGlobalState().getSaveState(), SaveState.Running)){
-                    getGlobalContext().getRdbBuffer().add(request);
+                if (Objects.equals(getGlobalContext().getGlobalState().getSaveState(), SaveState.Running)
+                        && Objects.equals(request.getMessageType(), Proto.MessageType.Expire)) {
+                    getGlobalContext().getRdbBuffer().getExpireList().add(request);
+                } else if (Objects.equals(getGlobalContext().getGlobalState().getSaveState(), SaveState.Running)){
+                    List<Proto.Request> requests = getGlobalContext().getRdbBuffer().getBufferMap().getOrDefault(optional.get(), new ArrayList<>());
+                    requests.add(request);
+                    getGlobalContext().getRdbBuffer().getBufferMap().put(optional.get(), requests);
                 }
             }
             doHandle(request, okBuilder);

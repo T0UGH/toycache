@@ -19,6 +19,7 @@ public class InnerCloneValueHandler extends AbstractGenericsHandler<Proto.InnerC
     @Override
     protected Proto.InnerCloneValueResponse doHandle(Proto.InnerCloneValueRequest innerCloneValueRequest) throws Exception {
         String key = innerCloneValueRequest.getKey();
+        getGlobalContext().getRdbBuffer().getBufferMap().remove(key);
         Proto.InnerCloneValueResponse.Builder builder = Proto.InnerCloneValueResponse.newBuilder();
         Optional<DBProto.KeyValue> optionalKeyValue = getGlobalContext().getStorage().cloneValue(key);
         optionalKeyValue.ifPresent(builder::setKeyValue);

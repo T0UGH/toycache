@@ -23,30 +23,33 @@ public class DBUtils {
 
     public static void loadRDBFromFile(String filePath, GlobalContext globalContext) throws IOException {
         InputStream inputStream = new FileInputStream(filePath);
-        // 先加载meta信息
-        DBProto.DatabaseMeta databaseMeta = DBProto.DatabaseMeta.parseDelimitedFrom(inputStream);
-        globalContext.getGlobalState().getWriteCount().set(databaseMeta.getLastWriteId());
-        globalContext.getGlobalState().setEpoch(databaseMeta.getLastEpoch());
-        globalContext.getStorage().expireBackdoor().putAll(databaseMeta.getExpireMap());
-        // 然后是ValueObject
-        for(;;){
-            try {
-                DBProto.KeyValue keyValue = DBProto.KeyValue.parseDelimitedFrom(inputStream);
-                globalContext.getStorage().backdoor().put(keyValue.getKey(), MemoryValueObject.fromValueObject(keyValue.getValueObject()));
-            } catch (IOException e){
-                break;
+        try{
+            // 先是ValueObject
+            for(;;){
+                try {
+                    DBProto.KeyValue keyValue = DBProto.KeyValue.parseDelimitedFrom(inputStream);
+                    globalContext.getStorage().backdoor().put(keyValue.getKey(), MemoryValueObject.fromValueObject(keyValue.getValueObject()));
+                } catch (IOException e){
+                    break;
+                }
             }
-        }
-        // 然后是request信息
-        for(;;){
-            try {
-                Proto.Request request = Proto.Request.parseDelimitedFrom(inputStream);
-                globalContext.getHandlerFactory().getHandler(request.getMessageType()).get().handle(request);
-            } catch (IOException e){
-                break;
+            // 然后是request信息
+            for(;;){
+                try {
+                    Proto.Request request = Proto.Request.parseDelimitedFrom(inputStream);
+                    globalContext.getHandlerFactory().getHandler(request.getMessageType()).get().handle(request);
+                } catch (IOException e){
+                    break;
+                }
             }
+            // 最后加载meta信息
+            DBProto.DatabaseMeta databaseMeta = DBProto.DatabaseMeta.parseDelimitedFrom(inputStream);
+            globalContext.getGlobalState().getWriteCount().set(databaseMeta.getLastWriteId());
+            globalContext.getGlobalState().setEpoch(databaseMeta.getLastEpoch());
+            globalContext.getStorage().expireBackdoor().putAll(databaseMeta.getExpireMap());
+        } finally {
+            inputStream.close();
         }
-        inputStream.close();
     }
 
     public static void applyDb(DBProto.Database db, Map<String, MemoryValueObject> kvs, Map<String, Long> expire) {

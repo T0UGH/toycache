@@ -5,6 +5,7 @@ import com.t0ugh.server.config.Config;
 import com.t0ugh.server.executor.MessageExecutor;
 import com.t0ugh.server.handler.HandlerFactory;
 import com.t0ugh.server.rollbacker.RollBackerFactory;
+import com.t0ugh.server.storage.RDBBuffer;
 import com.t0ugh.server.storage.RequestBuffer;
 import com.t0ugh.server.storage.RequestRollBackers;
 import com.t0ugh.server.storage.Storage;
@@ -38,5 +39,5 @@ public class GlobalContext {
     private ZooKeeper zooKeeper;
     private ZKState zkState;
     private NettyServer nettyServer;
-    private List<Proto.Request> rdbBuffer;
+    private RDBBuffer rdbBuffer;
 }

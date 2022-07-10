@@ -532,6 +532,11 @@ public class MemoryStorage implements Storage{
     }
 
     @Override
+    public Map<String, Long> cloneExpires() {
+        return Maps.newHashMap(expire);
+    }
+
+    @Override
     public boolean isExpired(String key) {
         if (!expire.containsKey(key)){
             return false;

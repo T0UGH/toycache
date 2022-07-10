@@ -20,8 +20,11 @@ public class InnerSaveFinishHandler extends AbstractGenericsHandler<Proto.InnerS
     @Override
     public Proto.InnerSaveFinishResponse doHandle(Proto.InnerSaveFinishRequest unused) throws Exception {
         getGlobalContext().getGlobalState().setSaveState(SaveState.Idle);
-        List<Proto.Request> rdbBuffer = getGlobalContext().getRdbBuffer();
-        getGlobalContext().setRdbBuffer(Lists.newArrayList());
-        return Proto.InnerSaveFinishResponse.newBuilder().addAllRequests(rdbBuffer).build();
+        List<Proto.Request> rdbBuffer = getGlobalContext().getRdbBuffer().toList();
+        getGlobalContext().getRdbBuffer().clear();
+        return Proto.InnerSaveFinishResponse.newBuilder()
+                .setLastWriteId(getGlobalContext().getGlobalState().getWriteCount().get())
+                .setLastEpoch(getGlobalContext().getGlobalState().getEpoch())
+                .addAllRequests(rdbBuffer).build();
     }
 }

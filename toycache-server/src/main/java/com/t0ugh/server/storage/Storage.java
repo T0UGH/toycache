@@ -92,6 +92,8 @@ public interface Storage {
 
     DBProto.Database toUnModifiableDB(long lastWriteId, long lastEpoch);
 
+    Map<String, Long> cloneExpires();
+
     boolean isExpired(String key);
 
     boolean delIfExpired(String key);

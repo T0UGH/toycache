@@ -12,6 +12,8 @@ import com.t0ugh.server.utils.StateUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
 
@@ -72,8 +74,14 @@ public class MultiHandler implements Handler {
                         // 向writeLogExecutor提交一个写日志
                         globalContext.getWriteLogExecutor().submit(request);
                         // 如果开启了RDB, 放到RDB里
-                        if (Objects.equals(globalContext.getGlobalState().getSaveState(), SaveState.Running)){
-                            globalContext.getRdbBuffer().add(request);
+                        if (Objects.equals(globalContext.getGlobalState().getSaveState(), SaveState.Running)
+                                && Objects.equals(request.getMessageType(), Proto.MessageType.Expire)) {
+                            globalContext.getRdbBuffer().getExpireList().add(request);
+                        } else if (Objects.equals(globalContext.getGlobalState().getSaveState(), SaveState.Running)){
+                            String key = MessageUtils.getKeyFromRequest(request).get();
+                            List<Proto.Request> requests = globalContext.getRdbBuffer().getBufferMap().getOrDefault(key, new ArrayList<>());
+                            requests.add(request);
+                            globalContext.getRdbBuffer().getBufferMap().put(key, requests);
                         }
                     }
                 }

@@ -26,15 +26,13 @@ public class SaveHandler extends AbstractGenericsHandler<Proto.SaveRequest, Prot
             return Proto.SaveResponse.newBuilder().setOk(false).build();
         }
         getGlobalContext().getGlobalState().setSaveState(SaveState.Running);
-        getGlobalContext().setRdbBuffer(Lists.newArrayList());
+        getGlobalContext().getRdbBuffer().clear();
         Set<String> keys = getGlobalContext().getStorage().keys();
         Proto.Request dbRequest = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.InnerStartSave)
                 .setInnerStartSaveRequest(Proto.InnerStartSaveRequest.newBuilder()
                         .setFilePath(DBUtils.genFilePath(getGlobalContext().getConfig().getDbBaseFilePath()))
-                        .setDatabaseMeta(getGlobalContext().getStorage()
-                                .getDatabaseMeta(getGlobalContext().getGlobalState().getWriteCount().get(),
-                                        getGlobalContext().getGlobalState().getEpoch()))
+                        .putAllExpire(getGlobalContext().getStorage().cloneExpires())
                         .addAllKeys(keys)
                         .build())
                 .build();

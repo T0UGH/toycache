@@ -29,26 +29,33 @@ public class DBExecutor extends AbstractMessageExecutor {
     public Proto.Response doRequest(Proto.Request request) throws IOException, ExecutionException, InterruptedException {
         Proto.InnerStartSaveRequest innerStartSaveRequest = request.getInnerStartSaveRequest();
         FileOutputStream fileOutputStream = new FileOutputStream(innerStartSaveRequest.getFilePath());
-        // 先将元数据写入硬盘
-        innerStartSaveRequest.getDatabaseMeta().writeDelimitedTo(fileOutputStream);
-        // 将每个data写入硬盘
-        for (String key: innerStartSaveRequest.getKeysList()) {
-            Future<Proto.Response> future = getGlobalContext().getMemoryOperationExecutor().submit(MessageUtils.newInnerCloneValueRequest(key));
-            Proto.Response response = future.get();
-            Proto.InnerCloneValueResponse innerCloneValueResponse = response.getInnerCloneValueResponse();
-            if (innerCloneValueResponse.hasKeyValue()){
-                DBProto.KeyValue keyValue = innerCloneValueResponse.getKeyValue();
-                keyValue.writeDelimitedTo(fileOutputStream);
+        try{
+            DBProto.DatabaseMeta.Builder metaBuilder = DBProto.DatabaseMeta.newBuilder();
+            metaBuilder.putAllExpire(innerStartSaveRequest.getExpireMap());
+            // 将每个data写入硬盘
+            for (String key: innerStartSaveRequest.getKeysList()) {
+                Future<Proto.Response> future = getGlobalContext().getMemoryOperationExecutor().submit(MessageUtils.newInnerCloneValueRequest(key));
+                Proto.Response response = future.get();
+                Proto.InnerCloneValueResponse innerCloneValueResponse = response.getInnerCloneValueResponse();
+                if (innerCloneValueResponse.hasKeyValue()){
+                    DBProto.KeyValue keyValue = innerCloneValueResponse.getKeyValue();
+                    keyValue.writeDelimitedTo(fileOutputStream);
+                }
             }
+            Future<Proto.Response> future = getGlobalContext().getMemoryOperationExecutor().submit(MessageUtils.newInnerSaveFinishRequest());
+            Proto.Response response = future.get();
+            List<Proto.Request> rdbBuffer = response.getInnerSaveFinishResponse().getRequestsList();
+            metaBuilder.setLastWriteId(response.getInnerSaveFinishResponse().getLastWriteId());
+            metaBuilder.setLastEpoch(response.getInnerSaveFinishResponse().getLastEpoch());
+            // 将后续的命令写入硬盘
+            for (Proto.Request request1: rdbBuffer){
+                request1.writeDelimitedTo(fileOutputStream);
+            }
+            // 先将元数据写入硬盘
+            metaBuilder.build().writeDelimitedTo(fileOutputStream);
+        } finally {
+            fileOutputStream.close();
+            return null;
         }
-        Future<Proto.Response> future = getGlobalContext().getMemoryOperationExecutor().submit(MessageUtils.newInnerSaveFinishRequest());
-        Proto.Response response = future.get();
-        List<Proto.Request> rdbBuffer = response.getInnerSaveFinishResponse().getRequestsList();
-        // 将后续的命令写入硬盘
-        for (Proto.Request request1: rdbBuffer){
-            request1.writeDelimitedTo(fileOutputStream);
-        }
-        return null;
     }
-
 }
