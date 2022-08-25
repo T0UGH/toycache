@@ -19,13 +19,13 @@ public class ExpireRollBacker extends AbstractAllValueTypeRollBacker{
     @Override
     public void doRollBack() throws Exception {
         if (originalExpireTime == null) {
-            getGlobalContext().getStorage().expireBackdoor().remove(getKey());
+            getGlobalContext().getStorage().getExpireMap().remove(getKey());
         }
     }
 
     @Override
     public void doBeforeHandle(Proto.Request request) throws Exception {
-        originalExpireTime = getGlobalContext().getStorage().expireBackdoor().getOrDefault(getKey(), null);
+        originalExpireTime = getGlobalContext().getStorage().getExpireMap().getOrDefault(getKey(), null);
         // 校验参数
         long expireTime = request.getExpireRequest().getExpireTime();
         if (expireTime <= 0) {

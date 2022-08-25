@@ -78,7 +78,7 @@ public class WriteLogExecutorTest extends BaseTest {
         Storage storage = testContext.getStorage();
         storage.backdoor().put("Hello", MemoryValueObject.newInstance("World"));
         storage.backdoor().put("Hi", MemoryValueObject.newInstance("World"));
-        storage.expireBackdoor().put("Hello", System.currentTimeMillis() + 100000L);
+        storage.getExpireMap().put("Hello", System.currentTimeMillis() + 100000L);
         Proto.Request innerRewrite = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.InnerRewriteLog)
                 .setInnerRewriteLogRequest(Proto.InnerRewriteLogRequest.newBuilder()

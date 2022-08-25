@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class MemoryStorage implements Storage{
@@ -31,13 +32,18 @@ public class MemoryStorage implements Storage{
     }
 
     @Override
-    public Map<String, Long> expireBackdoor() {
+    public Map<String, Long> getExpireMap() {
         return expire;
     }
 
     @Override
     public boolean exists(String key) {
         return data.containsKey(key);
+    }
+
+    @Override
+    public List<String> keys() {
+        return new ArrayList<>(data.keySet());
     }
 
     @Override

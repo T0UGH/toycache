@@ -289,18 +289,17 @@ public class ToyCacheClient {
         return response.getLSetResponse().getOk();
     }
 
-    public boolean hSet(String key, String field, String value) throws InterruptedException {
+    public int hSet(String key, Map<String, String> kvs) throws InterruptedException {
         Proto.Request request = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.HSet)
                 .setClientTId(context.getDispatcher().generateClientTId())
                 .setHSetRequest(Proto.HSetRequest.newBuilder()
                         .setKey(key)
-                        .setField(field)
-                        .setValue(value)
+                        .putAllKvs(kvs)
                         .build())
                 .build();
         Proto.Response response = context.getDispatcher().talkSync(request);
-        return response.getHSetResponse().getOk();
+        return response.getHSetResponse().getCount();
     }
 
     public boolean hExists(String key, String field) throws InterruptedException {

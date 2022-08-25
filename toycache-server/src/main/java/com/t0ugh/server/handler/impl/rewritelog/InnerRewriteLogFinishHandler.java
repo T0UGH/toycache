@@ -1,4 +1,4 @@
-package com.t0ugh.server.handler.impl.inner;
+package com.t0ugh.server.handler.impl.rewritelog;
 
 
 import com.t0ugh.sdk.proto.Proto;

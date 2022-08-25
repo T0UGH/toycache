@@ -36,4 +36,6 @@ public class Config {
     private int serverId;
     // 运行Id, 用来标识一组集群服务器
     private int groupId;
+    // 一个特殊的key
+    private String noopKeyForRewriteLog;
 }

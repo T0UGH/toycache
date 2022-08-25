@@ -22,12 +22,12 @@ public class InnerRewriteLogFinishHandlerTest extends BaseTest {
     }
 
     /**
-     * 测试当{@link GlobalState#getRewriteLogState()}为{@link com.t0ugh.server.enums.RewriteLogState#Rewriting}时收到一条InnerRewriteFinish请求
-     * 1. 能够更新状态为{@link com.t0ugh.server.enums.RewriteLogState#Rewriting}
+     * 测试当{@link GlobalState#getRewriteLogState()}为{@link com.t0ugh.server.enums.RewriteLogState#RewritingKeys}时收到一条InnerRewriteFinish请求
+     * 1. 能够更新状态为{@link com.t0ugh.server.enums.RewriteLogState#RewritingKeys}
      * */
     @Test
     public void test1() throws Exception {
-        testContext.getGlobalState().setRewriteLogState(RewriteLogState.Rewriting);
+        testContext.getGlobalState().setRewriteLogState(RewriteLogState.RewritingKeys);
         Proto.Request request = MessageUtils.newInnerRewriteLogFinishRequest(true);
         testContext.getHandlerFactory().getHandler(Proto.MessageType.InnerRewriteLogFinish).get().handle(request);
         assertEquals(RewriteLogState.Normal, testContext.getGlobalState().getRewriteLogState());

@@ -10,9 +10,11 @@ public interface Storage {
     // todo 后门方法, 开发完记得删除
     Map<String, MemoryValueObject> backdoor();
 
-    Map<String, Long> expireBackdoor();
+    Map<String, Long> getExpireMap();
 
     boolean exists(String key);
+
+    List<String> keys();
 
     DBProto.ValueType getValueType(String key);
 

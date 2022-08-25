@@ -29,8 +29,8 @@ public class InnerClearExpireTest extends BaseTest {
         testContext.getStorage().set("Hello", "World");
         testContext.getStorage().set("Hi", "World");
         testContext.getStorage().set("Haha", "World");
-        testContext.getStorage().expireBackdoor().put("Hello", 1636613116992L);
-        testContext.getStorage().expireBackdoor().put("Hi", System.currentTimeMillis() + 10000000L);
+        testContext.getStorage().getExpireMap().put("Hello", 1636613116992L);
+        testContext.getStorage().getExpireMap().put("Hi", System.currentTimeMillis() + 10000000L);
 
         Proto.Response resp = callHandler(testContext);
         TestUtils.assertOK(Proto.MessageType.InnerClearExpire, resp);
@@ -40,9 +40,9 @@ public class InnerClearExpireTest extends BaseTest {
         assertTrue(storage.backdoor().containsKey("Hi"));
         assertTrue(storage.backdoor().containsKey("Haha"));
         assertFalse(storage.backdoor().containsKey("Hello"));
-        assertEquals(1, storage.expireBackdoor().size());
-        assertTrue(storage.expireBackdoor().containsKey("Hi"));
-        assertFalse(storage.expireBackdoor().containsKey("Hello"));
+        assertEquals(1, storage.getExpireMap().size());
+        assertTrue(storage.getExpireMap().containsKey("Hi"));
+        assertFalse(storage.getExpireMap().containsKey("Hello"));
     }
 
     /**
@@ -54,14 +54,14 @@ public class InnerClearExpireTest extends BaseTest {
         testContext.getConfig().setUpperKeyLimitOfPeriodicalDelete(10);
         for (int i = 0; i < 15; i ++) {
             testContext.getStorage().set("Hello" + i, "World");
-            testContext.getStorage().expireBackdoor().put("Hello" + i, 1636613116992L);
+            testContext.getStorage().getExpireMap().put("Hello" + i, 1636613116992L);
         }
 
         Proto.Response resp = callHandler(testContext);
         TestUtils.assertOK(Proto.MessageType.InnerClearExpire, resp);
         assertEquals(10, resp.getInnerClearExpireResponse().getCleared());
         assertEquals(5, testContext.getStorage().backdoor().size());
-        assertEquals(5, testContext.getStorage().expireBackdoor().size());
+        assertEquals(5, testContext.getStorage().getExpireMap().size());
     }
 
     public static Proto.Response callHandler(GlobalContext testContext) {

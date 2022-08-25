@@ -6,6 +6,7 @@ import com.t0ugh.server.handler.HandlerFactory;
 import com.t0ugh.server.rollbacker.RollBackerFactory;
 import com.t0ugh.server.storage.RequestBuffer;
 import com.t0ugh.server.storage.RequestRollBackers;
+import com.t0ugh.server.storage.RewriteLogBuffer;
 import com.t0ugh.server.storage.Storage;
 import com.t0ugh.server.tick.TickDriver;
 import com.t0ugh.server.zookeeper.ZKState;
@@ -32,6 +33,7 @@ public class GlobalContext {
     private RollBackerFactory rollBackerFactory;
     private TickDriver tickDriver;
     private RequestBuffer requestBuffer;
+    private RewriteLogBuffer rewriteLogBuffer;
     private RequestRollBackers requestRollBackers;
     private ZooKeeper zooKeeper;
     private ZKState zkState;

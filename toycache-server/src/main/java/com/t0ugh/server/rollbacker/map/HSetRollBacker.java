@@ -6,8 +6,10 @@ import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
 import com.t0ugh.server.rollbacker.AbstractRollBacker;
 import com.t0ugh.server.rollbacker.RollBackerAnnotation;
+import com.t0ugh.server.storage.MemoryValueObject;
 import com.t0ugh.server.utils.MessageUtils;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -17,7 +19,7 @@ import java.util.Optional;
 @RollBackerAnnotation(messageType = Proto.MessageType.HSet)
 public class HSetRollBacker extends AbstractMapRollBacker {
 
-    Optional<String> oldValue;
+    Map<String, String> kvs;
 
     public HSetRollBacker(GlobalContext globalContext) {
         super(globalContext);
@@ -26,18 +28,12 @@ public class HSetRollBacker extends AbstractMapRollBacker {
     @Override
     public void doRollBack() throws Exception {
         Proto.HSetRequest hSetRequest = getRequest().getHSetRequest();
-        // 如果key存在并且原来有field
-        if (oldValue.isPresent()){
-            getGlobalContext().getStorage().hSet(hSetRequest.getKey(), hSetRequest.getField(), oldValue.get());
-        } else {
-            getGlobalContext().getStorage().hDel(hSetRequest.getKey(), Sets.newHashSet(hSetRequest.getField()));
-        }
+        getGlobalContext().getStorage().backdoor().put(hSetRequest.getKey(), MemoryValueObject.newInstance(kvs));
     }
 
     @Override
     public void doBeforeHandle(Proto.Request request) throws Exception {
         Proto.HSetRequest hSetRequest = request.getHSetRequest();
-        MessageUtils.assertStringNotNullOrEmpty(hSetRequest.getField());
-        oldValue = getGlobalContext().getStorage().hGet(hSetRequest.getKey(), hSetRequest.getField());
+        this.kvs = getGlobalContext().getStorage().hGetAll(hSetRequest.getKey());
     }
 }

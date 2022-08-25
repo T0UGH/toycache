@@ -4,7 +4,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.t0ugh.sdk.exception.InvalidParamException;
+import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.sdk.proto.Proto;
+import com.t0ugh.server.config.Config;
 import com.t0ugh.server.enums.HandlerType;
 import com.t0ugh.server.handler.Handler;
 import com.t0ugh.server.handler.HandlerAnnotation;
@@ -149,6 +151,30 @@ public class MessageUtils {
                 .build();
     }
 
+    public static Proto.Request newLPushRequest(String key, List<String> values){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.LPush)
+                .setLPushRequest(Proto.LPushRequest.newBuilder().setKey(key).addAllValue(values).build()).build();
+    }
+
+    public static Proto.Request newSAddRequest(String key, List<String> values){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.SAdd)
+                .setSAddRequest(Proto.SAddRequest.newBuilder().setKey(key).addAllSetValue(values).build()).build();
+    }
+
+    public static Proto.Request newZAddRequest(String key, List<DBProto.ComparableString> comparableStrings){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.ZAdd)
+                .setZAddRequest(Proto.ZAddRequest.newBuilder().addAllValues(comparableStrings).build()).build();
+    }
+
+    public static Proto.Request newHSetRequest(String key, Map<String, String> kvs){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.HSet)
+                .setHSetRequest(Proto.HSetRequest.newBuilder().setKey(key).putAllKvs(kvs).build()).build();
+    }
+
     public static Proto.Request newExpireRequest(String key, long expireTime){
         return Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.Expire)
@@ -167,6 +193,27 @@ public class MessageUtils {
         return Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.InnerRewriteLogFinish)
                 .setInnerRewriteLogFinishRequest(Proto.InnerRewriteLogFinishRequest.newBuilder().setOk(ok))
+                .build();
+    }
+
+    public static Proto.Request newInnerRewriteLogNextKeyRequest(String key){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.InnerRewriteLogNextKey)
+                .setInnerRewriteLogNextKeyRequest(Proto.InnerRewriteLogNextKeyRequest.newBuilder().setKey(key).build())
+                .build();
+    }
+
+    public static Proto.Request newNoopRequest(String noopKey){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.Noop)
+                .setNoopRequest(Proto.NoopRequest.newBuilder().setKey(noopKey).build())
+                .build();
+    }
+
+    public static Proto.Request newInnerRewriteLogFinishKeysRequest(){
+        return Proto.Request.newBuilder()
+                .setMessageType(Proto.MessageType.InnerRewriteLogFinishKeys)
+                .setInnerRewriteLogFinishKeysRequest(Proto.InnerRewriteLogFinishKeysRequest.newBuilder().build())
                 .build();
     }
 

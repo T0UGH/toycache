@@ -61,7 +61,7 @@ public class DelTest extends BaseTest {
      * */
     @Test
     public void testDelExpired() throws Exception {
-        testContext.getStorage().expireBackdoor().put("Hello", 1636613116992L);
+        testContext.getStorage().getExpireMap().put("Hello", 1636613116992L);
         Proto.Request request = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.Del)
                 .setDelRequest(Proto.DelRequest.newBuilder()

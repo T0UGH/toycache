@@ -83,16 +83,26 @@ enum MessageType {
   CheckZRangeByScore = 55;
   CheckZRank = 56;
 
+  //no-op
+  Noop = 57;
+
   // 内部消息
   InnerClearExpire = 101;
   InnerSave = 102;
   InnerSaveFinish = 103;
-  InnerRewriteLog = 104;
-  InnerRewriteLogFinish = 105;
   InnerMasterUpdateFollowerProcess = 106;
   InnerStartSync = 107;
   InnerCreateClient = 108;
   InnerCreateFollowerToZK = 109;
+
+  // 重写日志相关
+  InnerRewriteLog = 104;//todo:废弃它
+  InnerRewriteLogFinish = 105;
+  InnerRewriteLogSendKeyList = 112; //ME发送给WriteLogE的,发送Key的列表
+  InnerRewriteLogNextKey = 113; //里面要放请求的下一个Key, 是WriteLogE发送给ME的
+  InnerRewriteLogSendOneKey = 114;//ME发送给WriteLogE的,发送单个key
+  InnerRewriteLogFinishKeys = 115; //当WriteLogE处理完了所有Key会发这个
+  InnerRewriteLogSendLogs  = 116;//ME发送给WriteLogE的,发送最后囤积的Logs
 
   FollowerOf = 110;//客户端发给主服务器，告诉它某个服务器是它的新的从服务器
   Sync = 111;//主服务器发给从服务器, 里面可能有快照也可能有缓存, 让从服务器应用这些命令
@@ -188,6 +198,12 @@ message Request {
   InnerRewriteLogRequest innerRewriteLogRequest = 66;
   InnerCreateClientRequest innerCreateClientRequest = 67;
   InnerCreateFollowerToZKRequest innerCreateFollowerToZKRequest = 68;
+  InnerRewriteLogSendKeyListRequest innerRewriteLogSendKeyListRequest = 69;
+  InnerRewriteLogNextKeyRequest innerRewriteLogNextKeyRequest = 70;
+  InnerRewriteLogSendOneKeyRequest innerRewriteLogSendOneKeyRequest = 71;
+  InnerRewriteLogFinishKeysRequest innerRewriteLogFinishKeysRequest = 72;
+  NoopRequest noopRequest = 73;
+  InnerRewriteLogSendLogsRequest innerRewriteLogSendLogsRequest = 74;
 }
 
 message Response {
@@ -259,6 +275,56 @@ message Response {
   InnerStartSyncResponse innerStartSyncResponse = 66;
   InnerCreateClientResponse innerCreateClientResponse = 67;
   InnerCreateFollowerToZKResponse innerCreateFollowerToZKResponse = 68;
+  InnerRewriteLogSendKeyListResponse innerRewriteLogSendKeyListResponse = 69;
+  InnerRewriteLogNextKeyResponse innerRewriteLogNextKeyResponse = 70;
+  InnerRewriteLogSendOneKeyResponse innerRewriteLogSendOneKeyResponse = 71;
+  InnerRewriteLogFinishKeysResponse innerRewriteLogFinishKeysResponse = 72;
+  NoopResponse noopResponse = 73;
+  InnerRewriteLogSendLogsResponse innerRewriteLogSendLogsResponse = 74;
+}
+
+message InnerRewriteLogSendLogsRequest{
+  repeated Request requests = 1;
+}
+
+message InnerRewriteLogSendLogsResponse{
+}
+
+message NoopRequest{
+  string key = 1;
+}
+
+message NoopResponse{
+}
+
+message InnerRewriteLogFinishKeysRequest{
+}
+
+message InnerRewriteLogFinishKeysResponse {
+}
+
+message InnerRewriteLogSendOneKeyRequest {
+  string key = 1;
+  bool exist = 2;
+  ValueObject value = 3;
+}
+
+message InnerRewriteLogSendOneKeyResponse {
+}
+
+message InnerRewriteLogNextKeyRequest {
+  string key = 2;
+}
+
+message InnerRewriteLogNextKeyResponse {
+}
+
+message InnerRewriteLogSendKeyListRequest {
+  repeated string keys = 1;
+  map<string, uint64> expire = 2; //过期key这个时候也要传递过去,但是不立刻存
+}
+
+message InnerRewriteLogSendKeyListResponse {
 }
 
 message InnerCreateFollowerToZKRequest {
@@ -639,12 +705,11 @@ message HExistsResponse {
 
 message HSetRequest {
   string key = 1;
-  string field = 2;
-  string value = 3;
+  map<string, string> kvs = 2;
 }
 
 message HSetResponse {
-  bool ok = 1;
+  uint32 count = 1;
 }
 
 message LSetRequest {

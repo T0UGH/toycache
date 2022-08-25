@@ -29,20 +29,20 @@ public class RewriteLogHandlerTest extends BaseTest {
     /**
      * 测试当{@link GlobalState#getRewriteLogState()}为{@link com.t0ugh.server.enums.RewriteLogState#Normal}时收到一条Rewrite请求
      * 1. 能够向WriteLogExecutor提交一条InnerSaveRequest请求，并且请求中携带了当前数据库状态
-     * 2. 能够更新状态为{@link com.t0ugh.server.enums.RewriteLogState#Rewriting}
+     * 2. 能够更新状态为{@link com.t0ugh.server.enums.RewriteLogState#RewritingKeys}
      * 3. Response中的OK为True
      * */
     @Test
     public void test1() throws Exception {
         testContext.getStorage().backdoor().put("Hello", MemoryValueObject.newInstance("World"));
-        testContext.getStorage().expireBackdoor().put("Hello", System.currentTimeMillis() + 100000L);
+        testContext.getStorage().getExpireMap().put("Hello", System.currentTimeMillis() + 100000L);
         testContext.getGlobalState().setRewriteLogState(RewriteLogState.Normal);
         Proto.Request request = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.RewriteLog)
                 .setRewriteLogRequest(Proto.RewriteLogRequest.newBuilder().build())
                 .build();
         Proto.Response response = testContext.getHandlerFactory().getHandler(Proto.MessageType.RewriteLog).get().handle(request);
-        assertEquals(RewriteLogState.Rewriting, testContext.getGlobalState().getRewriteLogState());
+        assertEquals(RewriteLogState.RewritingKeys, testContext.getGlobalState().getRewriteLogState());
         assertTrue(response.getRewriteLogResponse().getOk());
         assertEquals(1, messageExecutorTest.requestList.size());
         Proto.Request innerRequest = messageExecutorTest.requestList.get(0);
@@ -53,13 +53,13 @@ public class RewriteLogHandlerTest extends BaseTest {
     }
 
     /**
-     * 测试当{@link GlobalState#getRewriteLogState()}为{@link com.t0ugh.server.enums.RewriteLogState#Rewriting}时收到一条Rewrite请求
+     * 测试当{@link GlobalState#getRewriteLogState()}为{@link com.t0ugh.server.enums.RewriteLogState#RewritingKeys}时收到一条Rewrite请求
      * 1. 不提交请求
      * 2. 直接返回OK为false的Response
      * */
     @Test
     public void test2() throws Exception {
-        testContext.getGlobalState().setRewriteLogState(RewriteLogState.Rewriting);
+        testContext.getGlobalState().setRewriteLogState(RewriteLogState.RewritingKeys);
         Proto.Request request = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.RewriteLog)
                 .setRewriteLogRequest(Proto.RewriteLogRequest.newBuilder().build())

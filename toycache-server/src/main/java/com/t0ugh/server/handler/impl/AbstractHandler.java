@@ -63,6 +63,10 @@ public abstract class AbstractHandler implements Handler {
                 getGlobalContext().getRequestBuffer().add(request);
                 // 生成一个RollBack并放入
                 getGlobalContext().getRequestRollBackers().add(request);
+                // 如果正在进行AOF重写的重写key阶段,将命令放入重写缓冲区
+                if(StateUtils.isNowRewriteLogKeys(globalContext)){
+                    getGlobalContext().getRewriteLogBuffer().put(optional.get(), request);
+                }
             }
             doHandle(request, okBuilder);
             okBuilder.setClientTId(request.getClientTId());

@@ -11,6 +11,7 @@ public class Configs {
                 .upperKeyLimitOfPeriodicalDelete(100)
                 .syncFollowerTick(25)
                 .maxBufferSize(100)
+                .noopKeyForRewriteLog("__noop__")
                 .build();
     }
 
@@ -33,6 +34,7 @@ public class Configs {
                 .zookeeperHeartBeatTick(10)
                 .zookeeperServerIp("127.0.0.1")
                 .zookeeperServerPort(2181)
+                .noopKeyForRewriteLog("__noop__")
                 .build();
     }
 }

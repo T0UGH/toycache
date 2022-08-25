@@ -1,8 +1,6 @@
 package com.t0ugh.server.rollbacker;
 
-import com.google.common.base.Strings;
 import com.t0ugh.sdk.exception.InvalidParamException;
-import com.t0ugh.sdk.exception.ValueTypeNotMatchException;
 import com.t0ugh.sdk.proto.DBProto;
 import com.t0ugh.sdk.proto.Proto;
 import com.t0ugh.server.GlobalContext;
@@ -11,7 +9,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 此抽象类会负责检查key是否存在, 检查ValueType是否match, 并且会保存和复原expireTime
@@ -45,7 +42,7 @@ public abstract class AbstractRollBacker implements RollBacker{
             key = MessageUtils.getKeyFromRequest(request).orElseThrow(InvalidParamException::new);
             keyExists = globalContext.getStorage().exists(key);
             // 后面惰性检查删除的时候可能会把expireTime删掉, Rollback会把它复原(就像从来没有执行过这个请求一样, 即使它确实过期了)
-            originalExpireTime = globalContext.getStorage().expireBackdoor().getOrDefault(key, null);
+            originalExpireTime = globalContext.getStorage().getExpireMap().getOrDefault(key, null);
             // !!! 如果key存在并且key的valueType是匹配的, 才会再执行子类的beforeHandle
             if (keyExists){
                 // 如果子类返回的是ValueTypeAll，就说明不管什么ValueType, 子类都能处理，因此不需要进行检查
@@ -78,7 +75,7 @@ public abstract class AbstractRollBacker implements RollBacker{
             }
             // 如果原先这个key有一个超时时间, 复原它
             if (!Objects.isNull(originalExpireTime)){
-                globalContext.getStorage().expireBackdoor().put(key, originalExpireTime);
+                globalContext.getStorage().getExpireMap().put(key, originalExpireTime);
             }
             // 如果原先存在key，但是valueType不match, 那么就不执行回滚了
             if (!valueTypeMatch){

@@ -8,6 +8,8 @@ import com.t0ugh.server.handler.impl.AbstractGenericsHandler;
 import com.t0ugh.server.handler.HandlerAnnotation;
 import com.t0ugh.server.utils.MessageUtils;
 
+import java.util.Map;
+
 @HandlerAnnotation(messageType = Proto.MessageType.HSet, handlerType= HandlerType.Write)
 public class HSetHandler extends AbstractGenericsHandler<Proto.HSetRequest, Proto.HSetResponse> {
 
@@ -17,10 +19,14 @@ public class HSetHandler extends AbstractGenericsHandler<Proto.HSetRequest, Prot
 
     @Override
     public Proto.HSetResponse doHandle(Proto.HSetRequest req) throws Exception {
-
-        MessageUtils.assertStringNotNullOrEmpty(req.getField());
-        MessageUtils.assertStringNotNullOrEmpty(req.getValue());
-        getGlobalContext().getStorage().hSet(req.getKey(), req.getField(), req.getValue());
-        return Proto.HSetResponse.newBuilder().setOk(true).build();
+        Map<String, String> kvs = req.getKvsMap();
+        int count = 0;
+        for(Map.Entry<String, String> entry: kvs.entrySet()){
+            MessageUtils.assertStringNotNullOrEmpty(entry.getKey());
+            MessageUtils.assertStringNotNullOrEmpty(entry.getValue());
+            getGlobalContext().getStorage().hSet(req.getKey(), entry.getKey(), entry.getValue());
+            count ++;
+        }
+        return Proto.HSetResponse.newBuilder().setCount(count).build();
     }
 }

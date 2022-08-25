@@ -40,8 +40,8 @@ public class ExpireTest extends BaseTest {
         TestUtils.assertOK(Proto.MessageType.Expire, resp);
         assertTrue(resp.getExpireResponse().getOk());
         Storage storage = testContext.getStorage();
-        assertTrue(Longs.compare(storage.expireBackdoor().get("Hello"), 0L) > 0);
-        System.out.println(storage.expireBackdoor().get("Hello"));
+        assertTrue(Longs.compare(storage.getExpireMap().get("Hello"), 0L) > 0);
+        System.out.println(storage.getExpireMap().get("Hello"));
     }
 
     /**
@@ -59,7 +59,7 @@ public class ExpireTest extends BaseTest {
         Proto.Response resp = expireHandler.handle(request);
         TestUtils.assertOK(Proto.MessageType.Expire, resp);
         assertFalse(resp.getExpireResponse().getOk());
-        assertNull(testContext.getStorage().expireBackdoor().get("Hi"));
+        assertNull(testContext.getStorage().getExpireMap().get("Hi"));
     }
 
     /**
@@ -67,7 +67,7 @@ public class ExpireTest extends BaseTest {
      * */
     @Test
     public void testExpireExpired() throws Exception {
-        testContext.getStorage().expireBackdoor().put("Hello", 1636613116992L);
+        testContext.getStorage().getExpireMap().put("Hello", 1636613116992L);
         Proto.Request request = Proto.Request.newBuilder()
                 .setMessageType(Proto.MessageType.Expire)
                 .setExpireRequest(Proto.ExpireRequest.newBuilder()
@@ -77,6 +77,6 @@ public class ExpireTest extends BaseTest {
         Handler expireHandler = new ExpireHandler(testContext);
         Proto.Response resp = expireHandler.handle(request);
         TestUtils.assertOK(Proto.MessageType.Expire, resp);
-        assertNull(testContext.getStorage().expireBackdoor().get("Hello"));
+        assertNull(testContext.getStorage().getExpireMap().get("Hello"));
     }
 }
