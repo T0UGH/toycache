@@ -66,7 +66,7 @@ public class ProgressiveReHashMap<K,V> extends AbstractMap<K,V> implements Map<K
         this.table = new ArrayList<>(capacity);
         // 初始化为空列表
         for(int i = 0; i < capacity; i++) {
-            this.table.add(i, new ArrayList<Entry<K, V>>());
+            this.table.add(i, new LinkedList<>());
         }
         this.rehashIndex = -1;
         this.rehashCapacity = -1;
@@ -76,14 +76,13 @@ public class ProgressiveReHashMap<K,V> extends AbstractMap<K,V> implements Map<K
     /**
      * put 一个值
      *
-     * （1）如果不处于 rehash 阶段
-     *
+     * 1 如果不处于 rehash 阶段
      * 1.1 判断是否为 table 更新，如果是，则进行更新
      * 1.2 如果不是更新，则进行插入
      *
-     * 插入的时候可能触发 rehash
+     * 1.3 插入的时候可能触发 rehash
      *
-     * （2）如果处于 rehash 阶段
+     * 2 如果处于 rehash 阶段
      *
      * 2.0 执行一次渐进式 rehash 的动作
      *
@@ -101,41 +100,41 @@ public class ProgressiveReHashMap<K,V> extends AbstractMap<K,V> implements Map<K
     public V put(K key, V value) {
         boolean isInRehash = isInReHash();
         if(!isInRehash) {
-            //1. 是否为更新
+            // 1.1 是否为更新
             Entry<Boolean, V> pair = updateTableInfo(key, value, this.table, this.capacity);
             if(pair.getKey()) {
                 return pair.getValue();
             } else {
-                // 插入
+                // 1.2 插入
                 return this.createNewEntry(key, value);
             }
         } else {
-            //2.0 执行一个附加操作，进行渐进式 rehash 处理
+            // 2.0 执行一个附加操作，进行渐进式 rehash 处理
             rehashToNew();
             //2.1 是否为 table 更新
             Entry<Boolean, V> pair = updateTableInfo(key, value, this.table, this.capacity);
             if(pair.getKey()) {
                 return pair.getValue();
             }
-            //2.2 是否为 rehashTable 更新
+            // 2.2 是否为 rehashTable 更新
             Entry<Boolean, V> pair2 = updateTableInfo(key, value, this.rehashTable, this.rehashCapacity);
             if(pair2.getKey()) {
                 return pair2.getValue();
             }
-            //2.3 插入
+            // 2.3 插入
             return this.createNewEntry(key, value);
         }
     }
 
     /**
-     * 是否处于 rehash 阶段
+     * 是否处于 rehash 阶段, 就是判断 rehashIndex 是否为 -1
      */
     private boolean isInReHash() {
         return rehashIndex != -1;
     }
 
     /**
-     * 是否为更新信息
+     * 是否为更新信息, 这里为了复用，对方法进行了抽象。可以同时使用到 table 和 rehashTable 中
      * @param key key
      * @param value value
      * @param table table 信息
@@ -148,15 +147,14 @@ public class ProgressiveReHashMap<K,V> extends AbstractMap<K,V> implements Map<K
         int hash = ProgressiveReHashMap.hash(key);
         int index = ProgressiveReHashMap.indexFor(hash, tableCapacity);
         // 判断是否为替换
-        List<Entry<K,V>> entryList = new ArrayList<>();
-        if(index < table.size()) {
-            entryList = table.get(index);
+        if(index >= table.size()){
+            return new SimpleEntry<>(false, null);
         }
         // 遍历
-        for(Entry<K,V> entry : entryList) {
+        for(Entry<K,V> entry : table.get(index)) {
             // 二者的 key 都为 null，或者二者的 key equals()
             final K entryKey = entry.getKey();
-            if((Objects.isNull(key) && Objects.isNull(entryKey)) || key.equals(entryKey)) {
+            if(Objects.equals(key, entryKey)) {
                 final V oldValue = entry.getValue();
                 // 更新新的 value
                 entry.setValue(value);
@@ -167,7 +165,7 @@ public class ProgressiveReHashMap<K,V> extends AbstractMap<K,V> implements Map<K
     }
 
     /**
-     * 创建一个新的明细
+     * 创建一个新的Entry
      *
      * （1）如果处于渐进式 rehash 中，则设置到 rehashTable 中
      * （2）如果不是，则判断是否需要扩容
@@ -178,6 +176,7 @@ public class ProgressiveReHashMap<K,V> extends AbstractMap<K,V> implements Map<K
      *
      * @param key key
      * @param value value
+     * @return value
      */
     private V createNewEntry(final K key,
                              final V value) {
@@ -200,6 +199,7 @@ public class ProgressiveReHashMap<K,V> extends AbstractMap<K,V> implements Map<K
             List<Entry<K,V>> list = this.rehashTable.get(index);
             list.add(entry);
         } else {
+            // 目前不处于 rehash 中，元素直接插入到 table 中
             int index = ProgressiveReHashMap.indexFor(hash, this.capacity);
             List<Entry<K,V>> list = this.table.get(index);
             list.add(entry);
@@ -208,12 +208,12 @@ public class ProgressiveReHashMap<K,V> extends AbstractMap<K,V> implements Map<K
         return value;
     }
 
-    static final int hash(Object key) {
+    static int hash(Object key) {
         int h;
         return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
     }
 
-    static final int indexFor(int hash, int capacity){
+    static int indexFor(int hash, int capacity){
         return hash % capacity;
     }
 
@@ -243,15 +243,14 @@ public class ProgressiveReHashMap<K,V> extends AbstractMap<K,V> implements Map<K
             return;
         }
         // 初始化 rehashTable
-        this.rehashIndex = -1;
         this.rehashCapacity = 2 * capacity;
         // 一开始就把所有slot都创建好
         this.rehashTable = new ArrayList<>(this.rehashCapacity);
         for(int i = 0; i < rehashCapacity; i++) {
-            rehashTable.add(i, new ArrayList<Entry<K, V>>());
+            rehashTable.add(i, new LinkedList<>());
         }
 
-        // 遍历元素第一个元素，其他的进行渐进式更新。
+        // 遍历第一个元素，其他的进行渐进式更新。
         rehashToNew();
     }
 
@@ -270,16 +269,14 @@ public class ProgressiveReHashMap<K,V> extends AbstractMap<K,V> implements Map<K
             int hash = ProgressiveReHashMap.hash(entry);
             int index = ProgressiveReHashMap.indexFor(hash, rehashCapacity);
             //  添加元素
-            // 获取列表，避免数组越界
             List<Entry<K,V>> newList = rehashTable.get(index);
             // 添加元素到列表
             // 元素不存在重复，所以不需要考虑更新
             newList.add(entry);
-            rehashTable.set(index, newList);
         }
 
         // 清空 index 处的信息
-        table.set(rehashIndex, new ArrayList<Entry<K, V>>());
+        table.set(rehashIndex, new LinkedList<>());
 
         // 判断大小是否完成 rehash
         // 验证是否已经完成
@@ -320,6 +317,12 @@ public class ProgressiveReHashMap<K,V> extends AbstractMap<K,V> implements Map<K
         return null;
     }
 
+    /**
+     * 获取value, 这里为了复用，对方法进行了抽象。可以同时使用到 table 和 rehashTable 中
+     * @param key key
+     * @param table table 信息
+     * @return value 如果不存在返回null
+     */
     private V getValue(Object key, List<List<Entry<K, V>>> table){
         int hash = ProgressiveReHashMap.hash(key);
         int idx = ProgressiveReHashMap.indexFor(hash, table.size());
@@ -332,12 +335,21 @@ public class ProgressiveReHashMap<K,V> extends AbstractMap<K,V> implements Map<K
         return null;
     }
 
+    /**
+     * 执行一次渐进式rehash操作, 并且返回所有entry
+     * @return set 返回map中所有的entry
+     */
     @Override
     public Set<Entry<K, V>> entrySet() {
+        if(isInReHash()) {
+            rehashToNew();
+        }
+
         Stream<Entry<K, V>> tableStream = table.stream().flatMap(Collection::stream);
         if(!isInReHash()){
             return tableStream.collect(Collectors.toSet());
         }
+
         Stream<Entry<K, V>> reHashStream = rehashTable.stream().flatMap(Collection::stream);
         return Stream.concat(tableStream, reHashStream).collect(Collectors.toSet());
     }
