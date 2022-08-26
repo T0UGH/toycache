@@ -22,7 +22,7 @@ public class MemoryStorage implements Storage{
     private final Map<String, Long> expire;
 
     public MemoryStorage() {
-        data = Maps.newHashMap();
+        data = new ProgressiveReHashMap<>();
         expire = Maps.newHashMap();
     }
 
